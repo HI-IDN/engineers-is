@@ -1,0 +1,39 @@
+# Saga verkfræðimenntunar og fagstéttar
+
+Menntasagan er túlkunarrammi fyrir leyfisröðina en ekki sjálfstæð
+orsakasönnun. Tímamót verða aðeins sett á niðurstöðumyndir þegar þau geta haft
+mælingafræðilega þýðingu og frumheimildir hafa verið staðfestar.
+
+## Vinnutilgáta um Háskóla Íslands
+
+Fyrirliggjandi samantekt greinir á milli eftirfarandi atriða:
+
+- 1940: verkfræðikennsla hefst, fyrst einkum sem fyrri hluti náms;
+- 1944: Verkfræðideild er formfest í lögum og kennsla til fullnaðarprófs í
+  byggingarverkfræði samþykkt;
+- 1946–1948: sjö nemendur ljúka tímabundnu fullnaðarprófi;
+- 1970: samfellt fjögurra ára nám til lokaprófs tekið upp í helstu greinum;
+- 1974: fyrstu nemendur úr þeirri námsleið brautskrást;
+- 1997: þriggja ára BS- og tveggja ára MS-skipulag tekið upp.
+
+::: {.callout-warning title="Atriði til heimildakönnunar: 2024"}
+Árið 2024 voru 80 ár frá lagalegri stofnun Verkfræðideildar og frá samþykkt
+kennslu til fullnaðarprófs árið 1944. Staðfesta þarf með frumheimildum hvort
+afmælisviðburður var haldinn og nákvæmlega hvaða áfanga var minnst. Ekki verður
+fullyrt að verkfræði hafi verið kennd samfellt til fullnaðar í 80 ár, enda
+bendir núverandi tímalína til tímabundins fullnaðarprófs 1946–1948 og
+samfellds lokaprófsnáms frá 1970.
+:::
+
+## Tímamót til skoðunar í greiningu
+
+| Ár | Atburður | Fyrirhuguð notkun |
+|---:|---|---|
+| 1970 | Samfellt lokaprófsnám tekið upp við HÍ | Menntasamhengi |
+| 1974 | Fyrstu brautskráningar úr fjögurra ára námi | Mögulegt breytingartímabil |
+| 1996 | Lög nr. 8/1996 | Regluumhverfi |
+| 1997 | BS/MS-skipulag | Breyttur nefnari brautskráninga |
+| 2015 | Reglur nr. 1105/2015 | Viðmið leyfishæfs náms |
+| 2017 | VFÍ og TFÍ sameinast | Stofnanasamhengi |
+
+Orsakamál verða ekki leidd af nálægð tímamóta og brota í tímaröð einni saman.

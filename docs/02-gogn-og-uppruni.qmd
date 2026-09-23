@@ -1,0 +1,30 @@
+# Gögn og uppruni
+
+## Starfsheitaleyfi
+
+Opinberar skrár Stjórnarráðsins yfir verkfræðinga og tæknifræðinga eru
+aðalgagnagrunnur rannsóknarinnar. Þær geyma nafn, fæðingarár og leyfisdag.
+Geyma þarf söfnunardag og afrit frumheimildar svo breytingar á lifandi vefsíðu
+séu rekjanlegar.
+
+## Mannfjöldi og brautskráningar
+
+Mannfjöldatölur Hagstofu Íslands verða notaðar til að reikna ný leyfi á hverja
+100.000 íbúa og, eftir atvikum, á viðeigandi aldurshóp. Samræmdar
+brautskráningartölur eftir námsbraut, prófgráðu og kyni verða notaðar fyrir
+síðara rannsóknartímabilið.
+
+Flokkun námsbrauta í verkfræði, tæknifræði eða aðra grein verður skilgreind
+fyrir fram og varðveitt sem endurgeranleg gagnatafla.
+
+## Skemman
+
+Skemmu-gögn koma úr `skemman-harvester`. Þetta verkefni endurtekur hvorki
+söfnun né þáttun þeirra. Tenging ritgerðarhöfunda við leyfisskrá verður
+aukagreining með skráðum styrkleikaflokkum samsvarana og næmnigreiningu.
+
+## Persónuvernd og birting
+
+Kennitölur eða önnur bein auðkenni verða ekki vistuð í þessu kóðasafni.
+Nafnabyggð áætlun um kynjasamsetningu verður aðeins birt sem samantekin
+tölfræði með flokknum óþekkt/óvíst og skýrum næmnibilum.

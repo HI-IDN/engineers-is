@@ -1,0 +1,49 @@
+/*-- scss:defaults --*/
+
+$hi-blue: #10099f;
+$hi-teal: #2dd2c0;
+$hi-paper: #f5f5f5;
+$hi-panel: #eeeeee;
+$hi-ink: #262626;
+$hi-white: #ffffff;
+$hi-pink: #d61f69;
+
+$font-family-sans-serif: system-ui, -apple-system, "Segoe UI", sans-serif;
+$font-family-monospace: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+$headings-font-weight: 800;
+$headings-color: $hi-blue;
+$body-color: $hi-ink;
+$link-color: $hi-blue;
+$primary: $hi-blue;
+$secondary: $hi-teal;
+$code-color: $hi-pink;
+$code-bg: rgba($hi-pink, 0.07);
+$border-radius: 0;
+
+/*-- scss:rules --*/
+
+.navbar {
+  border-bottom: 3px solid $hi-teal;
+
+  .navbar-brand,
+  .nav-link,
+  .quarto-navbar-tools .nav-link { color: $hi-white !important; }
+}
+
+.sidebar { border-right: 1px solid $hi-panel; }
+h1 { border-bottom: 3px solid $hi-teal; padding-bottom: 0.25em; }
+h2 { border-bottom: 1px solid $hi-panel; padding-bottom: 0.15em; margin-top: 1.8em; }
+
+pre.sourceCode,
+div.sourceCode {
+  background: $hi-paper;
+  border-left: 4px solid $hi-teal;
+  border-radius: 0;
+}
+
+.callout { border-radius: 0; border-left-width: 4px; }
+.nav-footer { background: $hi-blue; color: $hi-white; a { color: $hi-teal; } }
+table {
+  th { background: $hi-blue; color: $hi-white; }
+  tbody tr:nth-child(even) td { background: $hi-paper; }
+}

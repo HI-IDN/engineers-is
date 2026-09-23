@@ -1,0 +1,23 @@
+# Vinnudagbók
+
+## 23. september 2026 — verkefni stofnað
+
+- Afmarkað sem sjálfstætt hliðarverkefni úr `skemman-msc`.
+- Kóðasafnsheitið `engineers-is` valið: stutt en lýsandi fyrir viðfangsefnið.
+- Megináhersla færð frá þröngri tengingu meistararitgerða og leyfa yfir á
+  langtímaþróun og nýliðun fagstéttarinnar.
+- Skemmu-tengingin skilgreind sem aukagreining.
+- HÍ-sagan sett í sérstakan kafla og 2024-spurningin skráð til
+  frumheimildakönnunar.
+- Vinnugrein heitir `profession-history`; áfangar verða squash-merge-aðir í
+  `main`.
+
+## Næstu skref
+
+1. Festa frumheimildir fyrir HÍ-tímalínuna, sérstaklega áfangann 1944 og
+   mögulegan afmælisviðburð 2024.
+2. Flytja leyfisskrár og endurgeranlegan lestrarkóða inn samkvæmt skýrum
+   eignamörkum gagnaverkefna.
+3. Sækja og flokka viðeigandi mannfjölda- og brautskráningarraðir Hagstofu.
+4. Endurgera aðalmyndina sem ný leyfi á hverja 100.000 íbúa.
+5. Hanna survival-greiningu fyrir afmarkaða Skemmu-árganga.

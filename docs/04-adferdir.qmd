@@ -1,0 +1,36 @@
+# Aðferðir
+
+## Lýsandi langtímagreining
+
+Árleg leyfi verða sýnd bæði sem hráar talningar og á hverja 100.000 íbúa.
+Þriggja eða fimm ára hreyfanlegt meðaltal verður notað til að draga úr áhrifum
+stjórnsýslulegra afgreiðslulota. Aldur við leyfi verður tekinn saman með
+miðgildi og fjórðungsbili.
+
+## Áætluð kynjasamsetning
+
+Nafnabyggð flokkun verður kölluð áætluð kynjasamsetning nafna, ekki kyn
+einstaklinga. Birta skal áætlað kvenkyns nafn, áætlað karlkyns nafn og
+óþekkt/óvíst. Næmnibil fæst með því að setja öll óþekkt til skiptis í hvorn
+þekkta flokkinn.
+
+## Brautskráningar og leyfi
+
+Brautskráningar verða ekki deildar óhliðrað í leyfi sama árs. Prófa þarf
+fyrirfram skilgreinda töf og aðgreina BS- og MS-próf eftir kerfisbreytinguna
+1997. Brautskráningartölur mæla próf eða brautskráningar og geta talið sama
+einstakling oftar en einu sinni.
+
+## Tími að leyfi
+
+Skemmu-árgangar verða greindir með tíma að fyrsta starfsheitaleyfi. Nýjustu
+árgangar eru hægri ritskoðaðir við fastan lokadag gagnasöfnunar. Birta má
+Kaplan–Meier-mat eða `1 − S(t)` og nota fastan 2,5 ára glugga aðeins sem
+næmnigreiningu.
+
+## Gagnagæði
+
+Skoða þarf tvítekningar, afturvirkar skráningar, óvenjulegar dagsetningar,
+sameiginlegar afgreiðslulotur og eyður í eldri gögnum. Sérstaklega verður
+athugað hvort árin 1992–1994 endurspegli skráningareyðu fremur en raunverulega
+fækkun leyfa.

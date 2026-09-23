@@ -1,0 +1,43 @@
+---
+title: "Verkfræðingar á Íslandi"
+---
+
+Þetta er vinnudagbók rannsóknar á þróun og nýliðun í lögverndaða
+verkfræðinga- og tæknifræðingastétt á Íslandi. Hér eru heimildir, kóði,
+aðferðafræðilegar ákvarðanir og bráðabirgðaniðurstöður varðveitt á meðan
+rannsókninni vindur fram.
+
+::: {.callout-note title="Staða: rannsókn í vinnslu"}
+Efnið er ekki fullbúin grein. Tölur og túlkun geta breyst þegar frumheimildir,
+gagnagæði, námsbrautaflokkun og tenging einstaklinga hafa verið yfirfarin.
+:::
+
+## Rannsóknarkjarni
+
+Meginspurningin er hvernig nýliðun í lögverndaða verkfræðinga- og
+tæknifræðingastétt hefur þróast frá 1962/1965 til 2026 með tilliti til
+umfangs, aldurs og áætlaðrar kynjasamsetningar, og hvernig þróunin tengist
+lýðfræði, brautskráningum, framboði innlendrar verkfræðimenntunar,
+stofnanaumhverfi og regluverki.
+
+Greiningin aðgreinir sérstaklega:
+
+1. áhuga á og þátttöku í verkfræðinámi;
+2. brautskráningar úr viðeigandi námsleiðum;
+3. nýliðun í skrá lögverndaðra starfsheita;
+4. stærð starfandi verkfræðingastéttar.
+
+Starfsheitaleyfisskráin mælir fyrst og fremst þriðja þrepið. Uppsafnaður
+leyfisfjöldi jafngildir hvorki fjölda starfandi verkfræðinga né fjölda þeirra
+sem búa á Íslandi.
+
+## Fyrirhugaður afrakstur
+
+Stefnt er að ritrýndri grein fyrir *Icelandic Journal of Engineering*. Vinnuheiti
+hennar er:
+
+> **Nýliðun í lögverndaða verkfræðinga- og tæknifræðingastétt á Íslandi
+> 1962–2026: langtímagreining starfsheitaleyfa, lýðfræði og brautskráninga**
+
+Samsvörun höfunda í Skemmu við leyfisskrár verður afmörkuð aukagreining með
+tilliti til mismunandi eftirfylgnitíma, en ekki aðalrammi rannsóknarinnar.
