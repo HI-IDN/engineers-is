@@ -422,11 +422,12 @@ með í heildinni en ekki í töflunni.
 Til samanburðar má flokka allar brautskráningar eftir almennum sviðum
 Hagstofunnar. Kóði námsbrautar fylgir ÍSNÁM2008 [@hagstofa_isnam2008], íslenskri
 útgáfu ISCED 97 [@unesco_isced1997]:
-fyrsti tölustafurinn er almennt svið og tveir fyrstu afmarkað svið. Verkfræði og
-tæknifræði eru sýndar sér innan sviðs 5, *Verkfræði, framleiðsla og
-mannvirkjagerð*, sem einnig nær til arkitektúrs, skipulags og matvælafræði.
-Þrjár brautir í flokkun okkar liggja utan þess sviðs hjá Hagstofunni:
-Lífverkfræði og Reikniverkfræði (svið 4) og Iðnaðartæknifræði (svið 3).
+fyrsti tölustafurinn er almennt svið og tveir fyrstu afmarkað svið. Undir
+samtölunni eru verkfræði og tæknifræði sýndar eftir flokkun okkar. Þær koma að
+mestu úr sviði 5, *Verkfræði, framleiðsla og mannvirkjagerð*, sem einnig nær til
+arkitektúrs, skipulags og matvælafræði, en þrjár brautir liggja utan þess hjá
+Hagstofunni: Lífverkfræði og Reikniverkfræði (svið 4) og Iðnaðartæknifræði
+(svið 3).
 
 ```{r hagstofa-svid}
 #| echo: false
@@ -440,21 +441,22 @@ if (!is.null(hag) && !is.null(hag$svid)) {
              "5" = "5 Verkfræði, framleiðsla og mannvirkjagerð",
              "6" = "6 Landbúnaður og dýralækningar", "7" = "7 Heilbrigði og velferð",
              "8" = "8 Þjónusta")
-  radir <- list()
-  for (k in names(heiti)) {
-    radir[[heiti[[k]]]] <- d$svid == k
-    if (k == "5") {
-      radir[["þar af verkfræði"]] <- d$svid == k & d$programme_group %in% "verkfraedi"
-      radir[["þar af tæknifræði"]] <- d$svid == k & d$programme_group %in% "taeknifraedi"
-    }
-  }
+  radir <- lapply(setNames(names(heiti), heiti), function(k) d$svid == k)
+  # Below the total, verkfræði and tæknifræði by our classification, whatever their field:
+  # mostly field 5, but three programmes sit in fields 3 and 4.
+  undir <- list("þar af verkfræði" = d$programme_group %in% "verkfraedi",
+                "þar af tæknifræði" = d$programme_group %in% "taeknifraedi")
   alls <- tapply(d$n, d$timabil, sum)
-  t <- do.call(rbind, lapply(radir, function(i) {
+  hlutur <- function(i) {
     x <- tapply(d$n[i], d$timabil[i], sum)
     x[is.na(x)] <- 0
     c(sub(".", ",", sprintf("%.1f%%", 100 * x / alls), fixed = TRUE), sum(d$n[i]))
-  }))
-  t <- rbind(t, "**Samtals**" = c(rep("**100%**", length(alls)), paste0("**", sum(d$n), "**")))
+  }
+  t <- rbind(
+    do.call(rbind, lapply(radir, hlutur)),
+    "**Samtals**" = c(rep("**100%**", length(alls)), paste0("**", sum(d$n), "**")),
+    do.call(rbind, lapply(undir, hlutur))
+  )
   t <- data.frame(Svið = rownames(t), t, check.names = FALSE, row.names = NULL)
   names(t)[-1] <- c(levels(d$timabil), paste0("Alls ", bil[1] + 1, "–", bil[5]))
   t$Svið <- ifelse(startsWith(t$Svið, "þar af"), paste0("*", t$Svið, "*"), t$Svið)
