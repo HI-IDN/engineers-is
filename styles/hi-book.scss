@@ -25,14 +25,30 @@ $border-radius: 0;
 .navbar {
   border-bottom: 3px solid $hi-teal;
 
+  .navbar-brand-logo img {
+    height: 30px;
+    filter: brightness(0) invert(1);
+  }
+
   .navbar-brand,
   .nav-link,
-  .quarto-navbar-tools .nav-link { color: $hi-white !important; }
+  .quarto-navbar-tools .nav-link {
+    color: $hi-white !important;
+  }
 }
 
 .sidebar { border-right: 1px solid $hi-panel; }
-h1 { border-bottom: 3px solid $hi-teal; padding-bottom: 0.25em; }
-h2 { border-bottom: 1px solid $hi-panel; padding-bottom: 0.15em; margin-top: 1.8em; }
+
+h1 {
+  border-bottom: 3px solid $hi-teal;
+  padding-bottom: 0.25em;
+}
+
+h2 {
+  border-bottom: 1px solid $hi-panel;
+  padding-bottom: 0.15em;
+  margin-top: 1.8em;
+}
 
 pre.sourceCode,
 div.sourceCode {
@@ -41,9 +57,23 @@ div.sourceCode {
   border-radius: 0;
 }
 
-.callout { border-radius: 0; border-left-width: 4px; }
-.nav-footer { background: $hi-blue; color: $hi-white; a { color: $hi-teal; } }
+.callout {
+  border-radius: 0;
+  border-left-width: 4px;
+}
+
+.nav-footer {
+  background: $hi-blue;
+  color: $hi-white;
+
+  a { color: $hi-teal; }
+}
+
 table {
-  th { background: $hi-blue; color: $hi-white; }
+  th {
+    background: $hi-blue;
+    color: $hi-white;
+  }
+
   tbody tr:nth-child(even) td { background: $hi-paper; }
 }
