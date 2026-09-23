@@ -303,16 +303,7 @@ með fyrirspurn skilar gögnunum:
 
 Fyrirspurnin fyrir mannfjöldann er tóm, þ.e. öll taflan. Brautskráningataflan
 er of stór til að sækja í einu lagi og er því sótt eftir prófgráðu, ein
-fyrirspurn á hverja:
-
-```json
-{
-  "query": [
-    {"code": "Prófgráða", "selection": {"filter": "item", "values": ["4"]}}
-  ],
-  "response": {"format": "json"}
-}
-```
+fyrirspurn á hverja.
 
 Hver fyrirspurn og svarið við henni eru geymd í töflunni `fetch` í
 `data/hagstofa.sqlite`.
