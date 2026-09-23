@@ -1,0 +1,5 @@
+# Gögn {.unnumbered}
+
+Þessi hluti viðaukanna lýsir hverri gagnalind fyrir sig: hvaðan hún kemur,
+hvernig hún er sótt og lesin, hvaða reglum er beitt og hvaða fyrirvarar fylgja.
+Yfirlit er í [Gögn](02-gogn.qmd).

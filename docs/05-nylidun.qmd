@@ -115,6 +115,25 @@ frá 2020.
 verkfræðináms og nýjar reglur um leyfishæft nám (sjá [Saga og
 tímamót](03-saga-og-timamot.qmd)), en nálægð í tíma sannar ekki orsök.
 
+## Áætluð kynjasamsetning
+
+```{r kyn-setup}
+#| include: false
+source("../R/gogn.R")
+```
+
+Kyn leyfishafa er áætlað út frá nafni eftir reglunum í @sec-gogn-kyn. Taflan
+sýnir hvaða regla réð og hvert matið varð. Neðst, undir samtölu, er sýnt hve
+oft vísbendingar nafnsins stangast á, sem varnagli: þar er matið síst öruggt.
+
+```{r kyn-tafla}
+#| echo: false
+if (!is.null(kyn)) kyn_tafla()
+```
+
+Nöfnin `r kyn$othekkt` sem engin regla sker úr (`r kyn$othekkt_hlutfall`%) eru
+látin standa sem óráðin.
+
 ## Fyrirvarar
 
 - Leyfi `r nyl$til + 1` og síðar (`r nyl$eftir` leyfi) eru ekki með, því

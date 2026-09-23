@@ -16,7 +16,9 @@ brautskráningum og breytingum á menntun, stofnanaumhverfi og regluverki?
 3. Hvernig tengjast brautskráningar úr viðeigandi námsleiðum leyfisstraumnum
    frá því samræmd brautskráningargögn verða tiltæk?
 4. Hve stór hluti af afmörkuðum Skemmu-árgöngum birtist síðar í leyfisskrá og
-   hver er tíminn að leyfi þegar tekið er tillit til hægri ritskoðunar?
+   hver er tíminn að leyfi, þegar tekið er tillit til þess að nýjustu
+   árgangarnir hafa ekki enn haft tíma til að fá leyfi (hægri skerðing, e.
+   *right censoring*)?
 
 ## Hugtakanotkun
 

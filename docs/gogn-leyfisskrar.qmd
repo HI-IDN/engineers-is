@@ -1,0 +1,116 @@
+# Leyfisskrár Stjórnarráðsins {#sec-gogn-leyfi}
+
+```{r setup}
+#| include: false
+source("../R/gogn.R")
+```
+
+
+Opinberar skrár Stjórnarráðsins yfir verkfræðinga [@stjr_verkfraedingar] og
+tæknifræðinga [@stjr_taeknifraedingar] eru aðalgagnagrunnur rannsóknarinnar.
+Þær eru lifandi vefsíður, ein málsgrein á hvern leyfishafa með nafni, kennitölu
+eða fæðingardegi og leyfisdegi.
+
+`scripts/fetch_licences.py` sækir báðar síður og vistar þær í litlum
+SQLite-gagnagrunni, `data/licences.sqlite`, sem er utan útgáfustýringar. Hver
+keyrsla bætir við nýrri sókn og skrifar ekkert yfir, svo breytingar á síðunum
+eru rekjanlegar með því að bera saman tvær sóknir:
+
+- `fetch` geymir eina línu á hverja skrá í hverri sókn: slóð, söfnunartíma,
+  SHA-256 af síðunni eins og hún barst, fjölda lesinna og ólæsilegra færslna og
+  afrit síðunnar;
+- `licence` geymir færslur hverrar sóknar: nafn, fæðingarár, snið
+  auðkennis, leyfisár og leyfisdag, og merki um leiðréttingar og athugasemdir
+  (sjá hér á eftir);
+- `licence_current` sýnir færslur nýjustu sóknar hvorrar skrár.
+
+## Auðkenni og fæðingarár
+
+Kennitalan er aðeins lesin í minni til að finna fæðingarár og er hvergi vistuð.
+Afrit síðunnar er geymt með kennitölum afmáðum; SHA-256 er reiknað af
+upprunalegu síðunni svo óbreytt síða þekkist án þess að auðkennin séu geymd. Í
+stað kennitölunnar er geymt á hvaða sniði hún var skráð (`id_format`).
+
+Skrárnar eru handslegnar og kennitala er ekki alltaf á réttu sniði. Af
+`r leyfi$alls$n` leyfishöfum eru `r leyfi$kt("kennitala")` með kennitölu á
+réttu sniði (*ddmmáá-nnnn*) og `r leyfi$kt("birth_date")` með fæðingardag, sem
+er eldra form: „f. *dd.mm.áá*“, en „f.“ vantar stundum og árið er ýmist tveggja
+eða fjögurra stafa. Tveir síðustu tölustafir ársins eru lesnir sem fæðingarár.
+Aðeins er leitað á undan „Fær leyfi“, svo leyfisdagurinn er aldrei tekinn fyrir
+fæðingardag. Sé fæðingardagurinn sami dagur, mánuður og ár og leyfisdagurinn
+hefur leyfisdagurinn verið sleginn inn tvisvar og færslan telst ólæsileg.
+
+Hinar kennitölurnar eru lesnar eftir tveimur reglum:
+
+- **Annað skiltákn** (`kennitala_variant`, `r leyfi$kt("kennitala_variant")`
+  færslur): tíu tölustafir en með punktum, skástriki, tvöföldu bandstriki eða
+  bili, t.d. *dd.mm.áá-nnnn* eða *ddmmáá/nnnn*. Þær eru lesnar eins og rétt
+  kennitala.
+- **Rangur fjöldi tölustafa** (`kennitala_typo`, `r leyfi$kt("kennitala_typo")`
+  færslur): fimm eða sjö tölustafir á undan bandstrikinu, fimm á eftir því, eða
+  komma inni í kennitölunni. Tveir síðustu tölustafirnir á undan bandstrikinu
+  eru lesnir sem fæðingarár. Séu fjórir tölustafir á eftir bandstrikinu er sá
+  síðasti öldin; séu þeir fimm er óljóst hver er aukalegur og 20. öld er gefin
+  sér, sem aldarreglan hér á eftir leiðréttir ef þarf.
+
+Gefi aldarstafurinn ótrúlegan aldur við leyfisveitingu, yngri en 18 ára eða
+eldri en 90, er hann líklega innsláttarvilla. Þá er valin sú öld sem gefur trúverðugan
+aldur, ef aðeins ein gerir það; fæðingarár í framtíðinni, t.d. 2070 með leyfi
+2007, verður þannig 1970. Þetta á við `r leyfi$alls$old` færslur
+(`century_corrected`). Gangi engin öld upp er fæðingarárið látið standa en
+færslan merkt sem líkleg innsláttarvilla (`implausible_age`,
+`r leyfi$alls$otrulegt` færslur); leyfið telst með.
+
+Tveir fyrstu tölustafir kennitölu eru fæðingardagur og mega því ekki vera
+hærri en 31. Byrji kennitala á hærra gildi telst færslan ólæsileg; það á við
+`r faerslur(leyfi$ekki_einstaklingur)`.
+
+`r leyfi$olaesilegt` færslur hafa ekkert læsilegt auðkenni og eru ekki taldar
+með. Flestar eru eldri tæknifræðingar sem skráðir eru með nafni og leyfisdegi
+einum saman.
+
+## Leyfisdagur
+
+Leyfisdagur er fyrsta dagsetningin á eftir „Fær leyfi“. Aðallega er
+litið til ársins; þriggja stafa ár, t.d. *30.05.022*, er innsláttarvilla og
+tveir síðustu tölustafirnir eru lesnir sem ár. Á eftir henni koma
+stundum athugasemdir sem eru varðveittar óbreyttar í `raw_date`, t.d.
+„Endurútgefið …“ eða „Látinn“. Tvær þeirra eru merktar sérstaklega:
+
+- „*dd.mm.áá* hefur ekki sótt leyfi“ (`not_collected`,
+  `r leyfi$alls$ekki_sott` færslur) er athugasemd úr einskiptis tiltekt á
+  skránum árið 1999. Leyfið var veitt en leyfishafinn sótti aldrei
+  leyfisbréfið. Hann telst leyfishafi.
+- „Fær leyfi fyrir *dd.mm.áá*“ (`date_is_upper_bound`, `r leyfi$alls$fyrir`
+  færslur) merkir að leyfið var veitt fyrir þann dag, ekki á honum.
+
+```{r leyfi-sokn}
+#| echo: false
+if (!is.null(leyfi)) {
+  sokn <- leyfi$sokn
+  sokn$list <- c(verkfraedingur = "Verkfræðingar",
+                 taeknifraedingur = "Tæknifræðingar")[sokn$list]
+  sokn$fetched_at <- substr(sokn$fetched_at, 1, 10)
+  # A bold total row: counts summed, the year range across both lists.
+  samtals <- data.frame(
+    list = "Samtals", fetched_at = "",
+    n_entries = sum(sokn$n_entries), n_unparsed = sum(sokn$n_unparsed),
+    n_no_date = sum(sokn$n_no_date), fyrst = min(sokn$fyrst), sidast = max(sokn$sidast)
+  )
+  samtals[] <- lapply(samtals, function(x) if (nzchar(x)) paste0("**", x, "**") else x)
+  sokn[] <- lapply(sokn, as.character)
+  sokn <- rbind(sokn, samtals)
+  knitr::kable(
+    sokn,
+    col.names = c("Skrá", "Sótt", "Leyfishafar", "Ólæsilegt auðkenni",
+                  "Án leyfisdags", "Fyrsta leyfisár", "Síðasta leyfisár"),
+    caption = "Nýjasta sókn hvorrar leyfisskrár.",
+    align = "llrrrrr"
+  )
+}
+```
+
+## Heimildir {.unnumbered}
+
+::: {#refs}
+:::

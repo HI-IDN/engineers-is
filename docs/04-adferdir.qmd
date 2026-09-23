@@ -24,7 +24,11 @@ einstakling oftar en einu sinni.
 ## Tími að leyfi
 
 Skemmu-árgangar verða greindir með tíma að fyrsta starfsheitaleyfi. Nýjustu
-árgangar eru hægri ritskoðaðir við fastan lokadag gagnasöfnunar. Birta má
+árgangarnir hafa ekki enn haft tíma til að fá leyfi þegar gögnunum er safnað:
+fyrir þá er aðeins vitað að leyfi hafði ekki verið veitt fyrir lokadag
+gagnasöfnunar, ekki hvort eða hvenær það verður veitt (hægri skerðing, e.
+*right censoring*). Aðferðir lifunargreiningar (e. *survival analysis*) taka
+tillit til þessa. Birta má
 Kaplan–Meier-mat eða `1 − S(t)` og nota fastan 2,5 ára glugga aðeins sem
 næmnigreiningu.
 

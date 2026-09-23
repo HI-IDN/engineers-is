@@ -1,0 +1,416 @@
+# Brautskráningar og nám
+
+```{r setup}
+#| include: false
+source("../R/gogn.R")
+```
+
+Þessi kafli lýsir brautskráningum og námi í verkfræði og tæknifræði út frá
+gögnum Hagstofunnar; gögnunum og flokkun námsbrauta er lýst í
+@sec-gogn-hagstofa.
+
+## Hlutur verkfræði og tæknifræði
+
+Taflan geymir allar námsbrautir, ekki aðeins verkfræði og tæknifræði, ásamt
+heildartölu Hagstofunnar. Því má segja hve stór hluti allra brautskráninga
+verkfræði og tæknifræði eru:
+
+```{r hagstofa-hlutfall}
+#| echo: false
+if (!is.null(hag)) {
+  h <- hag$hlutfall
+  h$vt[is.na(h$vt)] <- 0
+  bil <- c(1995, 2000, 2010, 2020, 2025)
+  h$timabil <- cut(h$year, bil, labels = paste0(bil[-5] + 1, "–", bil[-1]))
+  gradur <- c("2" = "Grunnnám", "4" = "Meistaranám", "5" = "Doktorsnám",
+              "Alls" = "Allar prófgráður")
+  h <- h[h$degree_code %in% names(gradur), ]
+  a <- aggregate(cbind(vt, alls) ~ degree_code + timabil, h, sum)
+  a$pct <- sub(".", ",", sprintf("%.1f%%", 100 * a$vt / a$alls), fixed = TRUE)
+  a$pct[a$alls == 0] <- "–"
+  w <- reshape(a[, c("degree_code", "timabil", "pct")], idvar = "degree_code",
+               timevar = "timabil", direction = "wide")
+  w <- w[match(names(gradur), w$degree_code), ]
+  w$degree_code <- gradur[w$degree_code]
+  names(w) <- c("Prófgráða", levels(h$timabil))
+  knitr::kable(w, row.names = FALSE, align = "lrrrr",
+               caption = paste0("Hlutfall verkfræði og tæknifræði af öllum brautskráningum ",
+                                "sömu prófgráðu, eftir tímabilum."))
+}
+```
+
+Engar brautskráningar í verkfræði eða tæknifræði eru skráðar sem próf á
+háskólastigi án gráðu (ISCED 5B) eða viðbótarnám eftir fyrstu gráðu; þær eru
+með í heildinni en ekki í töflunni.
+
+## Svið Hagstofunnar
+
+Til samanburðar má flokka allar brautskráningar eftir almennum sviðum
+Hagstofunnar. Kóði námsbrautar fylgir ÍSNÁM2008 [@hagstofa_isnam2008], íslenskri
+útgáfu ISCED 97 [@unesco_isced1997]:
+fyrsti tölustafurinn er almennt svið og tveir fyrstu afmarkað svið. Undir
+samtölunni eru verkfræði og tæknifræði sýndar eftir flokkun okkar. Þær koma að
+mestu úr sviði 5, *Verkfræði, framleiðsla og mannvirkjagerð*, sem einnig nær til
+arkitektúrs, skipulags og matvælafræði, en þrjár brautir liggja utan þess hjá
+Hagstofunni: Lífverkfræði og Reikniverkfræði (svið 4) og Iðnaðartæknifræði
+(svið 3).
+
+```{r hagstofa-svid}
+#| echo: false
+if (!is.null(hag) && !is.null(hag$svid)) {
+  d <- hag$svid
+  bil <- c(1995, 2000, 2010, 2020, 2025)
+  d$timabil <- cut(d$year, bil, labels = paste0(bil[-5] + 1, "–", bil[-1]))
+  heiti <- c("1" = "1 Menntun", "2" = "2 Hugvísindi og listir",
+             "3" = "3 Félagsvísindi, viðskipti og lögfræði",
+             "4" = "4 Raunvísindi, stærðfræði og tölvunarfræði",
+             "5" = "5 Verkfræði, framleiðsla og mannvirkjagerð",
+             "6" = "6 Landbúnaður og dýralækningar", "7" = "7 Heilbrigði og velferð",
+             "8" = "8 Þjónusta")
+  radir <- lapply(setNames(names(heiti), heiti), function(k) d$svid == k)
+  # Below the total, verkfræði and tæknifræði by our classification, whatever their field:
+  # mostly field 5, but three programmes sit in fields 3 and 4.
+  undir <- list("þar af verkfræði" = d$programme_group %in% "verkfraedi",
+                "þar af tæknifræði" = d$programme_group %in% "taeknifraedi")
+  alls <- tapply(d$n, d$timabil, sum)
+  hlutur <- function(i) {
+    x <- tapply(d$n[i], d$timabil[i], sum)
+    x[is.na(x)] <- 0
+    c(sub(".", ",", sprintf("%.1f%%", 100 * x / alls), fixed = TRUE), sum(d$n[i]))
+  }
+  t <- rbind(
+    do.call(rbind, lapply(radir, hlutur)),
+    "**Samtals**" = c(rep("**100%**", length(alls)), paste0("**", sum(d$n), "**")),
+    do.call(rbind, lapply(undir, hlutur))
+  )
+  t <- data.frame(Svið = rownames(t), t, check.names = FALSE, row.names = NULL)
+  names(t)[-1] <- c(levels(d$timabil), paste0("Alls ", bil[1] + 1, "–", bil[5]))
+  t$Svið <- ifelse(startsWith(t$Svið, "þar af"), paste0("*", t$Svið, "*"), t$Svið)
+  knitr::kable(t, align = "lrrrrr",
+               caption = paste0("Hlutfall almennra sviða Hagstofunnar af öllum brautskráningum ",
+                                "eftir tímabilum, og fjöldi brautskráninga alls."))
+}
+```
+
+Svið Hagstofunnar falla ekki að skipulagi háskólanna. Verkfræði- og
+náttúruvísindasvið Háskóla Íslands [@hi_fraedasvid] svarar að mestu til sviða 4 og 5, auk hluta
+af sviðum 6 og 8 (t.d. umhverfis- og auðlindafræði og ferðamálafræði).
+Sambærileg eining í Háskólanum í Reykjavík er Tæknisvið, með Verkfræðideild,
+Iðn- og tæknifræðideild og Tölvunarfræðideild [@hr_svid_deildir]. Það svarar
+til sviðs 5 og tölvunarfræðinnar í sviði 4, auk iðnfræði og tæknifræði sem
+Hagstofan telur að hluta til sviðs 3; raunvísindi eru ekki kennd þar.
+
+## Samanburður við aðrar greinar á meistarastigi
+
+Svið Hagstofunnar eru misstór og geyma ólíkar greinar. Til að bera verkfræði
+saman við aðrar stórar greinar eru notuð *afmörkuð svið* ÍSNÁM2008, sem eru
+tveir fyrstu tölustafir kóða námsbrautar: 14 er kennaranám og menntunarfræði, 31
+félags- og atferlisvísindi, 34 viðskipti og stjórnun, 38 lögfræði, 48
+tölvunarfræði og 72 heilbrigði. Heitin eru Hagstofunnar. Viðskipti og stjórnun
+(34) ná t.d. yfir viðskiptafræði, viðskiptastjórnun, markaðsfræði, fjármál og
+endurskoðun. Verkfræði er eftir flokkun okkar og ekki talin með í sínum
+afmörkuðu sviðum. Sviðin sex eru þau fimm stærstu á meistarastigi yfir allt
+tímabilið og tölvunarfræði, næsti nágranni verkfræðinnar. Öll önnur svið, alls
+`r fjoldi_svida() - 6`, eru dregin saman í línuna
+*Önnur svið*, svo línurnar leggjast saman í allar meistaragráður ársins. Þar
+eru m.a. hugvísindi, sem voru stærsta sviðið fyrstu árin.
+
+Samanburðurinn nær aðeins til meistaragráða, því starfsheitið verkfræðingur
+krefst meistaraprófs. Tæknifræði er ekki með: starfsheitið tæknifræðingur krefst
+BS-prófs og meistaragráður í tæknifræði eru fáar. Meistaragráðum fjölgaði úr
+`r heild(hag$br$fra, "4")` árið `r hag$br$fra` í `r heild(hag$br$til, "4")` árið
+`r hag$br$til`, svo hver grein er bæði sýnd sem fjöldi og sem hlutfall af öllum
+meistaragráðum ársins. Hlutföll fyrstu áranna byggja á fáum gráðum og sveiflast
+því mikið.
+
+```{r hagstofa-greinar}
+#| include: false
+greinar <- NULL
+if (!is.null(hag)) {
+  afmorkud <- c("14" = "Kennaranám og menntunarfræði (14)",
+                "31" = "Félags- og atferlisvísindi (31)",
+                "34" = "Viðskipti og stjórnun (34)", "38" = "Lögfræði (38)",
+                "48" = "Tölvunarfræði (48)", "72" = "Heilbrigði (72)")
+  greinar <- hag$greinar
+  greinar$grein <- ifelse(greinar$grein %in% names(afmorkud), afmorkud[greinar$grein],
+                          greinar$grein)
+  # Every other field (tæknifræði's few master's degrees included) in one line, so the
+  # lines add up to all master's degrees and nothing drops out of the shares.
+  greinar$grein[!greinar$grein %in% c(afmorkud, "Verkfræði")] <- "Önnur svið"
+  greinar <- aggregate(n ~ year + grein, greinar, sum)
+  alls <- hag$hlutfall[hag$hlutfall$degree_code == "4", c("year", "alls")]
+  greinar <- merge(greinar, alls)
+  greinar$pct <- 100 * greinar$n / greinar$alls
+  # Legend order: largest first over the whole period, "Önnur svið" last.
+  rod <- names(sort(tapply(greinar$n, greinar$grein, sum), decreasing = TRUE))
+  greinar$grein <- factor(greinar$grein, levels = c(setdiff(rod, "Önnur svið"), "Önnur svið"))
+  greinar <- greinar[order(greinar$grein, greinar$year), ]
+}
+
+# One line per field; verkfræði drawn thicker, so it stands out.
+greinar_plot <- function(y, snid, titill) {
+  p <- plotly::plot_ly()
+  for (g in levels(greinar$grein)) {
+    x <- greinar[greinar$grein == g, ]
+    p <- plotly::add_trace(
+      p, data = x, x = ~year, y = y, name = g, type = "scatter", mode = "lines+markers",
+      line = list(width = if (g == "Verkfræði") 4 else 1.5),
+      marker = list(size = 4),
+      hovertemplate = paste0("%{x}: ", snid, "<extra>", g, "</extra>")
+    )
+  }
+  plotly::layout(p, xaxis = list(title = ""),
+                 yaxis = list(title = titill, rangemode = "tozero"),
+                 legend = list(orientation = "h", y = -0.2))
+}
+```
+
+::: {.panel-tabset}
+
+### Fjöldi
+
+```{r hagstofa-greinar-fjoldi}
+#| echo: false
+#| fig-cap: >
+#|   Meistaragráður á ári í verkfræði og nokkrum stórum afmörkuðum sviðum
+#|   Hagstofunnar.
+if (!is.null(greinar)) greinar_plot(~n, "%{y} meistaragráður", "Meistaragráður á ári")
+```
+
+### Hlutfall
+
+```{r hagstofa-greinar-hlutfall}
+#| echo: false
+#| fig-cap: >
+#|   Sömu greinar sem hlutfall af öllum meistaragráðum hvers árs.
+if (!is.null(greinar)) greinar_plot(~pct, "%{y:.1f}%", "% af öllum meistaragráðum")
+```
+
+:::
+
+## Nemendur, brautskráningar og brottfall
+
+Frá 1997 telur Hagstofan nemendur á Íslandi eftir námsbraut og prófgráðu
+[@hagstofa_sko04105b], með sömu kóðum og brautskráningataflan. Því má bera
+saman, fyrir verkfræðibrautirnar í flokkun okkar, hve margir eru í námi á
+hverju ári og hve margir brautskrást. Nemendafjöldinn er staða ársins en
+brautskráningar flæði út; mismunurinn er ekki brottfall, því nemendur skipta um
+braut, eru í hlutanámi og eru mislengi að ljúka námi.
+
+::: {.panel-tabset}
+
+### Grunnnám
+
+```{r flaedi-grunn}
+#| echo: false
+#| fig-cap: >
+#|   Nemendur í grunnnámi í verkfræði og brautskráningar með fyrstu gráðu á ári.
+flaedi_plot <- function(st) {
+  d <- hag$flaedi[hag$flaedi$stig == st, ]
+  d <- d[order(d$maeling, d$year), ]
+  heiti <- c(nemendur = "Nemendur í námi", brautskraningar = "Brautskráningar")
+  litir <- c(nemendur = "#10099F", brautskraningar = "#d61f69")
+  p <- plotly::plot_ly()
+  for (m in names(heiti)) {
+    x <- d[d$maeling == m, ]
+    p <- plotly::add_trace(
+      p, data = x, x = ~year, y = ~n, name = heiti[[m]], type = "scatter",
+      mode = "lines+markers", line = list(color = litir[[m]]),
+      marker = list(color = litir[[m]], size = 5),
+      hovertemplate = paste0("%{x}: %{y}<extra>", heiti[[m]], "</extra>"))
+  }
+  plotly::layout(p, xaxis = list(title = ""),
+                 yaxis = list(title = "Fjöldi", rangemode = "tozero"),
+                 legend = list(orientation = "h", y = -0.15))
+}
+if (!is.null(hag) && !is.null(hag$flaedi)) flaedi_plot("grunn")
+```
+
+### Meistaranám
+
+```{r flaedi-meistara}
+#| echo: false
+#| fig-cap: >
+#|   Nemendur í meistaranámi í verkfræði og brautskráningar með meistaragráðu á ári.
+if (!is.null(hag) && !is.null(hag$flaedi)) flaedi_plot("meistara")
+```
+
+:::
+
+Árlega röð um brottfall er ekki að finna. Hagstofan rekur hins vegar árganga
+nýnema í þriggja ára bakkalárnámi og birtir stöðu þeirra þremur og sex árum eftir
+innritun [@hagstofa_sko04207]. Báðir tímapunktar eru hlutföll af öllum
+árganginum. *Brottfallinn* merkir að nemandinn hafi hvorki lokið prófi né sé
+skráður í nám á þeim degi; það er staða en ekki uppsöfnuð tala, og getur því
+lækkað milli tímapunkta þegar nemendur sem höfðu hætt snúa aftur og ljúka námi.
+
+```{r argangar-stada}
+#| echo: false
+#| fig-cap: >
+#|   Staða nýnema í þriggja ára bakkalárnámi þremur og sex árum eftir innritun,
+#|   eftir innritunarári, sem hlutfall af öllum árganginum. Öll námssvið.
+if (!is.null(hag) && !is.null(hag$stada)) {
+  d <- hag$stada[hag$stada$table_id == "SKO04207" &
+                 hag$stada$outcome %in% c("Brautskráðir alls", "Enn í námi", "Brottfallnir"), ]
+  d$x <- paste0(d$entry_year, ", eftir ", d$years_after, " ár")
+  d <- d[order(d$entry_year, d$years_after), ]
+  flokkar <- c("Brautskráðir alls" = "Lokið", "Enn í námi" = "Enn í námi",
+               "Brottfallnir" = "Hætt námi")
+  litir <- c("Lokið" = "#10099F", "Enn í námi" = "#8C8FD9", "Hætt námi" = "#d61f69")
+  p <- plotly::plot_ly()
+  for (o in names(flokkar)) {
+    x <- d[d$outcome == o, ]
+    p <- plotly::add_trace(
+      p, x = factor(x$x, levels = unique(d$x)), y = x$value, type = "bar",
+      name = flokkar[[o]], marker = list(color = litir[[flokkar[[o]]]]),
+      hovertemplate = paste0("%{x}: %{y:.1f}%<extra>", flokkar[[o]], "</extra>"))
+  }
+  plotly::layout(p, barmode = "stack", xaxis = list(title = ""),
+                 yaxis = list(title = "% af árganginum", range = c(0, 100)),
+                 legend = list(orientation = "h", y = -0.25))
+}
+```
+
+Eftir námssviði eru aðeins árgangarnir 2014 og 2017 raktir, og aðeins sex ár
+fram [@hagstofa_sko04208b]. Sviðin fylgja nýrri flokkun, ISCED-F 2013, og
+sviðið *Verkfræði, framleiðsla og mannvirkjagerð* nær yfir tæknifræði,
+byggingar og framleiðslugreinar auk verkfræði; verkfræði og tæknifræði verða
+því ekki greindar í sundur. Meistaranám er ekki rakið með þessum hætti.
+
+```{r argangar}
+#| echo: false
+if (!is.null(hag) && !is.null(hag$argangar)) {
+  a <- hag$argangar
+  afdrif <- c("Brautskráðir með bakkalárgráðu af sama sviði" = "Lauk BS á sama sviði",
+              "Brautskráðir með bakkalárgráðu af öðru sviði" = "Lauk BS á öðru sviði",
+              "Brautskráðir úr öðru háskólanámi" = "Lauk öðru háskólanámi",
+              "Brottfallnir" = "Hætti námi",
+              "Enn í námi" = "Enn í námi")
+  svid <- c("Verkfræði, framleiðsla og mannvirkjagerð" = "Verkfræði o.fl.",
+            "Alls" = "Allt BS-nám")
+  pct <- a[a$measure == "percent" & a$outcome %in% names(afdrif), ]
+  fj <- a[a$measure == "count" & a$outcome == "Nýnemar alls", ]
+  dalkar <- expand.grid(ar = sort(unique(a$entry_year)), svid = names(svid),
+                        stringsAsFactors = FALSE)
+  dalkar <- dalkar[order(match(dalkar$svid, names(svid)), dalkar$ar), ]
+  gildi <- function(o, sv, ar) {
+    x <- pct$value[pct$outcome == o & pct$field == sv & pct$entry_year == ar]
+    if (length(x)) sub(".", ",", sprintf("%.1f%%", x), fixed = TRUE) else "–"
+  }
+  t <- do.call(rbind, lapply(names(afdrif), function(o)
+    sapply(seq_len(nrow(dalkar)), function(i) gildi(o, dalkar$svid[i], dalkar$ar[i]))))
+  nyn <- sapply(seq_len(nrow(dalkar)), function(i)
+    format(fj$value[fj$field == dalkar$svid[i] & fj$entry_year == dalkar$ar[i]]))
+  t <- rbind(t, paste0("**", nyn, "**"))
+  t <- data.frame(c(unname(afdrif), "**Nýnemar**"), t, check.names = FALSE)
+  names(t) <- c("Sex árum eftir innritun",
+                paste0(svid[dalkar$svid], ", ", dalkar$ar))
+  knitr::kable(t, align = paste0("l", strrep("r", nrow(dalkar))),
+               caption = paste0("Afdrif nýnema í þriggja ára bakkalárnámi sex árum eftir ",
+                                "innritun, eftir innritunarári."))
+}
+```
+
+Árgangarnir eru ekki greindir eftir skóla, svo ekki er hægt að bera saman
+verkfræði í HÍ og HR. Næst því kemst skipting í opinbera skóla og einkaskóla
+[@hagstofa_sko04208a], en hún er ekki eftir námssviði. Opinberir skólar eru HÍ,
+Háskólinn á Akureyri, Landbúnaðarháskólinn og Hólar; einkaskólar eru HR,
+Háskólinn á Bifröst og Listaháskólinn.
+
+```{r argangar-rekstur}
+#| echo: false
+if (!is.null(hag) && !is.null(hag$stada)) {
+  d <- hag$stada[hag$stada$table_id == "SKO04208a" & hag$stada$grp != "Alls", ]
+  radir <- list("Lokið eftir 3 ár" = c(3, "Brautskráðir úr háskólanámi"),
+                "Lokið eftir 6 ár" = c(6, "Brautskráðir úr háskólanámi"),
+                "Hætt námi eftir 6 ár" = c(6, "Brottfallnir"),
+                "Enn í námi eftir 6 ár" = c(6, "Enn í námi"))
+  dalkar <- expand.grid(ar = c(2014, 2017), grp = c("Opinberir skólar", "Einkaskólar"),
+                        stringsAsFactors = FALSE)
+  t <- do.call(rbind, lapply(radir, function(r) sapply(seq_len(nrow(dalkar)), function(i) {
+    v <- d$value[d$grp == dalkar$grp[i] & d$entry_year == dalkar$ar[i] &
+                 d$years_after == as.numeric(r[1]) & d$outcome == r[2]]
+    if (length(v)) sub(".", ",", sprintf("%.1f%%", v), fixed = TRUE) else "–"
+  })))
+  t <- data.frame(names(radir), t, check.names = FALSE)
+  names(t) <- c("", paste0(dalkar$grp, ", ", dalkar$ar))
+  knitr::kable(t, align = "lrrrr", row.names = FALSE,
+               caption = paste0("Staða nýnema í þriggja ára bakkalárnámi eftir rekstrarformi ",
+                                "skóla og innritunarári."))
+}
+```
+
+Tölurnar eru unnar eftir skilgreiningum OECD og því sambærilegar við önnur
+aðildarríki. Samkvæmt *Education at a Glance 2025* ljúka 44% nýnema í
+bakkalárnámi á Íslandi prófi á tilætluðum tíma, 62% ári síðar og 74% þremur
+árum síðar, en meðaltal OECD er 43%, 59% og 70% [@oecd_eag2025_is]. Ísland er
+því rétt yfir meðaltali í námslokum, en fleiri hætta eftir fyrsta árið: 18% á
+móti 13%. Í raunvísindum, tækni, verkfræði og stærðfræði (STEM) hafa 62% lokið
+prófi á sama sviði innan þriggja ára frá áætluðum námslokum, á móti 58% að
+meðaltali í OECD. Tölur einstakra landa, t.d. Norðurlandanna, eru í töflu B5.1
+í *Education at a Glance* og hafa ekki verið sóttar hér.
+
+## Fyrir 1996: nemendur heima og erlendis {#sec-fyrir-1996}
+
+Brautskráningar eftir námsbraut ná aðeins aftur til 1996. Doktorsvarnir
+Íslendinga eftir fræðasviði eru til, en aðeins fyrir 1997–2006, svo þær fylla
+ekki í gatið. Eina röðin sem nær lengra aftur eftir fræðasviði er fjöldi
+skráðra nemenda á háskólastigi 1975–2006, sem Hagstofan skiptir í nám á Íslandi
+og nám erlendis [@hagstofa_sko04103]. Hún telur nemendur, ekki brautskráningar,
+og flokkurinn „Tæknigreinar, verkfræði“ er víðari en verkfræði og tæknifræði.
+Árin 1975–1976 vantar nám erlendis og heildartölur eru of lágar til að vera
+tæmandi, svo röðin er sýnd frá 1977.
+
+Röðin skiptir nemendum ekki eftir námsstigi, svo ekki er hægt að segja hve
+margir voru í grunnnámi og hve margir í framhaldsnámi. Fyrir 1997 átti skiptingin
+auk þess ekki við verkfræðinám í HÍ, sem lauk með fjögurra ára lokaprófi (sjá
+[Saga og tímamót](03-saga-og-timamot.qmd)). Frá 1997 skiptir Hagstofan
+nemendum á Íslandi eftir prófgráðu, en nemendum erlendis aðeins eftir landi og
+almennu sviði.
+
+```{r hagstofa-nemar}
+#| echo: false
+#| fig-cap: >
+#|   Nemendur í tæknigreinum og verkfræði á háskólastigi, á Íslandi og erlendis,
+#|   1977–2006. Fjöldi skráðra nemenda, ekki brautskráninga. Færðu bendilinn yfir
+#|   línurnar til að sjá gildi hvers árs.
+if (!is.null(hag) && !is.null(hag$nemar)) {
+  d <- hag$nemar
+  d$place <- factor(c(iceland = "Á Íslandi", abroad = "Erlendis")[d$place],
+                    levels = c("Á Íslandi", "Erlendis"))
+  plotly::plot_ly(d, x = ~year, y = ~n, color = ~place, type = "scatter",
+                  mode = "lines+markers",
+                  colors = c("Á Íslandi" = "#10099F", "Erlendis" = "#d61f69"),
+                  hovertemplate = "%{x}: %{y} nemendur<extra>%{fullData.name}</extra>") |>
+    plotly::layout(xaxis = list(title = ""),
+                   yaxis = list(title = "Nemendur", rangemode = "tozero"),
+                   legend = list(orientation = "h", y = -0.15))
+}
+```
+
+```{r hagstofa-nemar-tolur}
+#| include: false
+nem <- NULL
+if (!is.null(hag) && !is.null(hag$nemar)) {
+  w <- reshape(hag$nemar, idvar = "year", timevar = "place", direction = "wide")
+  w <- w[order(w$year), ]
+  erl <- w$n.abroad > w$n.iceland
+  # The longest unbroken run of years with more students abroad than at home.
+  r <- rle(erl)
+  k <- which.max(ifelse(r$values, r$lengths, 0))
+  endir <- cumsum(r$lengths)[k]
+  nem <- list(fleiri_erlendis = w$year[c(endir - r$lengths[k] + 1, endir)],
+              ar_erlendis = sum(erl), ar_alls = nrow(w))
+}
+```
+
+Samfellt árin `r nem$fleiri_erlendis[1]`–`r nem$fleiri_erlendis[2]` voru fleiri
+íslenskir nemendur í tæknigreinum og verkfræði erlendis en á Íslandi, og alls
+`r nem$ar_erlendis` af þeim `r nem$ar_alls` árum sem röðin nær yfir. Leyfi þess tíma
+endurspegla því að verulegu leyti nám erlendis, sem brautskráningargögn
+íslenskra skóla ná ekki til.
+
+## Heimildir {.unnumbered}
+
+::: {#refs}
+:::

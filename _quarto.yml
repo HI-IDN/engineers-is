@@ -45,9 +45,17 @@ book:
     - part: "Niðurstöður"
       chapters:
         - docs/05-nylidun.qmd
+        - docs/06-brautskraningar.qmd
   appendices:
-    - docs/vidauki-a-gogn.qmd
-    - docs/vidauki-b-vinnudagbok.qmd
+    - part: docs/vidauki-gogn.qmd
+      chapters:
+        - docs/gogn-leyfisskrar.qmd
+        - docs/gogn-mannanafnaskra.qmd
+        - docs/gogn-hagstofa.qmd
+        - docs/gogn-skemman.qmd
+    - part: "Annað"
+      chapters:
+        - docs/vidauki-vinnudagbok.qmd
 
 format:
   html:

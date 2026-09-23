@@ -1,0 +1,51 @@
+# Mannanafnaskrá Þjóðskrár {#sec-gogn-kyn}
+
+```{r setup}
+#| include: false
+source("../R/gogn.R")
+```
+
+Kyn leyfishafa er áætlað út frá nafni. Gagnalindin er Mannanafnaskrá Þjóðskrár
+[@mannanafnaskra], sem skráir hvert samþykkt eiginnafn sem drengjanafn,
+stúlknanafn eða millinafn. Skráin hefur ekki opið gagnasafn; hún er lesin um
+leitarvél island.is og afrit af henni allri fylgir pakkanum
+[`kyngreinir`](https://github.com/HI-IDN/kyngreinir), svo matið þarf ekki netsamband.
+Skráin fjallar um nöfn, ekki fólk, og geymir engar persónuupplýsingar.
+
+## Reglur
+
+Matið er gert með `kyngreinir` (útgáfa `r kyn$utgafa`), sem
+`scripts/estimate_gender.py` keyrir á hvert nafn í `licence`. Reglurnar eru
+þrjár og sú fyrsta sem sker úr ræður:
+
+1. **-dóttir** (`dottir`): eftirnafn sem endar á *-dóttir* er alltaf konu.
+2. **Eiginnafn** (`given_name`): eiginnöfnin eru skoðuð í röð og það fyrsta sem
+   Mannanafnaskrá Þjóðskrár skráir aðeins sem drengjanafn eða aðeins sem
+   stúlknanafn ræður. Nöfn sem skráð eru fyrir bæði kyn, millinöfn og nöfn sem
+   ekki eru á skrá eru hlaupin yfir, svo síðara eiginnafn ræður þegar það fyrra
+   segir ekkert.
+3. **-son** (`son`): eftirnafn sem endar á *-son*. Það er aðeins skoðað á eftir
+   eiginnöfnunum, því *-son* getur líka verið ættarnafn konu.
+
+Þetta er einfalt mat út frá nafnahefð og þeim nöfnum sem teljast lögleg
+drengja- og stúlknanöfn. Það segir ekkert um kyn eða kynvitund einstaklingsins
+og er aðeins birt sem samantekin tölfræði, með óþekktum sér.
+
+Auk þess sem ræður er skráð hvort allar vísbendingar nafnsins séu samhljóða.
+Þær stangast á þegar tvö eiginnöfn benda hvort í sína áttina (þá ræður það
+fyrra) eða þegar eiginnafn og *-son* eru ósammála, t.d. kvenmannsnafn með
+ættarnafni sem endar á *-son* (þá ræður eiginnafnið). Fjöldi slíkra nafna er
+sýndur með kynjasamsetningunni í [Nýliðun](05-nylidun.qmd).
+
+## Óráðin nöfn
+
+Nöfnin `r kyn$othekkt` sem engin regla sker úr, `r kyn$othekkt_hlutfall`% allra
+leyfishafa, voru skoðuð handvirkt. Þau eru að mestu erlend nöfn af ólíkum
+þjóðernum og engin ein heimild er til sem segir til um kyn þeirra. Ekki er
+reynt að giska á það, hvorki út frá nafnavenjum annarra landa né með mállíkani;
+þau eru látin standa sem óráðin.
+
+## Heimildir {.unnumbered}
+
+::: {#refs}
+:::
