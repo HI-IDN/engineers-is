@@ -327,8 +327,7 @@ svo ákvörðunin sé sýnileg: *Orkufræði* (`r utan("522j", "ms")` meistaragr
 sem gæti falið í sér meistaranám í orkuverkfræði; *Umhverfisfræði*
 (`r utan("422a", "ms")` meistaragráður), sem er blanda ólíkra námsleiða; og
 *Tölvunarfræði* (`r utan("481c", "bs")` fyrstu gráður), sem er ekki verkfræði í
-skilningi starfsheitalaganna. Þær eru utan flokkunarinnar þar til skorið hefur
-verið úr um þær.
+skilningi starfsheitalaganna. Þær eru viljandi ekki teknar með.
 
 ## Skemman
 
