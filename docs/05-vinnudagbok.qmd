@@ -12,12 +12,19 @@
 - Vinnugrein heitir `profession-history`; áfangar verða squash-merge-aðir í
   `main`.
 
+## 23. september 2026 — Leyfisskrár í SQLite
+
+- Leyfisskrár Stjórnarráðsins eru sóttar með `scripts/fetch_licences.py` í
+  `data/licences.sqlite`. Lestrarkóðinn er fluttur úr `skemman-msc`.
+- SQLite var valið fram yfir DuckDB: gögnin eru lítil, Python les það án
+  viðbótarpakka og hver sókn er ein skrá.
+- Hver sókn er varðveitt með söfnunartíma, SHA-256 og afriti síðunnar án
+  kennitalna.
+
 ## Næstu skref
 
 1. Festa frumheimildir fyrir HÍ-tímalínuna, sérstaklega áfangann 1944 og
    mögulegan afmælisviðburð 2024.
-2. Flytja leyfisskrár og endurgeranlegan lestrarkóða inn samkvæmt skýrum
-   eignamörkum gagnaverkefna.
-3. Sækja og flokka viðeigandi mannfjölda- og brautskráningarraðir Hagstofu.
-4. Endurgera aðalmyndina sem ný leyfi á hverja 100.000 íbúa.
-5. Hanna survival-greiningu fyrir afmarkaða Skemmu-árganga.
+2. Sækja og flokka viðeigandi mannfjölda- og brautskráningarraðir Hagstofu.
+3. Endurgera aðalmyndina sem ný leyfi á hverja 100.000 íbúa.
+4. Hanna survival-greiningu fyrir afmarkaða Skemmu-árganga.

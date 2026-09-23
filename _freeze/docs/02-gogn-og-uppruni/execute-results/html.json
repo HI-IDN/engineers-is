@@ -1,0 +1,15 @@
+{
+  "hash": "c178c3e2c2f6daeecbe92b7eeadf98fc",
+  "result": {
+    "engine": "knitr",
+    "markdown": "# Gögn og uppruni\n\n## Starfsheitaleyfi\n\nOpinberar skrár Stjórnarráðsins yfir\n[verkfræðinga](https://www.stjornarradid.is/verkefni/atvinnuvegir/starfsrettindi/verkfraedingar/)\nog\n[tæknifræðinga](https://www.stjornarradid.is/verkefni/atvinnuvegir/starfsrettindi/taeknifraedingar/)\neru aðalgagnagrunnur rannsóknarinnar. Þær eru lifandi vefsíður, ein málsgrein á\nhvern leyfishafa með nafni, kennitölu eða fæðingardegi og leyfisdegi.\n\n`scripts/fetch_licences.py` sækir báðar síður og vistar þær í litlum\nSQLite-gagnagrunni, `data/licences.sqlite`, sem er utan útgáfustýringar. Hver\nkeyrsla bætir við nýrri sókn og skrifar ekkert yfir, svo breytingar á síðunum\neru rekjanlegar með því að bera saman tvær sóknir:\n\n- `fetch` geymir eina línu á hverja skrá í hverri sókn: slóð, söfnunartíma,\n  SHA-256 af síðunni eins og hún barst, fjölda lesinna og ólæsilegra færslna og\n  afrit síðunnar;\n- `licence` geymir færslur hverrar sóknar: nafn, fæðingarár, leyfisár og\n  leyfisdag;\n- `licence_current` sýnir færslur nýjustu sóknar hvorrar skrár.\n\nKennitalan er aðeins lesin í minni til að finna fæðingarár og er hvergi vistuð.\nAfrit síðunnar er geymt með kennitölum afmáðum; SHA-256 er reiknað af\nupprunalegu síðunni svo óbreytt síða þekkist án þess að auðkennin séu geymd.\nFærslur sem skráin sjálf segir að hafi aldrei sótt um leyfi eru ekki taldar\nleyfishafar.\n\n\n::: {.cell}\n::: {.cell-output-display}\n\n\nTable: Nýjasta sókn hvorrar leyfisskrár.\n\n|Skrá           |Sótt       | Leyfishafar| Ólæsilegar| Aldrei sótt um| Fyrsta leyfisár| Síðasta leyfisár|\n|:--------------|:----------|-----------:|----------:|--------------:|---------------:|----------------:|\n|Verkfræðingar  |2026-09-23 |        3944|         29|             83|            1962|             2026|\n|Tæknifræðingar |2026-09-23 |        2128|         60|            237|            1965|             2026|\n\n\n:::\n:::\n\n\n## Mannfjöldi og brautskráningar\n\nMannfjöldatölur Hagstofu Íslands verða notaðar til að reikna ný leyfi á hverja\n100.000 íbúa og, eftir atvikum, á viðeigandi aldurshóp. Samræmdar\nbrautskráningartölur eftir námsbraut, prófgráðu og kyni verða notaðar fyrir\nsíðara rannsóknartímabilið.\n\nFlokkun námsbrauta í verkfræði, tæknifræði eða aðra grein verður skilgreind\nfyrir fram og varðveitt sem endurgeranleg gagnatafla.\n\n## Skemman\n\nSkemmu-gögn koma úr `skemman-harvester`. Þetta verkefni endurtekur hvorki\nsöfnun né þáttun þeirra. Tenging ritgerðarhöfunda við leyfisskrá verður\naukagreining með skráðum styrkleikaflokkum samsvarana og næmnigreiningu.\n\n## Persónuvernd og birting\n\nKennitölur eða önnur bein auðkenni verða ekki vistuð í þessu kóðasafni.\nNafnabyggð áætlun um kynjasamsetningu verður aðeins birt sem samantekin\ntölfræði með flokknum óþekkt/óvíst og skýrum næmnibilum.\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

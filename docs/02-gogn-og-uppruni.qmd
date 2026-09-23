@@ -2,10 +2,54 @@
 
 ## Starfsheitaleyfi
 
-Opinberar skrár Stjórnarráðsins yfir verkfræðinga og tæknifræðinga eru
-aðalgagnagrunnur rannsóknarinnar. Þær geyma nafn, fæðingarár og leyfisdag.
-Geyma þarf söfnunardag og afrit frumheimildar svo breytingar á lifandi vefsíðu
-séu rekjanlegar.
+Opinberar skrár Stjórnarráðsins yfir
+[verkfræðinga](https://www.stjornarradid.is/verkefni/atvinnuvegir/starfsrettindi/verkfraedingar/)
+og
+[tæknifræðinga](https://www.stjornarradid.is/verkefni/atvinnuvegir/starfsrettindi/taeknifraedingar/)
+eru aðalgagnagrunnur rannsóknarinnar. Þær eru lifandi vefsíður, ein málsgrein á
+hvern leyfishafa með nafni, kennitölu eða fæðingardegi og leyfisdegi.
+
+`scripts/fetch_licences.py` sækir báðar síður og vistar þær í litlum
+SQLite-gagnagrunni, `data/licences.sqlite`, sem er utan útgáfustýringar. Hver
+keyrsla bætir við nýrri sókn og skrifar ekkert yfir, svo breytingar á síðunum
+eru rekjanlegar með því að bera saman tvær sóknir:
+
+- `fetch` geymir eina línu á hverja skrá í hverri sókn: slóð, söfnunartíma,
+  SHA-256 af síðunni eins og hún barst, fjölda lesinna og ólæsilegra færslna og
+  afrit síðunnar;
+- `licence` geymir færslur hverrar sóknar: nafn, fæðingarár, leyfisár og
+  leyfisdag;
+- `licence_current` sýnir færslur nýjustu sóknar hvorrar skrár.
+
+Kennitalan er aðeins lesin í minni til að finna fæðingarár og er hvergi vistuð.
+Afrit síðunnar er geymt með kennitölum afmáðum; SHA-256 er reiknað af
+upprunalegu síðunni svo óbreytt síða þekkist án þess að auðkennin séu geymd.
+Færslur sem skráin sjálf segir að hafi aldrei sótt um leyfi eru ekki taldar
+leyfishafar.
+
+```{r leyfi-sokn}
+#| echo: false
+db <- file.path("..", "data", "licences.sqlite")
+if (file.exists(db)) {
+  con <- DBI::dbConnect(RSQLite::SQLite(), db, flags = RSQLite::SQLITE_RO)
+  sokn <- DBI::dbGetQuery(con, "
+    select f.list, f.fetched_at, f.n_entries, f.n_unparsed, f.n_not_licensed,
+           min(l.licence_year) as fyrst, max(l.licence_year) as sidast
+    from fetch f join licence l using (fetch_id)
+    where f.fetch_id in (select max(fetch_id) from fetch group by list)
+    group by f.fetch_id order by f.list desc")
+  DBI::dbDisconnect(con)
+  sokn$list <- c(verkfraedingur = "Verkfræðingar",
+                 taeknifraedingur = "Tæknifræðingar")[sokn$list]
+  sokn$fetched_at <- substr(sokn$fetched_at, 1, 10)
+  knitr::kable(
+    sokn,
+    col.names = c("Skrá", "Sótt", "Leyfishafar", "Ólæsilegar", "Aldrei sótt um",
+                  "Fyrsta leyfisár", "Síðasta leyfisár"),
+    caption = "Nýjasta sókn hvorrar leyfisskrár."
+  )
+}
+```
 
 ## Mannfjöldi og brautskráningar
 
