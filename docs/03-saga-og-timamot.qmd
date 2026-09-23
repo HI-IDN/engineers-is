@@ -1,29 +1,140 @@
 # Saga verkfræðimenntunar og fagstéttar
 
+```{r setup}
+#| include: false
+source("../R/gogn.R")
+```
+
 Menntasagan er túlkunarrammi fyrir leyfisröðina en ekki sjálfstæð
 orsakasönnun. Tímamót verða aðeins sett á niðurstöðumyndir þegar þau geta haft
 mælingafræðilega þýðingu og frumheimildir hafa verið staðfestar.
 
-## Vinnutilgáta um Háskóla Íslands
+## Verkfræðikennsla í Háskóla Íslands
 
-Fyrirliggjandi samantekt greinir á milli eftirfarandi atriða:
+Fyrstu áfangarnir eru raktir í sögu háskólans frá 1961, þar sem kaflinn um
+verkfræðideild er að mestu eftir Finnboga R. Þorvaldsson, fyrsta forstöðumann
+verkfræðikennslunnar [@gudni1961]:
 
-- 1940: verkfræðikennsla hefst, fyrst einkum sem fyrri hluti náms;
-- 1944: Verkfræðideild er formfest í lögum og kennsla til fullnaðarprófs í
-  byggingarverkfræði samþykkt;
-- 1946–1948: sjö nemendur ljúka tímabundnu fullnaðarprófi;
-- 1970: samfellt fjögurra ára nám til lokaprófs tekið upp í helstu greinum;
-- 1974: fyrstu nemendur úr þeirri námsleið brautskrást;
-- 1997: þriggja ára BS- og tveggja ára MS-skipulag tekið upp.
+- **1940:** Undirbúningskennsla í verkfræði hefst með fyrstu kennslustund 19.
+  október 1940. Námið er tveggja ára nám undir fyrra hluta próf í bygginga-,
+  véla- og rafmagnsverkfræði, að fyrirmynd Danmarks tekniske Højskole, en
+  síðari hlutann þarf að taka erlendis [@gudni1961, bls. 112–114].
+- **1943:** Vorið 1943 ljúka sex fyrstu stúdentarnir fyrra hluta prófi. Þeir
+  komast ekki utan vegna stríðsins og kennsla til fullnaðarprófs í
+  byggingarverkfræði er samþykkt um sumarið; hún hefst 1. október 1943
+  [@gudni1961, bls. 114–115].
+- **1944:** Verkfræðideild er stofnuð með lögum nr. 66, 28. desember 1944
+  [@gudni1961, bls. 116].
+- **1946–1948:** Sjö verkfræðingar ljúka fullnaðarprófi, sex í desember 1946 og
+  einn 15. júní 1948. Kennslan er síðan felld niður og aðeins fyrri hlutinn
+  kenndur [@gudni1961, bls. 115–117].
+- **1968:** Kennsla hefst í nýjum raungreinum innan deildarinnar og hún fær
+  nafnið verkfræði- og raunvísindadeild [@aldarafmaeli1968].
+- **1970:** Samfellt fjögurra ára nám til lokaprófs í verkfræði tekið upp.
+- **1974:** Fyrstu verkfræðingarnir úr því námi brautskrást. Hálfrar aldar
+  afmælis þeirrar brautskráningar var minnst í Aðalbyggingu HÍ árið 2024.
+- **1997:** Þriggja ára BS- og tveggja ára MS-skipulag tekið upp.
 
-::: {.callout-warning title="Atriði til heimildakönnunar: 2024"}
-Árið 2024 voru 80 ár frá lagalegri stofnun Verkfræðideildar og frá samþykkt
-kennslu til fullnaðarprófs árið 1944. Staðfesta þarf með frumheimildum hvort
-afmælisviðburður var haldinn og nákvæmlega hvaða áfanga var minnst. Ekki verður
-fullyrt að verkfræði hafi verið kennd samfellt til fullnaðar í 80 ár, enda
-bendir núverandi tímalína til tímabundins fullnaðarprófs 1946–1948 og
-samfellds lokaprófsnáms frá 1970.
+::: {.callout-warning title="Heimildir vantar fyrir 1970, 1974 og 1997"}
+Ártölin 1970, 1974 og 1997 og afmælið 2024 eru ekki enn staðfest með rituðum
+heimildum. Líklegast er að finna þær í *Aldarsögu Háskóla Íslands 1911–2011*
+eða í Árbókum Háskóla Íslands frá þeim árum.
 :::
+
+## Lög um starfsheitin
+
+Starfsheitin verkfræðingur og tæknifræðingur hafa verið lögvernduð frá 1937.
+Lögin hafa verið endurskoðuð fjórum sinnum [@althingi_frv_1996]:
+
+| Lög | Helsta efni |
+|---|---|
+| Nr. 24, 13. júní 1937 | Réttur manna til að kalla sig verkfræðinga, húsameistara eða iðnfræðinga |
+| Nr. 44, 3. apríl 1963 | Starfsheitið tæknifræðingur kemur í stað iðnfræðings |
+| Nr. 73, 9. október 1968 | Byggingafræðingur bætist við, sem áður féll undir iðnfræðing |
+| Nr. 62, 5. september 1986 | Húsgagna- og innanhússhönnuðir og landslagshönnuðir bætast við |
+| Nr. 8, 11. mars 1996 | Núgildandi lög um löggildingu starfsheita sérfræðinga í tækni- og hönnunargreinum |
+
+Samkvæmt núgildandi lögum hafa þeir einir rétt til að kalla sig verkfræðing eða
+tæknifræðing sem fengið hafa til þess leyfi ráðherra, og leyfi fæst ekki nema
+viðkomandi hafi lokið fullnaðarprófi í greininni. Fagfélögin setja reglur um
+hvaða nám leiðir til fullnaðarprófs, fyrir verkfræðinga reglur nr. 1105/2015
+[@althingi_8_1996, 2.–3. gr.]. Leyfisskrá Stjórnarráðsins telur leyfishafa
+samkvæmt öllum fimm lögunum [@stjr_verkfraedingar].
+
+```{r fyrstu-leyfi}
+#| include: false
+# The first licence holders on each list, by the name-based gender estimate. The lists
+# begin in 1962 and 1965, although the first law is from 1937: anyone licensed earlier is
+# not on them, so these are the first on the list, not necessarily the first ever.
+fyrstu <- NULL
+if (!is.null(kyn)) {
+  con <- DBI::dbConnect(RSQLite::SQLite(), db, flags = RSQLite::SQLITE_RO)
+  fyrstu <- DBI::dbGetQuery(con, "
+    select list, gender, min(licence_year) as ar from licence_gender
+    where gender is not null group by 1, 2")
+  DBI::dbDisconnect(con)
+}
+fyrst <- function(l, g) if (is.null(fyrstu)) NA else
+  fyrstu$ar[fyrstu$list == l & fyrstu$gender == g]
+```
+
+Leyfisskrárnar ná aftur til `r fyrst("verkfraedingur", "male")` (verkfræðingar)
+og `r fyrst("taeknifraedingur", "male")` (tæknifræðingar), þótt fyrstu lögin séu
+frá 1937; þeir sem fengu leyfi fyrr eru ekki á skránum. Fyrsti leyfishafi á
+verkfræðingaskránni sem metinn er kona fékk leyfi `r fyrst("verkfraedingur", "female")`
+og á tæknifræðingaskránni `r fyrst("taeknifraedingur", "female")`. Kyn er metið út
+frá nafni (@sec-gogn-kyn), og þetta eru fyrstu konurnar *á skránum*, ekki
+endilega fyrstu konurnar með leyfi: Kristín Hallberg Jónsdóttir lauk
+verkfræðiprófi 1942 [@vfi_saga].
+
+## Tímalína
+
+Tímalínan dregur saman áfanga í menntun, löggjöf og fagfélögum ásamt fyrstu
+leyfishöfum á skránum. Opnir hringir eru áfangar sem enn vantar heimild fyrir.
+
+```{r timalina}
+#| echo: false
+#| fig-cap: >
+#|   Áfangar í sögu verkfræði og tæknifræði á Íslandi. Færðu bendilinn yfir punkt
+#|   til að sjá atburðinn og heimildina; opinn hringur merkir að heimild vantar.
+t <- read.csv(file.path("..", "config", "timalina.csv"), encoding = "UTF-8",
+              stringsAsFactors = FALSE)
+t$heimild[is.na(t$heimild)] <- ""
+if (!is.null(fyrstu)) {
+  heiti <- c(verkfraedingur = "verkfræðingur", taeknifraedingur = "tæknifræðingur")
+  kyn_heiti <- c(male = "karl", female = "kona")
+  t <- rbind(t, data.frame(
+    ar = fyrstu$ar, flokkur = "Leyfishafar",
+    atburdur = paste0("Fyrsti ", heiti[fyrstu$list], " á skránni sem metinn er ",
+                      kyn_heiti[fyrstu$gender]),
+    heimild = "leyfisskrá"))
+}
+flokkar <- c("Menntun", "Löggjöf", "Fagfélög", "Leyfishafar")
+litir <- c(Menntun = "#10099F", Löggjöf = "#d61f69", Fagfélög = "#2DD2C0",
+           Leyfishafar = "#FFA05F")
+t$flokkur <- factor(t$flokkur, levels = rev(flokkar))
+t$stadfest <- nzchar(t$heimild)
+heimildir <- c(vfi_saga = "Verkfræðingafélag Íslands, Saga VFÍ",
+               gudni1961 = "Guðni Jónsson 1961, Saga Háskóla Íslands",
+               aldarafmaeli1968 = "Háskóli Íslands, aldarafmælisvefur",
+               althingi_frv_1996 = "Alþingi, þskj. 107, 120. lþ.",
+               althingi_8_1996 = "Lög nr. 8/1996",
+               "leyfisskrá" = "Leyfisskrá Stjórnarráðsins")
+t$heimild_texti <- ifelse(t$stadfest, paste0("Heimild: ", heimildir[t$heimild]),
+                          "Heimild vantar")
+p <- plotly::plot_ly()
+for (f in flokkar) {
+  x <- t[t$flokkur == f, ]
+  p <- plotly::add_trace(
+    p, data = x, x = ~ar, y = ~flokkur, type = "scatter", mode = "markers", name = f,
+    marker = list(size = 13, color = ifelse(x$stadfest, litir[[f]], "white"),
+                  line = list(color = litir[[f]], width = 2)),
+    text = ~paste0("<b>", ar, "</b><br>", atburdur, "<br><i>", heimild_texti, "</i>"),
+    hoverinfo = "text")
+}
+plotly::layout(p, xaxis = list(title = "", dtick = 20), yaxis = list(title = ""),
+               showlegend = FALSE, hoverlabel = list(align = "left"))
+```
 
 ## Tímamót til skoðunar í greiningu
 
@@ -34,6 +145,7 @@ samfellds lokaprófsnáms frá 1970.
 | 1996 | Lög nr. 8/1996 | Regluumhverfi |
 | 1997 | BS/MS-skipulag | Breyttur nefnari brautskráninga |
 | 2015 | Reglur nr. 1105/2015 | Viðmið leyfishæfs náms |
-| 2017 | VFÍ og TFÍ sameinast | Stofnanasamhengi |
 
 Orsakamál verða ekki leidd af nálægð tímamóta og brota í tímaröð einni saman.
+
+## Heimildir {.unnumbered}

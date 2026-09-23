@@ -111,6 +111,3 @@ if (!is.null(leyfi)) {
 ```
 
 ## Heimildir {.unnumbered}
-
-::: {#refs}
-:::

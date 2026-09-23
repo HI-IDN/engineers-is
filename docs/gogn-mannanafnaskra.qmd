@@ -46,6 +46,3 @@ reynt að giska á það, hvorki út frá nafnavenjum annarra landa né með má
 þau eru látin standa sem óráðin.
 
 ## Heimildir {.unnumbered}
-
-::: {#refs}
-:::

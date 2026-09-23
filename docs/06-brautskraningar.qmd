@@ -411,6 +411,3 @@ endurspegla því að verulegu leyti nám erlendis, sem brautskráningargögn
 íslenskra skóla ná ekki til.
 
 ## Heimildir {.unnumbered}
-
-::: {#refs}
-:::

@@ -94,6 +94,3 @@ afdrif nýnema fylgja hins vegar nýrri flokkun, ISCED-F 2013, og sviðin þar e
 ekki alveg þau sömu.
 
 ## Heimildir {.unnumbered}
-
-::: {#refs}
-:::
