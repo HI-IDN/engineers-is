@@ -47,6 +47,7 @@ format:
     theme:
       - cosmo
       - styles/hi-book.scss
+    include-in-header: partials/header-includes.inc
     toc: true
     toc-depth: 3
     number-sections: true
