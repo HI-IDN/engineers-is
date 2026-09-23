@@ -15,48 +15,96 @@ eru rekjanlegar með því að bera saman tvær sóknir:
 - `fetch` geymir eina línu á hverja skrá í hverri sókn: slóð, söfnunartíma,
   SHA-256 af síðunni eins og hún barst, fjölda lesinna og ólæsilegra færslna og
   afrit síðunnar;
-- `licence` geymir færslur hverrar sóknar: nafn, fæðingarár, leyfisár og
-  leyfisdag, og tvö merki lesin úr texta leyfisdagsins (sjá hér á eftir);
+- `licence` geymir færslur hverrar sóknar: nafn, fæðingarár, snið
+  auðkennis, leyfisár og leyfisdag, og merki um leiðréttingar og athugasemdir
+  (sjá hér á eftir);
 - `licence_current` sýnir færslur nýjustu sóknar hvorrar skrár.
 
-Kennitalan er aðeins lesin í minni til að finna fæðingarár og er hvergi vistuð. Sé kennitalan
-rangt slegin inn, t.d. með fimm eða sjö tölustöfum á undan bandstrikinu, eru
-tveir síðustu tölustafirnir á undan því lesnir sem fæðingarár og síðasti
-tölustafurinn sem öld. Gefi aldarstafurinn ótrúlegan aldur við leyfisveitingu
-(yngri en 18 ára eða eldri en 90), t.d. fæðingarár 2070 og leyfi 2007, er valin
-sú öld sem gefur trúverðugan aldur, ef aðeins ein gerir það. Slíkar færslur eru
-merktar `birth_year_from_typo`.
+```{r leyfi-gogn}
+#| include: false
+# Read once for the whole section; `leyfi` is NULL when the local database is absent, and
+# every chunk below then renders nothing (the frozen output is served instead).
+db <- file.path("..", "data", "licences.sqlite")
+leyfi <- NULL
+if (file.exists(db)) {
+  con <- DBI::dbConnect(RSQLite::SQLite(), db, flags = RSQLite::SQLITE_RO)
+  leyfi <- list(
+    sokn = DBI::dbGetQuery(con, "
+      select f.list, f.fetched_at, f.n_entries, f.n_unparsed, f.n_no_date,
+             min(l.licence_year) as fyrst, max(l.licence_year) as sidast
+      from fetch f join licence l using (fetch_id)
+      where f.fetch_id in (select max(fetch_id) from fetch group by list)
+      group by f.fetch_id order by f.list desc"),
+    snid = DBI::dbGetQuery(con, "
+      select list, id_format, count(*) as n, sum(century_corrected) as old
+      from licence_current group by list, id_format"),
+    alls = DBI::dbGetQuery(con, "
+      select count(*) as n, sum(century_corrected) as old,
+             sum(not_collected) as ekki_sott, sum(date_is_upper_bound) as fyrir
+      from licence_current")
+  )
+  DBI::dbDisconnect(con)
+  leyfi$olaesilegt <- sum(leyfi$sokn$n_unparsed)
+  leyfi$kt <- function(fmt) sum(leyfi$snid$n[leyfi$snid$id_format %in% fmt])
+}
+```
+
+### Auðkenni og fæðingarár
+
+Kennitalan er aðeins lesin í minni til að finna fæðingarár og er hvergi vistuð.
 Afrit síðunnar er geymt með kennitölum afmáðum; SHA-256 er reiknað af
-upprunalegu síðunni svo óbreytt síða þekkist án þess að auðkennin séu geymd.
+upprunalegu síðunni svo óbreytt síða þekkist án þess að auðkennin séu geymd. Í
+stað kennitölunnar er geymt á hvaða sniði hún var skráð (`id_format`).
+
+Skrárnar eru handslegnar og kennitala er ekki alltaf á réttu sniði. Af
+`r leyfi$alls$n` leyfishöfum eru `r leyfi$kt("kennitala")` með kennitölu á
+réttu sniði (*ddmmáá-nnnn*) og `r leyfi$kt("birth_date")` með fæðingardag
+(„f. *dd.mm.áá*“), sem er eldra form. Hinar eru lesnar eftir tveimur reglum:
+
+- **Annað skiltákn** (`kennitala_variant`, `r leyfi$kt("kennitala_variant")`
+  færslur): tíu tölustafir en með punktum, skástriki, tvöföldu bandstriki eða
+  bili, t.d. *dd.mm.áá-nnnn* eða *ddmmáá/nnnn*. Þær eru lesnar eins og rétt
+  kennitala.
+- **Rangur fjöldi tölustafa** (`kennitala_typo`, `r leyfi$kt("kennitala_typo")`
+  færslur): fimm eða sjö tölustafir á undan bandstrikinu, eða komma inni í
+  kennitölunni. Sé fjórtölustafahlutinn á eftir bandstrikinu eðlilegur eru tveir
+  síðustu tölustafirnir á undan bandstrikinu lesnir sem fæðingarár og síðasti
+  tölustafurinn sem öld.
+
+Gefi aldarstafurinn ótrúlegan aldur við leyfisveitingu, yngri en 18 ára eða
+eldri en 90, er hann innsláttarvilla. Þá er valin sú öld sem gefur trúverðugan
+aldur, ef aðeins ein gerir það; fæðingarár í framtíðinni, t.d. 2070 með leyfi
+2007, verður þannig 1970. Þetta á við `r leyfi$alls$old` færslur
+(`century_corrected`).
+
+`r leyfi$olaesilegt` færslur hafa ekkert læsilegt auðkenni og eru ekki taldar
+með. Flestar eru eldri tæknifræðingar sem skráðir eru með nafni og leyfisdegi
+einum saman.
+
+### Leyfisdagur
+
 Leyfisdagur er fyrsta dagsetningin á eftir „Fær leyfi“. Á eftir henni koma
 stundum athugasemdir sem eru varðveittar óbreyttar í `raw_date`, t.d.
 „Endurútgefið …“ eða „Látinn“. Tvær þeirra eru merktar sérstaklega:
 
-- „*dd.mm.áá* hefur ekki sótt leyfi“ (`not_collected`) er athugasemd úr
-  einskiptis tiltekt á skránum árið 1999. Leyfið var veitt en leyfishafinn
-  sótti aldrei leyfisbréfið. Hann telst leyfishafi.
-- „Fær leyfi fyrir *dd.mm.áá*“ (`date_is_upper_bound`) merkir að leyfið var
-  veitt fyrir þann dag, ekki á honum.
+- „*dd.mm.áá* hefur ekki sótt leyfi“ (`not_collected`,
+  `r leyfi$alls$ekki_sott` færslur) er athugasemd úr einskiptis tiltekt á
+  skránum árið 1999. Leyfið var veitt en leyfishafinn sótti aldrei
+  leyfisbréfið. Hann telst leyfishafi.
+- „Fær leyfi fyrir *dd.mm.áá*“ (`date_is_upper_bound`, `r leyfi$alls$fyrir`
+  færslur) merkir að leyfið var veitt fyrir þann dag, ekki á honum.
 
 ```{r leyfi-sokn}
 #| echo: false
-db <- file.path("..", "data", "licences.sqlite")
-if (file.exists(db)) {
-  con <- DBI::dbConnect(RSQLite::SQLite(), db, flags = RSQLite::SQLITE_RO)
-  sokn <- DBI::dbGetQuery(con, "
-    select f.list, f.fetched_at, f.n_entries, f.n_unparsed, f.n_no_date,
-           min(l.licence_year) as fyrst, max(l.licence_year) as sidast
-    from fetch f join licence l using (fetch_id)
-    where f.fetch_id in (select max(fetch_id) from fetch group by list)
-    group by f.fetch_id order by f.list desc")
-  DBI::dbDisconnect(con)
+if (!is.null(leyfi)) {
+  sokn <- leyfi$sokn
   sokn$list <- c(verkfraedingur = "Verkfræðingar",
                  taeknifraedingur = "Tæknifræðingar")[sokn$list]
   sokn$fetched_at <- substr(sokn$fetched_at, 1, 10)
   knitr::kable(
     sokn,
-    col.names = c("Skrá", "Sótt", "Leyfishafar", "Ólæsilegar", "Án leyfisdags",
-                  "Fyrsta leyfisár", "Síðasta leyfisár"),
+    col.names = c("Skrá", "Sótt", "Leyfishafar", "Ólæsilegt auðkenni",
+                  "Án leyfisdags", "Fyrsta leyfisár", "Síðasta leyfisár"),
     caption = "Nýjasta sókn hvorrar leyfisskrár."
   )
 }

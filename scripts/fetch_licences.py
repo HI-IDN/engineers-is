@@ -58,7 +58,7 @@ ID = re.compile(
 # A mistyped kennitala -- five or seven digits before the separator, or a comma inside
 # ("#####-####", "#######-####", "###,##-####"). The two digits just before the separator are
 # still the birth year and the last digit the century, so the birth year is read from those
-# and the row is flagged birth_year_from_typo.
+# (id_format 'kennitala_typo').
 ID_TYPO = re.compile(r"(?<!\d)(\d[\d.,]{3,8}\d)\s*(?:--?|/)\s*(\d{4})(?!\d)")
 DATE = re.compile(r"Fær leyfi\s*(.*?)\.?\s*$")
 # Anything shaped like a kennitala. Some entries repeat it after "Fær leyfi" instead of a
@@ -85,8 +85,8 @@ create table if not exists licence (
     list          text not null,
     name          text not null,
     birth_year    integer not null,
-    birth_year_from_typo integer not null, -- 1: read from a mistyped kennitala (ID_TYPO), or
-                                           --    its century corrected (PLAUSIBLE_AGE)
+    id_format     text not null,           -- how the identifier was printed, see id_format()
+    century_corrected integer not null,    -- 1: century digit gave an implausible age, fixed
     licence_year  integer not null,
     licence_date  text,                    -- ISO date, null when the source gives only a year
     date_is_upper_bound integer not null,  -- 1: "fyrir dd.mm.yy", granted before that date
@@ -101,12 +101,27 @@ join (select list, max(fetch_id) as fetch_id from fetch group by list) f using (
 """
 
 
+def id_format(printed):
+    """How the identifier was printed -- stored instead of the identifier itself.
+
+    kennitala          ddmmyy-nnnn, as it should be
+    kennitala_variant  ten digits, another separator: dd.mm.yy-nnnn, ddmmyy/nnnn, ddmmyy--nnnn, ...
+    kennitala_typo     five or seven digits before the separator, or a comma inside
+    birth_date         the older "f. dd.mm.yy"
+    """
+    if printed is None:
+        return "kennitala_typo"
+    if printed.startswith("f."):
+        return "birth_date"
+    return "kennitala" if re.fullmatch(r"\d{6}-\d{4}", printed) else "kennitala_variant"
+
+
 def parse_entry(text):
     idm, dm = ID.search(text), DATE.search(text)
     if not dm:
         return None
-    typo = False
     if idm:
+        fmt = id_format(idm.group(1) or "f.")
         ident = idm.group(1) or "f. " + re.sub(r"\s", "", idm.group(2))
         if idm.group(1):
             digits = re.sub(r"\D", "", idm.group(1))
@@ -116,9 +131,9 @@ def parse_entry(text):
         digits = re.sub(r"\D", "", idm.group(1)) if idm else ""
         if not 5 <= len(digits) <= 7:
             return None
-        ident, typo = digits[-2:].rjust(6, "0") + "-" + idm.group(2), True
+        ident, fmt = digits[-2:].rjust(6, "0") + "-" + idm.group(2), id_format(None)
     name = re.sub(r"[\s,.]*(?:f\.|kt\.?)?[\s,.]*$", "", text[:idm.start()]).strip()
-    return {"name": name, "id": ident, "date": dm.group(1), "typo": typo} if name else None
+    return {"name": name, "id": ident, "date": dm.group(1), "fmt": fmt} if name else None
 
 
 def year2(yy):
@@ -193,7 +208,7 @@ def parse_page(page, lst, this_year):
         if year is None:
             no_date += 1
             continue
-        born, typo = birth_year(m["id"]), m["typo"]
+        born, corrected = birth_year(m["id"]), False
         if not PLAUSIBLE_AGE[0] <= year - born <= PLAUSIBLE_AGE[1]:
             # A mistyped century digit (e.g. 0 for 9: born "2070", licensed 2007). Take the
             # century that gives a plausible age at licensing, if exactly one does. Otherwise
@@ -202,14 +217,14 @@ def parse_page(page, lst, this_year):
             fits = [c + born % 100 for c in (1800, 1900, 2000)
                     if PLAUSIBLE_AGE[0] <= year - (c + born % 100) <= PLAUSIBLE_AGE[1]]
             if len(fits) == 1:
-                born, typo = fits[0], True
-        rows.append((lst, m["name"].strip(), born, int(typo), year, iso, int(upper),
+                born, corrected = fits[0], True
+        rows.append((lst, m["name"].strip(), born, m["fmt"], int(corrected), year, iso, int(upper),
                      int(not_collected), ID_SHAPED.sub("<kt>", m["date"].strip())))
     # The source prints a few people twice, once with the date spelled out and once numeric:
     # the same grant, so it counts once.
     seen, unique = set(), []
     for r in rows:
-        key = r[:6]
+        key = (r[0], r[1], r[2], r[5], r[6])  # list, name, birth year, licence year and date
         if key not in seen:
             seen.add(key)
             unique.append(r)
@@ -237,9 +252,9 @@ def main():
                 (lst, url, fetched_at.isoformat(), status, hashlib.sha256(raw).hexdigest(),
                  len(rows), unparsed, no_date, redacted))
             con.executemany(
-                "insert into licence (fetch_id, list, name, birth_year, birth_year_from_typo, "
+                "insert into licence (fetch_id, list, name, birth_year, id_format, century_corrected, "
                 "licence_year, licence_date, date_is_upper_bound, not_collected, raw_date) "
-                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 [(cur.lastrowid, *r) for r in rows])
         print(f"{lst}: {len(rows)} entries, {unparsed} unparsed, "
               f"{no_date} without a readable licence date", file=sys.stderr)
