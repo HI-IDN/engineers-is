@@ -151,17 +151,35 @@ if (file.exists(db)) {
   con <- DBI::dbConnect(RSQLite::SQLite(), db, flags = RSQLite::SQLITE_RO)
   if (DBI::dbExistsTable(con, "name_gender")) {
     kyn <- list(
-      regla = DBI::dbGetQuery(con, "
-        select gender, gender_rule, count(*) as n from licence_gender group by 1, 2"),
-      samraemi = DBI::dbGetQuery(con, "
-        select gender_agreement, count(*) as n from licence_gender group by 1"),
+      d = DBI::dbGetQuery(con, "
+        select list, gender, gender_rule, given_position, gender_agreement, gender_conflict
+        from licence_gender"),
       utgafa = DBI::dbGetQuery(con, "select max(kyngreinir) as v from name_gender")$v
     )
-    kyn$n <- function(g = NULL, r = NULL) sum(kyn$regla$n[
-      (is.null(g) | kyn$regla$gender %in% g) & (is.null(r) | kyn$regla$gender_rule %in% r)])
-    kyn$sam <- function(a) sum(kyn$samraemi$n[kyn$samraemi$gender_agreement == a])
   }
   DBI::dbDisconnect(con)
+}
+skrar <- c(verkfraedingur = "verkfræðinga", taeknifraedingur = "tæknifræðinga")
+
+# One table per list: rows are the rule that decided, columns the estimate.
+kyn_tafla <- function(lst) {
+  d <- kyn$d[kyn$d$list == lst, ]
+  regla <- ifelse(is.na(d$gender_rule), "Ekkert sker úr",
+           ifelse(d$gender_rule == "dottir", "-dóttir",
+           ifelse(d$gender_rule == "son", "-son",
+           ifelse(d$given_position == 1, "Fyrsta eiginnafn", "Síðara eiginnafn"))))
+  radir <- c("-dóttir", "Fyrsta eiginnafn", "Síðara eiginnafn", "-son", "Ekkert sker úr")
+  kyn_d <- factor(ifelse(is.na(d$gender), "Óþekkt",
+                  ifelse(d$gender == "female", "Konur", "Karlar")),
+                  levels = c("Konur", "Karlar", "Óþekkt"))
+  t <- as.data.frame.matrix(table(factor(regla, levels = radir), kyn_d))
+  t$Alls <- rowSums(t)
+  t <- rbind(t, Samtals = colSums(t))
+  t <- cbind(Regla = rownames(t), t)
+  t[] <- lapply(t, as.character)
+  t[nrow(t), ] <- paste0("**", t[nrow(t), ], "**")
+  knitr::kable(t, row.names = FALSE, align = "lrrrr",
+               caption = paste0("Kynjamat ", skrar[[lst]], " eftir því hvaða regla réð."))
 }
 ```
 
@@ -171,9 +189,11 @@ Kyn leyfishafa er metið út frá nafni með pakkanum
 þrjár og sú fyrsta sem sker úr ræður:
 
 1. **-dóttir** (`dottir`): eftirnafn sem endar á *-dóttir* er alltaf konu.
-2. **Eiginnafn** (`given_name`): fyrsta eiginnafnið sem Mannanafnaskrá Þjóðskrár
-   skráir aðeins sem drengjanafn eða aðeins sem stúlknanafn. Nöfn sem skráð eru
-   fyrir bæði kyn, og millinöfn, eru hlaupin yfir.
+2. **Eiginnafn** (`given_name`): eiginnöfnin eru skoðuð í röð og það fyrsta sem
+   Mannanafnaskrá Þjóðskrár skráir aðeins sem drengjanafn eða aðeins sem
+   stúlknanafn ræður. Nöfn sem skráð eru fyrir bæði kyn, millinöfn og nöfn sem
+   ekki eru á skrá eru hlaupin yfir, svo síðara eiginnafn ræður þegar það fyrra
+   segir ekkert.
 3. **-son** (`son`): eftirnafn sem endar á *-son*. Það er aðeins skoðað á eftir
    eiginnöfnunum, því *-son* getur líka verið ættarnafn konu.
 
@@ -181,12 +201,40 @@ Kyn leyfishafa er metið út frá nafni með pakkanum
 drengja- og stúlknanöfn. Það segir ekkert um kyn eða kynvitund einstaklingsins
 og er aðeins birt sem samantekin tölfræði, með óþekktum sér.
 
-Af `r kyn$n()` leyfishöfum eru `r kyn$n("female")` metnir konur og
-`r kyn$n("male")` karlar; `r kyn$n(NA)` eru óþekkt. Eiginnafn réð hjá
-`r kyn$n(r = "given_name")`, *-dóttir* hjá `r kyn$n(r = "dottir")` og *-son*
-aðeins hjá `r kyn$n(r = "son")`. Vísbendingar nafnsins eru samhljóða hjá
-`r kyn$sam("unanimous")` en stangast á hjá `r kyn$sam("conflicting")`, t.d.
-kvenmannsnafn með ættarnafni sem endar á *-son*; þá ræður eiginnafnið.
+```{r kyn-verkfraedingar}
+#| echo: false
+if (!is.null(kyn)) kyn_tafla("verkfraedingur")
+```
+
+```{r kyn-taeknifraedingar}
+#| echo: false
+if (!is.null(kyn)) kyn_tafla("taeknifraedingur")
+```
+
+Auk þess sem ræður er skráð hvort allar vísbendingar nafnsins séu samhljóða.
+Þær stangast á þegar tvö eiginnöfn benda hvort í sína áttina (þá ræður það
+fyrra) eða þegar eiginnafn og *-son* eru ósammála, t.d. kvenmannsnafn með
+ættarnafni sem endar á *-son* (þá ræður eiginnafnið).
+
+```{r kyn-samraemi}
+#| echo: false
+if (!is.null(kyn)) {
+  flokkur <- with(kyn$d, ifelse(gender_agreement == "unanimous", "Samhljóða",
+             ifelse(gender_agreement == "none", "Engin vísbending",
+             ifelse(gender_conflict == "given_names", "Stangast á: tvö eiginnöfn",
+             ifelse(gender_conflict == "suffix", "Stangast á: eiginnafn og -son",
+                    "Stangast á: hvort tveggja")))))
+  radir <- c("Samhljóða", "Stangast á: tvö eiginnöfn", "Stangast á: eiginnafn og -son",
+             "Stangast á: hvort tveggja", "Engin vísbending")
+  t <- as.data.frame.matrix(table(factor(flokkur, levels = radir),
+                                  factor(kyn$d$list, levels = names(skrar))))
+  t <- t[rowSums(t) > 0, , drop = FALSE]
+  names(t) <- c("Verkfræðingar", "Tæknifræðingar")
+  t <- cbind(Vísbendingar = rownames(t), t)
+  knitr::kable(t, row.names = FALSE, align = "lrr",
+               caption = "Samræmi vísbendinga nafnsins.")
+}
+```
 
 ## Mannfjöldi og brautskráningar
 
