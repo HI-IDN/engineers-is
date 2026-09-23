@@ -378,6 +378,9 @@ if (!is.null(hag)) {
 #| include: false
 utan <- function(kodi, dalkur) if (is.null(hag)) NA else
   hag$utan[[dalkur]][hag$utan$programme_code == kodi]
+# All graduations in a year, every programme and degree (Hagstofa's own total).
+heild <- function(ar) if (is.null(hag)) NA else
+  hag$hlutfall$alls[hag$hlutfall$degree_code == "Alls" & hag$hlutfall$year == ar]
 ```
 
 Nokkrar brautir utan flokkunarinnar gætu geymt verkfræðipróf og eru skráðar hér
@@ -475,31 +478,67 @@ til sviðs 5 og tölvunarfræðinnar í sviði 4, auk iðnfræði og tæknifræ�
 Hagstofan telur að hluta til sviðs 3; raunvísindi eru ekki kennd þar.
 
 Svið Hagstofunnar eru misstór og geyma ólíkar greinar. Til að bera verkfræði
-saman við aðrar stórar greinar eru hér notuð afmörkuð svið Hagstofunnar
-óbreytt, t.d. *viðskipti og stjórnun* (34), sem nær yfir viðskiptafræði,
+saman við aðrar stórar greinar eru notuð *afmörkuð svið* ÍSNÁM2008, sem eru
+tveir fyrstu tölustafir kóða námsbrautar: 14 er kennaranám og menntunarfræði, 34
+viðskipti og stjórnun, 38 lögfræði, 48 tölvunarfræði og 72 heilbrigði. Heitin
+eru Hagstofunnar. Viðskipti og stjórnun (34) ná t.d. yfir viðskiptafræði,
 viðskiptastjórnun, markaðsfræði, fjármál og endurskoðun. Verkfræði og
-tæknifræði eru eftir flokkun okkar og ekki taldar með í sínum sviðum
-Hagstofunnar.
+tæknifræði eru eftir flokkun okkar og ekki taldar með í sínum afmörkuðu sviðum.
+Heildarfjöldi brautskráninga fór úr `r heild(hag$br$fra)` árið `r hag$br$fra` í
+`r heild(hag$br$til)` árið `r hag$br$til`, svo hver grein er bæði sýnd sem fjöldi
+og sem hlutfall af öllum brautskráningum ársins.
 
 ```{r hagstofa-greinar}
-#| echo: false
+#| include: false
+greinar <- NULL
 if (!is.null(hag)) {
-  afmorkud <- c("34" = "Viðskipti og stjórnun (34)", "38" = "Lögfræði (38)",
-                "48" = "Tölvunarfræði (48)", "72" = "Heilbrigði (72)",
-                "14" = "Kennaramenntun og menntunarfræði (14)")
-  d <- hag$greinar
-  d$grein <- ifelse(d$grein %in% names(afmorkud), afmorkud[d$grein], d$grein)
-  d <- d[d$grein %in% c(afmorkud, "Verkfræði", "Tæknifræði"), ]
-  bil <- c(1995, 2000, 2010, 2020, 2025)
-  d$timabil <- cut(d$year, bil, labels = paste0(bil[-5] + 1, "–", bil[-1]))
-  t <- as.data.frame.matrix(xtabs(n ~ grein + timabil, d))
-  t$Alls <- rowSums(t)
-  t <- t[order(-t$Alls), ]
-  names(t)[ncol(t)] <- paste0("Alls ", bil[1] + 1, "–", bil[5])
-  knitr::kable(cbind(Námsgrein = rownames(t), t), row.names = FALSE, align = "lrrrrr",
-               caption = paste0("Brautskráningar í verkfræði og tæknifræði og nokkrum stórum ",
-                                "afmörkuðum sviðum Hagstofunnar."))
+  afmorkud <- c("14" = "Kennaranám og menntunarfræði (14)",
+                "34" = "Viðskipti og stjórnun (34)", "38" = "Lögfræði (38)",
+                "48" = "Tölvunarfræði (48)", "72" = "Heilbrigði (72)")
+  greinar <- hag$greinar
+  greinar$grein <- ifelse(greinar$grein %in% names(afmorkud), afmorkud[greinar$grein],
+                          greinar$grein)
+  greinar <- greinar[greinar$grein %in% c(afmorkud, "Verkfræði", "Tæknifræði"), ]
+  alls <- hag$hlutfall[hag$hlutfall$degree_code == "Alls", c("year", "alls")]
+  greinar <- merge(greinar, alls)
+  greinar$pct <- 100 * greinar$n / greinar$alls
+  # Legend order: largest first over the whole period.
+  rod <- names(sort(tapply(greinar$n, greinar$grein, sum), decreasing = TRUE))
+  greinar$grein <- factor(greinar$grein, levels = rod)
+  greinar <- greinar[order(greinar$grein, greinar$year), ]
 }
+
+# One line per field; verkfræði and tæknifræði drawn thicker, so they stand out.
+greinar_plot <- function(y, snid, titill) {
+  p <- plotly::plot_ly()
+  for (g in levels(greinar$grein)) {
+    x <- greinar[greinar$grein == g, ]
+    p <- plotly::add_trace(
+      p, data = x, x = ~year, y = y, name = g, type = "scatter", mode = "lines+markers",
+      line = list(width = if (g %in% c("Verkfræði", "Tæknifræði")) 4 else 1.5),
+      marker = list(size = 4),
+      hovertemplate = paste0("%{x}: ", snid, "<extra>", g, "</extra>")
+    )
+  }
+  plotly::layout(p, xaxis = list(title = ""),
+                 yaxis = list(title = titill, rangemode = "tozero"),
+                 legend = list(orientation = "h", y = -0.2))
+}
+```
+
+```{r hagstofa-greinar-fjoldi}
+#| echo: false
+#| fig-cap: >
+#|   Brautskráningar á ári í verkfræði, tæknifræði og nokkrum stórum afmörkuðum
+#|   sviðum Hagstofunnar.
+if (!is.null(greinar)) greinar_plot(~n, "%{y} brautskráningar", "Brautskráningar á ári")
+```
+
+```{r hagstofa-greinar-hlutfall}
+#| echo: false
+#| fig-cap: >
+#|   Sömu greinar sem hlutfall af öllum brautskráningum hvers árs.
+if (!is.null(greinar)) greinar_plot(~pct, "%{y:.1f}%", "% af öllum brautskráningum")
 ```
 
 ### Fyrir 1996: nemendur heima og erlendis {#sec-fyrir-1996}
