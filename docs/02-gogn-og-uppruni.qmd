@@ -255,11 +255,20 @@ if (file.exists(hdb)) {
       select p.programme_group, p.programme, p.programme_code, p.note,
              coalesce(sum(case when g.degree_code = '2' then g.n end), 0) as bs,
              coalesce(sum(case when g.degree_code = '4' then g.n end), 0) as ms,
-             coalesce(sum(case when g.degree_code not in ('2', '4', 'Alls') then g.n end), 0)
-               as annad
+             coalesce(sum(case when g.degree_code = '5' then g.n end), 0) as phd
       from programme_group p
       left join graduation_current g on g.programme_code = p.programme_code and g.sex = 'total'
-      group by 1, 2, 3, 4 order by 1 desc, bs + ms + annad desc"),
+      group by 1, 2, 3, 4 order by 1 desc, bs + ms + phd desc"),
+    # Every programme and degree, with Hagstofa's own total ('Alls'), so shares of the whole
+    # are exact rather than a sum of what we happened to fetch.
+    hlutfall = DBI::dbGetQuery(con, "
+      select g.year, g.degree_code,
+             sum(case when g.programme_code = 'Alls' then g.n end) as alls,
+             sum(case when p.programme_group is not null then g.n end) as vt
+      from graduation_current g
+      left join programme_group p using (programme_code)
+      where g.sex = 'total'
+      group by 1, 2"),
     utan = DBI::dbGetQuery(con, "
       select programme, programme_code,
              coalesce(sum(case when degree_code = '2' then n end), 0) as bs,
@@ -322,15 +331,46 @@ if (!is.null(hag)) {
   f$programme_group <- c(verkfraedi = "Verkfræði", taeknifraedi = "Tæknifræði")[f$programme_group]
   f$note <- ifelse(is.na(f$note), "", f$note)
   knitr::kable(
-    f[, c("programme_group", "programme", "programme_code", "bs", "ms", "annad")],
-    col.names = c("Flokkur", "Námsbraut", "Kóði", "Fyrsta gráða", "Meistaragráða",
-                  "Annað"),
+    f[, c("programme_group", "programme", "programme_code", "bs", "ms", "phd")],
+    col.names = c("Flokkur", "Námsbraut", "Kóði", "Grunnnám", "Meistaranám", "Doktorsnám"),
     row.names = FALSE, align = "lllrrr",
     caption = paste0("Námsbrautir sem teljast verkfræði eða tæknifræði, með fjölda ",
                      "brautskráninga ", hag$br$fra, "–", hag$br$til, " eftir prófgráðu.")
   )
 }
 ```
+
+Taflan geymir allar námsbrautir, ekki aðeins verkfræði og tæknifræði, ásamt
+heildartölu Hagstofunnar. Því má segja hve stór hluti allra brautskráninga
+verkfræði og tæknifræði eru:
+
+```{r hagstofa-hlutfall}
+#| echo: false
+if (!is.null(hag)) {
+  h <- hag$hlutfall
+  h$vt[is.na(h$vt)] <- 0
+  bil <- c(1995, 2000, 2010, 2020, 2025)
+  h$timabil <- cut(h$year, bil, labels = paste0(bil[-5] + 1, "–", bil[-1]))
+  gradur <- c("2" = "Grunnnám", "4" = "Meistaranám", "5" = "Doktorsnám",
+              "Alls" = "Allar prófgráður")
+  h <- h[h$degree_code %in% names(gradur), ]
+  a <- aggregate(cbind(vt, alls) ~ degree_code + timabil, h, sum)
+  a$pct <- sub(".", ",", sprintf("%.1f%%", 100 * a$vt / a$alls), fixed = TRUE)
+  a$pct[a$alls == 0] <- "–"
+  w <- reshape(a[, c("degree_code", "timabil", "pct")], idvar = "degree_code",
+               timevar = "timabil", direction = "wide")
+  w <- w[match(names(gradur), w$degree_code), ]
+  w$degree_code <- gradur[w$degree_code]
+  names(w) <- c("Prófgráða", levels(h$timabil))
+  knitr::kable(w, row.names = FALSE, align = "lrrrr",
+               caption = paste0("Hlutfall verkfræði og tæknifræði af öllum brautskráningum ",
+                                "sömu prófgráðu, eftir tímabilum."))
+}
+```
+
+Engar brautskráningar í verkfræði eða tæknifræði eru skráðar sem próf á
+háskólastigi án gráðu (ISCED 5B) eða viðbótarnám eftir fyrstu gráðu; þær eru
+með í heildinni en ekki í töflunni.
 
 ```{r hagstofa-utan}
 #| include: false
