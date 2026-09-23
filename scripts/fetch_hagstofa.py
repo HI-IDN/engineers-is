@@ -17,6 +17,14 @@ Reads the PX-Web API at px.hagstofa.is. Every run adds a snapshot, as fetch_lice
   enrolment    SKO04103, students (nemendur) at university level 1975-2006 by field, sex and
                where they studied: 'iceland' or 'abroad' ('total' for both). A count of
                enrolled students, not of graduations; the only field-level series before 1996.
+  student      SKO04105b, students (nemendur) in Iceland 1997-2025 by programme, degree and
+               sex -- the same programme codes as `graduation`. degree_code is this table's
+               own: '1' first degree (grunnpróf), '2' master's, '0' doctorate, 'D' diploma,
+               'A' all. A count of enrolled students in the year, not of graduations.
+  cohort       SKO04208b, what became of the students who began a three-year bachelor's
+               programme in a given year, six years on: graduated in the same field, in
+               another, from other study, dropped out, or still studying -- by field
+               (ISCED-F 2013) and sex, as counts and percentages. Cohorts 2014 and 2017.
   programme_group  config/programme_groups.csv: which programmes count as verkfræði and which
                as tæknifræði. Replaced whole each run; the CSV is the source.
   population_current, graduation_current (views)  the newest fetch of each table.
@@ -41,8 +49,12 @@ API = "https://px.hagstofa.is/pxis/api/v1/is/"
 POPULATION = "Ibuar/mannfjoldi/1_yfirlit/Yfirlit_mannfjolda/MAN08000.px"
 GRADUATION = "Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04205c.px"
 ENROLMENT = "Samfelag/skolamal/4_haskolastig/3_hseldra/SKO04103.px"
+STUDENT = "Samfelag/skolamal/4_haskolastig/0_hsNemendur/SKO04105b.px"
+COHORT = "Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04208b.px"
 PLACE = {"Alls": "total", "2": "iceland", "3": "abroad"}
 SEX = {"Total": "total", "Alls": "total", "1": "male", "2": "female", "3": "other"}
+# SKO04105b and SKO04208b code sex as '0' for both.
+SEX_STUDENT = {"0": "total", "1": "male", "2": "female"}
 # How PX-Web marks a cell with no value.
 MISSING = {"..", ".", "-", ""}
 
@@ -86,6 +98,25 @@ create table if not exists enrolment (
     sex          text not null,
     n            integer not null
 );
+create table if not exists student (
+    fetch_id       integer not null references fetch(fetch_id),
+    year           integer not null,
+    programme_code text not null,      -- as in graduation; '000a' for all programmes
+    programme      text not null,
+    degree_code    text not null,      -- '1' first degree, '2' master's, '0' doctorate, ...
+    degree         text not null,
+    sex            text not null,
+    n              integer not null
+);
+create table if not exists cohort (
+    fetch_id     integer not null references fetch(fetch_id),
+    entry_year   integer not null,     -- the year the cohort began its bachelor's study
+    outcome      text not null,        -- e.g. 'Brottfallnir', 'Enn í námi', 'Nýnemar alls'
+    measure      text not null,        -- 'count' or 'percent'
+    field        text not null,        -- ISCED-F 2013 field, 'Alls' for all
+    sex          text not null,
+    value        real not null
+);
 drop table if exists programme_group;
 create table programme_group (
     programme_code  text primary key,
@@ -101,6 +132,14 @@ create view if not exists enrolment_current as
 select * from enrolment where fetch_id in (
     select fetch_id from fetch where table_id = 'SKO04103' and run_at = (
         select max(run_at) from fetch where table_id = 'SKO04103'));
+create view if not exists student_current as
+select * from student where fetch_id in (
+    select fetch_id from fetch where table_id = 'SKO04105b' and run_at = (
+        select max(run_at) from fetch where table_id = 'SKO04105b'));
+create view if not exists cohort_current as
+select * from cohort where fetch_id in (
+    select fetch_id from fetch where table_id = 'SKO04208b' and run_at = (
+        select max(run_at) from fetch where table_id = 'SKO04208b'));
 create view if not exists graduation_current as
 select * from graduation where fetch_id in (
     select fetch_id from fetch where table_id = 'SKO04205c' and run_at = (
@@ -199,6 +238,63 @@ def fetch_enrolment(con):
     return len(rows)
 
 
+def fetch_student(con):
+    """All levels and types of study together, one query per degree: the whole table is
+    too large for one."""
+    meta = metadata(STUDENT)
+    names = {v["code"]: dict(zip(v["values"], v["valueTexts"])) for v in meta["variables"]}
+    title = " ".join(meta["title"].split())
+    total = 0
+    for degree in names["Prófgráður"]:
+        selection = [
+            {"code": "Skólastig", "selection": {"filter": "item", "values": ["0"]}},
+            {"code": "Tegund náms", "selection": {"filter": "item", "values": ["0A"]}},
+            {"code": "Prófgráður", "selection": {"filter": "item", "values": [degree]}},
+        ]
+        q, body, data = query(STUDENT, selection)
+        cols = [c["code"] for c in data["columns"]]
+        rows = []
+        for d in data["data"]:
+            k = dict(zip(cols, d["key"]))
+            value = d["values"][0]
+            if value in MISSING:
+                continue
+            rows.append((int(k["Ár"]), k["Námsbraut"], names["Námsbraut"][k["Námsbraut"]].strip(),
+                         k["Prófgráður"], names["Prófgráður"][k["Prófgráður"]].strip(),
+                         SEX_STUDENT[k["Kyn"]], int(float(value))))
+        with con:
+            fid = record_fetch(con, "SKO04105b", title, STUDENT, q, body, len(rows))
+            con.executemany("insert into student values (?, ?, ?, ?, ?, ?, ?, ?)",
+                            [(fid, *r) for r in rows])
+        total += len(rows)
+    return total
+
+
+def fetch_cohort(con):
+    meta = metadata(COHORT)
+    names = {v["code"]: dict(zip(v["values"], v["valueTexts"])) for v in meta["variables"]}
+    title = " ".join(meta["title"].split())
+    q, body, data = query(COHORT, [])
+    cols = [c["code"] for c in data["columns"]]
+    rows = []
+    for d in data["data"]:
+        k = dict(zip(cols, d["key"]))
+        value = d["values"][0]
+        if value in MISSING:
+            continue
+        measure = names["Fjöldi/Hlutfall"][k["Fjöldi/Hlutfall"]]
+        rows.append((int(names["Innritunarár"][k["Innritunarár"]]),
+                     names["Nemendur"][k["Nemendur"]].strip(),
+                     "percent" if "%" in measure else "count",
+                     names["Námssvið"][k["Námssvið"]].strip(),
+                     SEX_STUDENT.get(k["Kyn"], SEX.get(k["Kyn"])), float(value)))
+    with con:
+        fid = record_fetch(con, "SKO04208b", title, COHORT, q, body, len(rows))
+        con.executemany("insert into cohort values (?, ?, ?, ?, ?, ?, ?)",
+                        [(fid, *r) for r in rows])
+    return len(rows)
+
+
 def load_programme_groups(con):
     with PROGRAMME_GROUPS.open(encoding="utf-8") as f:
         rows = [(r["programme_code"], r["programme"], r["programme_group"], r["note"] or None)
@@ -219,6 +315,8 @@ def main():
     print(f"population: {fetch_population(con)} rows", file=sys.stderr)
     print(f"graduation: {fetch_graduation(con)} rows", file=sys.stderr)
     print(f"enrolment: {fetch_enrolment(con)} rows", file=sys.stderr)
+    print(f"student: {fetch_student(con)} rows", file=sys.stderr)
+    print(f"cohort: {fetch_cohort(con)} rows", file=sys.stderr)
     print(f"programme_group: {load_programme_groups(con)} programmes", file=sys.stderr)
     con.close()
     print(f"written to {args.db}", file=sys.stderr)
