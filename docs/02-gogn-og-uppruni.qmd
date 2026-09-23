@@ -277,8 +277,9 @@ if (file.exists(hdb)) {
       left join programme_group p using (programme_code)
       where g.sex = 'total' and g.degree_code = 'Alls' and g.programme_code <> 'Alls'
       group by 1, 2, 3"),
-    # Field against field: Hagstofa's narrow fields as they are, and verkfræði and
-    # tæknifræði by our own classification of programmes.
+    # Field against field, at master's level (degree 4), since the engineer's title
+    # requires a master's degree: Hagstofa's narrow fields as they are, and verkfræði by
+    # our own classification of programmes.
     greinar = DBI::dbGetQuery(con, "
       select g.year,
              case when p.programme_group = 'verkfraedi' then 'Verkfræði'
@@ -288,7 +289,7 @@ if (file.exists(hdb)) {
              sum(g.n) as n
       from graduation_current g
       left join programme_group p using (programme_code)
-      where g.sex = 'total' and g.degree_code = 'Alls' and g.programme_code <> 'Alls'
+      where g.sex = 'total' and g.degree_code = '4' and g.programme_code <> 'Alls'
       group by 1, 2"),
     nemar = if (DBI::dbExistsTable(con, "enrolment")) DBI::dbGetQuery(con, "
       select year, place, n from enrolment_current
@@ -378,9 +379,9 @@ if (!is.null(hag)) {
 #| include: false
 utan <- function(kodi, dalkur) if (is.null(hag)) NA else
   hag$utan[[dalkur]][hag$utan$programme_code == kodi]
-# All graduations in a year, every programme and degree (Hagstofa's own total).
-heild <- function(ar) if (is.null(hag)) NA else
-  hag$hlutfall$alls[hag$hlutfall$degree_code == "Alls" & hag$hlutfall$year == ar]
+# All graduations in a year and degree ('Alls' for every degree), Hagstofa's own total.
+heild <- function(ar, gr = "Alls") if (is.null(hag)) NA else
+  hag$hlutfall$alls[hag$hlutfall$degree_code == gr & hag$hlutfall$year == ar]
 ```
 
 Nokkrar brautir utan flokkunarinnar gætu geymt verkfræðipróf og eru skráðar hér
@@ -479,27 +480,34 @@ Hagstofan telur að hluta til sviðs 3; raunvísindi eru ekki kennd þar.
 
 Svið Hagstofunnar eru misstór og geyma ólíkar greinar. Til að bera verkfræði
 saman við aðrar stórar greinar eru notuð *afmörkuð svið* ÍSNÁM2008, sem eru
-tveir fyrstu tölustafir kóða námsbrautar: 14 er kennaranám og menntunarfræði, 34
-viðskipti og stjórnun, 38 lögfræði, 48 tölvunarfræði og 72 heilbrigði. Heitin
-eru Hagstofunnar. Viðskipti og stjórnun (34) ná t.d. yfir viðskiptafræði,
-viðskiptastjórnun, markaðsfræði, fjármál og endurskoðun. Verkfræði og
-tæknifræði eru eftir flokkun okkar og ekki taldar með í sínum afmörkuðu sviðum.
-Heildarfjöldi brautskráninga fór úr `r heild(hag$br$fra)` árið `r hag$br$fra` í
-`r heild(hag$br$til)` árið `r hag$br$til`, svo hver grein er bæði sýnd sem fjöldi
-og sem hlutfall af öllum brautskráningum ársins.
+tveir fyrstu tölustafir kóða námsbrautar: 14 er kennaranám og menntunarfræði, 31
+félags- og atferlisvísindi, 34 viðskipti og stjórnun, 38 lögfræði, 48
+tölvunarfræði og 72 heilbrigði. Heitin eru Hagstofunnar. Viðskipti og stjórnun
+(34) ná t.d. yfir viðskiptafræði, viðskiptastjórnun, markaðsfræði, fjármál og
+endurskoðun. Verkfræði er eftir flokkun okkar og ekki talin með í sínum
+afmörkuðu sviðum.
+
+Samanburðurinn nær aðeins til meistaragráða, því starfsheitið verkfræðingur
+krefst meistaraprófs. Tæknifræði er ekki með: starfsheitið tæknifræðingur krefst
+BS-prófs og meistaragráður í tæknifræði eru fáar. Meistaragráðum fjölgaði úr
+`r heild(hag$br$fra, "4")` árið `r hag$br$fra` í `r heild(hag$br$til, "4")` árið
+`r hag$br$til`, svo hver grein er bæði sýnd sem fjöldi og sem hlutfall af öllum
+meistaragráðum ársins. Hlutföll fyrstu áranna byggja á fáum gráðum og sveiflast
+því mikið.
 
 ```{r hagstofa-greinar}
 #| include: false
 greinar <- NULL
 if (!is.null(hag)) {
   afmorkud <- c("14" = "Kennaranám og menntunarfræði (14)",
+                "31" = "Félags- og atferlisvísindi (31)",
                 "34" = "Viðskipti og stjórnun (34)", "38" = "Lögfræði (38)",
                 "48" = "Tölvunarfræði (48)", "72" = "Heilbrigði (72)")
   greinar <- hag$greinar
   greinar$grein <- ifelse(greinar$grein %in% names(afmorkud), afmorkud[greinar$grein],
                           greinar$grein)
-  greinar <- greinar[greinar$grein %in% c(afmorkud, "Verkfræði", "Tæknifræði"), ]
-  alls <- hag$hlutfall[hag$hlutfall$degree_code == "Alls", c("year", "alls")]
+  greinar <- greinar[greinar$grein %in% c(afmorkud, "Verkfræði"), ]
+  alls <- hag$hlutfall[hag$hlutfall$degree_code == "4", c("year", "alls")]
   greinar <- merge(greinar, alls)
   greinar$pct <- 100 * greinar$n / greinar$alls
   # Legend order: largest first over the whole period.
@@ -508,14 +516,14 @@ if (!is.null(hag)) {
   greinar <- greinar[order(greinar$grein, greinar$year), ]
 }
 
-# One line per field; verkfræði and tæknifræði drawn thicker, so they stand out.
+# One line per field; verkfræði drawn thicker, so it stands out.
 greinar_plot <- function(y, snid, titill) {
   p <- plotly::plot_ly()
   for (g in levels(greinar$grein)) {
     x <- greinar[greinar$grein == g, ]
     p <- plotly::add_trace(
       p, data = x, x = ~year, y = y, name = g, type = "scatter", mode = "lines+markers",
-      line = list(width = if (g %in% c("Verkfræði", "Tæknifræði")) 4 else 1.5),
+      line = list(width = if (g == "Verkfræði") 4 else 1.5),
       marker = list(size = 4),
       hovertemplate = paste0("%{x}: ", snid, "<extra>", g, "</extra>")
     )
@@ -533,9 +541,9 @@ greinar_plot <- function(y, snid, titill) {
 ```{r hagstofa-greinar-fjoldi}
 #| echo: false
 #| fig-cap: >
-#|   Brautskráningar á ári í verkfræði, tæknifræði og nokkrum stórum afmörkuðum
-#|   sviðum Hagstofunnar.
-if (!is.null(greinar)) greinar_plot(~n, "%{y} brautskráningar", "Brautskráningar á ári")
+#|   Meistaragráður á ári í verkfræði og nokkrum stórum afmörkuðum sviðum
+#|   Hagstofunnar.
+if (!is.null(greinar)) greinar_plot(~n, "%{y} meistaragráður", "Meistaragráður á ári")
 ```
 
 ## Hlutfall
@@ -543,8 +551,8 @@ if (!is.null(greinar)) greinar_plot(~n, "%{y} brautskráningar", "Brautskráning
 ```{r hagstofa-greinar-hlutfall}
 #| echo: false
 #| fig-cap: >
-#|   Sömu greinar sem hlutfall af öllum brautskráningum hvers árs.
-if (!is.null(greinar)) greinar_plot(~pct, "%{y:.1f}%", "% af öllum brautskráningum")
+#|   Sömu greinar sem hlutfall af öllum meistaragráðum hvers árs.
+if (!is.null(greinar)) greinar_plot(~pct, "%{y:.1f}%", "% af öllum meistaragráðum")
 ```
 
 :::
