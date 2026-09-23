@@ -12,6 +12,9 @@ Reads the PX-Web API at px.hagstofa.is. Every run adds a snapshot, as fetch_lice
   graduation   SKO04205c, graduations (brautskráningar) by academic year, programme, degree
                and sex. `year` is the academic year's second calendar year: 1995-1996 -> 1996.
                A graduation is a degree awarded, not a person; one person can count twice.
+  enrolment    SKO04103, students (nemendur) at university level 1975-2006 by field, sex and
+               where they studied: 'iceland' or 'abroad' ('total' for both). A count of
+               enrolled students, not of graduations; the only field-level series before 1996.
   programme_group  config/programme_groups.csv: which programmes count as verkfræði and which
                as tæknifræði. Replaced whole each run; the CSV is the source.
   programme_field  config/programme_fields.csv: every programme's HÍ school (svið) -- 'FVS',
@@ -39,6 +42,8 @@ PROGRAMME_FIELDS = ROOT / "config" / "programme_fields.csv"
 API = "https://px.hagstofa.is/pxis/api/v1/is/"
 POPULATION = "Ibuar/mannfjoldi/1_yfirlit/Yfirlit_mannfjolda/MAN08000.px"
 GRADUATION = "Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04205c.px"
+ENROLMENT = "Samfelag/skolamal/4_haskolastig/3_hseldra/SKO04103.px"
+PLACE = {"Alls": "total", "2": "iceland", "3": "abroad"}
 SEX = {"Total": "total", "Alls": "total", "1": "male", "2": "female", "3": "other"}
 # How PX-Web marks a cell with no value.
 MISSING = {"..", ".", "-", ""}
@@ -74,6 +79,15 @@ create table if not exists graduation (
     sex            text not null,
     n              integer not null
 );
+create table if not exists enrolment (
+    fetch_id     integer not null references fetch(fetch_id),
+    year         integer not null,
+    place        text not null,        -- 'total', 'iceland' or 'abroad'
+    field_code   text not null,        -- 'Alls', or '0'..'9'; '7' is Tæknigreinar, verkfræði
+    field        text not null,
+    sex          text not null,
+    n            integer not null
+);
 drop table if exists programme_group;
 create table programme_group (
     programme_code  text primary key,
@@ -92,6 +106,10 @@ create view if not exists population_current as
 select * from population where fetch_id in (
     select fetch_id from fetch where table_id = 'MAN08000' and run_at = (
         select max(run_at) from fetch where table_id = 'MAN08000'));
+create view if not exists enrolment_current as
+select * from enrolment where fetch_id in (
+    select fetch_id from fetch where table_id = 'SKO04103' and run_at = (
+        select max(run_at) from fetch where table_id = 'SKO04103'));
 create view if not exists graduation_current as
 select * from graduation where fetch_id in (
     select fetch_id from fetch where table_id = 'SKO04205c' and run_at = (
@@ -171,6 +189,25 @@ def fetch_graduation(con):
     return total
 
 
+def fetch_enrolment(con):
+    meta = metadata(ENROLMENT)
+    names = {v["code"]: dict(zip(v["values"], v["valueTexts"])) for v in meta["variables"]}
+    q, body, data = query(ENROLMENT, [])
+    rows = []
+    for d in data["data"]:
+        place, field, sex, year = d["key"]
+        if d["values"][0] in MISSING:
+            continue
+        rows.append((int(year), PLACE[place], field, names["námsbraut"][field].strip(), SEX[sex],
+                     int(float(d["values"][0]))))
+    with con:
+        fid = record_fetch(con, "SKO04103", " ".join(meta["title"].split()), ENROLMENT, q, body,
+                           len(rows))
+        con.executemany("insert into enrolment values (?, ?, ?, ?, ?, ?, ?)",
+                        [(fid, *r) for r in rows])
+    return len(rows)
+
+
 def load_programme_groups(con):
     with PROGRAMME_GROUPS.open(encoding="utf-8") as f:
         rows = [(r["programme_code"], r["programme"], r["programme_group"], r["note"] or None)
@@ -199,6 +236,7 @@ def main():
     con.executescript(SCHEMA)
     print(f"population: {fetch_population(con)} rows", file=sys.stderr)
     print(f"graduation: {fetch_graduation(con)} rows", file=sys.stderr)
+    print(f"enrolment: {fetch_enrolment(con)} rows", file=sys.stderr)
     print(f"programme_group: {load_programme_groups(con)} programmes", file=sys.stderr)
     print(f"programme_field: {load_programme_fields(con)} programmes", file=sys.stderr)
     con.close()

@@ -276,6 +276,27 @@ if (file.exists(hdb)) {
       left join programme_group p using (programme_code)
       where g.sex = 'total' and g.degree_code = 'Alls'
       group by 1, 2, 3"),
+    # Field against field. Business is every business and management programme (ISCED 34x)
+    # except tæknifræði/iðnfræði (345d, 345g) and school leadership (345h); law is 38x.
+    greinar = DBI::dbGetQuery(con, "
+      select g.year,
+             case when p.programme_group = 'verkfraedi' then 'Verkfræði'
+                  when p.programme_group = 'taeknifraedi' then 'Tæknifræði'
+                  when g.programme_code like '34%'
+                       and g.programme_code not in ('345d', '345g', '345h')
+                    then 'Viðskipta- og stjórnunarnám'
+                  when g.programme_code like '38%' then 'Lögfræði'
+                  when g.programme_code = '481c' then 'Tölvunarfræði'
+             end as grein,
+             sum(g.n) as n
+      from graduation_current g
+      left join programme_group p using (programme_code)
+      where g.sex = 'total' and g.degree_code = 'Alls' and g.programme_code <> 'Alls'
+      group by 1, 2"),
+    nemar = if (DBI::dbExistsTable(con, "enrolment")) DBI::dbGetQuery(con, "
+      select year, place, n from enrolment_current
+      where field_code = '7' and sex = 'total' and place in ('iceland', 'abroad')
+        and year >= 1977"),
     utan = DBI::dbGetQuery(con, "
       select programme, programme_code,
              coalesce(sum(case when degree_code = '2' then n end), 0) as bs,
@@ -300,10 +321,9 @@ Brautskráningar eru úr töflu Hagstofunnar eftir námsbraut, prófgráðu og k
 Skólaár er talið til síðara almanaksársins, svo `r hag$br$fyrsta` telst
 `r hag$br$fra`. Taflan telur prófgráður, ekki einstaklinga: sá sem lýkur BS- og
 síðar MS-prófi telst tvisvar. Fyrir `r hag$br$fra` eru engin samræmd
-brautskráningargögn, svo samanburður við leyfi nær aðeins til síðara
-rannsóknartímabilsins.
+brautskráningargögn; um það tímabil, sjá [Fyrir 1996](#sec-fyrir-1996).
 
-`scripts/fetch_hagstofa.py` sækir báðar töflur um vefþjónustu Hagstofunnar
+`scripts/fetch_hagstofa.py` sækir töflurnar um vefþjónustu Hagstofunnar
 (PX-Web) í `data/hagstofa.sqlite`, með sama hætti og leyfisskrárnar: hver sókn
 er varðveitt með fyrirspurn, söfnunartíma, SHA-256 og svarinu sjálfu. Nýjasta
 sókn er frá `r hag$sott`.
@@ -316,10 +336,11 @@ með fyrirspurn skilar gögnunum:
 |---|---|
 | MAN08000 | <https://px.hagstofa.is/pxis/api/v1/is/Ibuar/mannfjoldi/1_yfirlit/Yfirlit_mannfjolda/MAN08000.px> |
 | SKO04205c | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04205c.px> |
+| SKO04103 | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/3_hseldra/SKO04103.px> |
 
-Fyrirspurnin fyrir mannfjöldann er tóm, þ.e. öll taflan. Brautskráningataflan
-er of stór til að sækja í einu lagi og er því sótt eftir prófgráðu, ein
-fyrirspurn á hverja.
+Mannfjöldataflan og nemendataflan eru sóttar í heild í einu kalli, öll ár,
+kyn og aldur. Brautskráningataflan er of stór til þess og er því sótt eftir
+prófgráðu, eitt kall á hverja.
 
 Hver fyrirspurn og svarið við henni eru geymd í töflunni `fetch` í
 `data/hagstofa.sqlite`.
@@ -415,9 +436,83 @@ if (!is.null(hag) && !is.null(hag$svid)) {
 }
 ```
 
+Svið HÍ eru misstór og geyma ólíkar greinar. Til að bera verkfræði saman við
+aðrar stórar námsgreinar er hver grein tekin í heild, með öllum námsbrautum
+sínum: viðskipta- og stjórnunarnám er allt nám í viðskiptum og stjórnun (ISCED
+34), t.d. viðskiptafræði, viðskiptastjórnun, markaðsfræði, fjármál og
+endurskoðun, en án tæknifræði, iðnfræði og skólastjórnunar.
+
+```{r hagstofa-greinar}
+#| echo: false
+if (!is.null(hag)) {
+  d <- hag$greinar[!is.na(hag$greinar$grein), ]
+  bil <- c(1995, 2000, 2010, 2020, 2025)
+  d$timabil <- cut(d$year, bil, labels = paste0(bil[-5] + 1, "–", bil[-1]))
+  t <- as.data.frame.matrix(xtabs(n ~ grein + timabil, d))
+  t$Alls <- rowSums(t)
+  t <- t[order(-t$Alls), ]
+  names(t)[ncol(t)] <- paste0("Alls ", bil[1] + 1, "–", bil[5])
+  knitr::kable(cbind(Námsgrein = rownames(t), t), row.names = FALSE, align = "lrrrrr",
+               caption = "Brautskráningar í verkfræði og nokkrum öðrum stórum námsgreinum.")
+}
+```
+
 Engar brautskráningar í verkfræði eða tæknifræði eru skráðar sem próf á
 háskólastigi án gráðu (ISCED 5B) eða viðbótarnám eftir fyrstu gráðu; þær eru
 með í heildinni en ekki í töflunni.
+
+### Fyrir 1996: nemendur heima og erlendis {#sec-fyrir-1996}
+
+Brautskráningar eftir námsbraut ná aðeins aftur til 1996. Doktorsvarnir
+Íslendinga eftir fræðasviði eru til, en aðeins fyrir 1997–2006, svo þær fylla
+ekki í gatið. Eina röðin sem nær lengra aftur eftir fræðasviði er fjöldi
+skráðra nemenda á háskólastigi 1975–2006, sem Hagstofan skiptir í nám á Íslandi
+og nám erlendis [@hagstofa_sko04103]. Hún telur nemendur, ekki brautskráningar,
+og flokkurinn „Tæknigreinar, verkfræði“ er víðari en verkfræði og tæknifræði.
+Árin 1975–1976 vantar nám erlendis og heildartölur eru of lágar til að vera
+tæmandi, svo röðin er sýnd frá 1977.
+
+```{r hagstofa-nemar}
+#| echo: false
+#| fig-height: 4
+#| fig-cap: >
+#|   Nemendur í tæknigreinum og verkfræði á háskólastigi, á Íslandi og erlendis,
+#|   1977–2006. Fjöldi skráðra nemenda, ekki brautskráninga.
+if (!is.null(hag) && !is.null(hag$nemar)) {
+  library(ggplot2)
+  d <- hag$nemar
+  d$place <- factor(c(iceland = "Á Íslandi", abroad = "Erlendis")[d$place],
+                    levels = c("Á Íslandi", "Erlendis"))
+  ggplot(d, aes(year, n, colour = place)) +
+    geom_line(linewidth = 1) +
+    scale_colour_manual(values = c("Á Íslandi" = "#10099F", "Erlendis" = "#d61f69")) +
+    labs(x = NULL, y = "Nemendur", colour = NULL) +
+    theme_minimal(base_size = 13) +
+    theme(legend.position = "bottom", panel.grid.minor = element_blank())
+}
+```
+
+```{r hagstofa-nemar-tolur}
+#| include: false
+nem <- NULL
+if (!is.null(hag) && !is.null(hag$nemar)) {
+  w <- reshape(hag$nemar, idvar = "year", timevar = "place", direction = "wide")
+  w <- w[order(w$year), ]
+  erl <- w$n.abroad > w$n.iceland
+  # The longest unbroken run of years with more students abroad than at home.
+  r <- rle(erl)
+  k <- which.max(ifelse(r$values, r$lengths, 0))
+  endir <- cumsum(r$lengths)[k]
+  nem <- list(fleiri_erlendis = w$year[c(endir - r$lengths[k] + 1, endir)],
+              ar_erlendis = sum(erl), ar_alls = nrow(w))
+}
+```
+
+Samfellt árin `r nem$fleiri_erlendis[1]`–`r nem$fleiri_erlendis[2]` voru fleiri
+íslenskir nemendur í tæknigreinum og verkfræði erlendis en á Íslandi, og alls
+`r nem$ar_erlendis` af þeim `r nem$ar_alls` árum sem röðin nær yfir. Leyfi þess tíma
+endurspegla því að verulegu leyti nám erlendis, sem brautskráningargögn
+íslenskra skóla ná ekki til.
 
 ```{r hagstofa-utan}
 #| include: false
