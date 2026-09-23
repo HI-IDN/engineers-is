@@ -159,11 +159,10 @@ if (file.exists(db)) {
   }
   DBI::dbDisconnect(con)
 }
-skrar <- c(verkfraedingur = "verkfræðinga", taeknifraedingur = "tæknifræðinga")
 
-# One table per list: rows are the rule that decided, columns the estimate.
-kyn_tafla <- function(lst) {
-  d <- kyn$d[kyn$d$list == lst, ]
+# One table for both lists: rows are the rule that decided, columns the estimate. Below the
+# total, as a caveat, the estimates whose evidence conflicts ("þar af"), by how.
+kyn_tafla <- function(d = kyn$d) {
   regla <- ifelse(is.na(d$gender_rule), "Ekkert sker úr",
            ifelse(d$gender_rule == "dottir", "-dóttir",
            ifelse(d$gender_rule == "son", "-son",
@@ -173,13 +172,22 @@ kyn_tafla <- function(lst) {
                   ifelse(d$gender == "female", "Konur", "Karlar")),
                   levels = c("Konur", "Karlar", "Óþekkt"))
   t <- as.data.frame.matrix(table(factor(regla, levels = radir), kyn_d))
-  t$Alls <- rowSums(t)
   t <- rbind(t, Samtals = colSums(t))
+  osamraemi <- c(given_names = "þar af stangast á: tvö eiginnöfn",
+                 suffix      = "þar af stangast á: eiginnafn og -son",
+                 both        = "þar af stangast á: hvort tveggja")
+  ag <- as.data.frame.matrix(table(factor(d$gender_conflict, levels = names(osamraemi)), kyn_d))
+  rownames(ag) <- osamraemi
+  ag <- ag[rowSums(ag) > 0, , drop = FALSE]
+  t <- rbind(t, ag)
+  t$Alls <- rowSums(t)
   t <- cbind(Regla = rownames(t), t)
   t[] <- lapply(t, as.character)
-  t[nrow(t), ] <- paste0("**", t[nrow(t), ], "**")
+  sam <- which(t$Regla == "Samtals")
+  t[sam, ] <- paste0("**", t[sam, ], "**")
+  if (nrow(t) > sam) t$Regla[(sam + 1):nrow(t)] <- paste0("*", t$Regla[(sam + 1):nrow(t)], "*")
   knitr::kable(t, row.names = FALSE, align = "lrrrr",
-               caption = paste0("Kynjamat ", skrar[[lst]], " eftir því hvaða regla réð."))
+               caption = "Kynjamat verkfræðinga og tæknifræðinga eftir því hvaða regla réð.")
 }
 ```
 
@@ -201,39 +209,15 @@ Kyn leyfishafa er metið út frá nafni með pakkanum
 drengja- og stúlknanöfn. Það segir ekkert um kyn eða kynvitund einstaklingsins
 og er aðeins birt sem samantekin tölfræði, með óþekktum sér.
 
-```{r kyn-verkfraedingar}
-#| echo: false
-if (!is.null(kyn)) kyn_tafla("verkfraedingur")
-```
-
-```{r kyn-taeknifraedingar}
-#| echo: false
-if (!is.null(kyn)) kyn_tafla("taeknifraedingur")
-```
-
 Auk þess sem ræður er skráð hvort allar vísbendingar nafnsins séu samhljóða.
 Þær stangast á þegar tvö eiginnöfn benda hvort í sína áttina (þá ræður það
 fyrra) eða þegar eiginnafn og *-son* eru ósammála, t.d. kvenmannsnafn með
-ættarnafni sem endar á *-son* (þá ræður eiginnafnið).
+ættarnafni sem endar á *-son* (þá ræður eiginnafnið). Fjöldi slíkra nafna er
+sýndur neðst í töflunni, undir samtölu, sem varnagli: þar er matið síst öruggt.
 
-```{r kyn-samraemi}
+```{r kyn-tafla}
 #| echo: false
-if (!is.null(kyn)) {
-  flokkur <- with(kyn$d, ifelse(gender_agreement == "unanimous", "Samhljóða",
-             ifelse(gender_agreement == "none", "Engin vísbending",
-             ifelse(gender_conflict == "given_names", "Stangast á: tvö eiginnöfn",
-             ifelse(gender_conflict == "suffix", "Stangast á: eiginnafn og -son",
-                    "Stangast á: hvort tveggja")))))
-  radir <- c("Samhljóða", "Stangast á: tvö eiginnöfn", "Stangast á: eiginnafn og -son",
-             "Stangast á: hvort tveggja", "Engin vísbending")
-  t <- as.data.frame.matrix(table(factor(flokkur, levels = radir),
-                                  factor(kyn$d$list, levels = names(skrar))))
-  t <- t[rowSums(t) > 0, , drop = FALSE]
-  names(t) <- c("Verkfræðingar", "Tæknifræðingar")
-  t <- cbind(Vísbendingar = rownames(t), t)
-  knitr::kable(t, row.names = FALSE, align = "lrr",
-               caption = "Samræmi vísbendinga nafnsins.")
-}
+if (!is.null(kyn)) kyn_tafla()
 ```
 
 ## Mannfjöldi og brautskráningar
