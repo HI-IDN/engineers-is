@@ -40,7 +40,8 @@ book:
     - docs/02-gogn-og-uppruni.qmd
     - docs/03-saga-og-timamot.qmd
     - docs/04-adferdir.qmd
-    - docs/05-vinnudagbok.qmd
+    - docs/05-nylidun.qmd
+    - docs/06-vinnudagbok.qmd
 
 format:
   html:

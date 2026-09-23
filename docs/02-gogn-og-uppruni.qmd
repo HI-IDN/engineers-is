@@ -354,17 +354,26 @@ eða tæknifræði eru flokkaðar undir önnur svið.
 
 ```{r hagstofa-flokkun}
 #| echo: false
+#| results: asis
+# One table per group, each with a bold total row.
 if (!is.null(hag)) {
-  f <- hag$flokkun
-  f$programme_group <- c(verkfraedi = "Verkfræði", taeknifraedi = "Tæknifræði")[f$programme_group]
-  f$note <- ifelse(is.na(f$note), "", f$note)
-  knitr::kable(
-    f[, c("programme_group", "programme", "programme_code", "bs", "ms", "phd")],
-    col.names = c("Flokkur", "Námsbraut", "Kóði", "Grunnnám", "Meistaranám", "Doktorsnám"),
-    row.names = FALSE, align = "lllrrr",
-    caption = paste0("Námsbrautir sem teljast verkfræði eða tæknifræði, með fjölda ",
-                     "brautskráninga ", hag$br$fra, "–", hag$br$til, " eftir prófgráðu.")
-  )
+  for (hopur in c("verkfraedi", "taeknifraedi")) {
+    f <- hag$flokkun[hag$flokkun$programme_group == hopur, ]
+    t <- data.frame(Námsbraut = f$programme, Kóði = f$programme_code,
+                    Grunnnám = f$bs, Meistaranám = f$ms, Doktorsnám = f$phd)
+    t <- rbind(t, data.frame(Námsbraut = "Samtals", Kóði = "", Grunnnám = sum(f$bs),
+                             Meistaranám = sum(f$ms), Doktorsnám = sum(f$phd)))
+    t[] <- lapply(t, as.character)
+    n <- nrow(t)
+    t[n, ] <- ifelse(t[n, ] == "", "", paste0("**", t[n, ], "**"))
+    heiti <- c(verkfraedi = "verkfræði", taeknifraedi = "tæknifræði")[[hopur]]
+    print(knitr::kable(
+      t, row.names = FALSE, align = "llrrr",
+      caption = paste0("Námsbrautir sem teljast ", heiti, ", með fjölda brautskráninga ",
+                       hag$br$fra, "–", hag$br$til, " eftir prófgráðu.")
+    ))
+    cat("\n\n")
+  }
 }
 ```
 
