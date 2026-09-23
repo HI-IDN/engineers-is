@@ -59,7 +59,7 @@ stað kennitölunnar er geymt á hvaða sniði hún var skráð (`id_format`).
 Skrárnar eru handslegnar og kennitala er ekki alltaf á réttu sniði. Af
 `r leyfi$alls$n` leyfishöfum eru `r leyfi$kt("kennitala")` með kennitölu á
 réttu sniði (*ddmmáá-nnnn*) og `r leyfi$kt("birth_date")` með fæðingardag
-(„f. *dd.mm.áá*“), sem er eldra form. Hinar eru lesnar eftir tveimur reglum:
+(„f. *dd.mm.áá*“), sem er eldra form. Hinar eru lesnar eftir þremur reglum:
 
 - **Annað skiltákn** (`kennitala_variant`, `r leyfi$kt("kennitala_variant")`
   færslur): tíu tölustafir en með punktum, skástriki, tvöföldu bandstriki eða
@@ -70,6 +70,12 @@ réttu sniði (*ddmmáá-nnnn*) og `r leyfi$kt("birth_date")` með fæðingardag
   kennitölunni. Sé fjórtölustafahlutinn á eftir bandstrikinu eðlilegur eru tveir
   síðustu tölustafirnir á undan bandstrikinu lesnir sem fæðingarár og síðasti
   tölustafurinn sem öld.
+- **Fæðingardagur án „f.“** (`birth_date_bare`,
+  `r leyfi$kt("birth_date_bare")` færslur): *dd.mm.áá* eða *dd.mm.áááá* á milli
+  nafns og starfsheitis. Tveir síðustu tölustafir ársins eru lesnir sem
+  fæðingarár. Aðeins er leitað á undan „Fær leyfi“, svo leyfisdagurinn er aldrei
+  tekinn fyrir fæðingardag. Sé dagsetningin sami dagur og leyfisdagurinn er
+  hún leyfisdagurinn sleginn inn tvisvar og færslan telst ólæsileg.
 
 Gefi aldarstafurinn ótrúlegan aldur við leyfisveitingu, yngri en 18 ára eða
 eldri en 90, er hann innsláttarvilla. Þá er valin sú öld sem gefur trúverðugan
