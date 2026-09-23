@@ -292,6 +292,31 @@ rannsóknartímabilsins.
 er varðveitt með fyrirspurn, söfnunartíma, SHA-256 og svarinu sjálfu. Nýjasta
 sókn er frá `r hag$sott`.
 
+Töflurnar eru sóttar af þessum slóðum. `GET` á slóðina skilar lýsigögnum
+töflunnar sem JSON (breytur, kóðar og heiti gilda), og `POST` á sömu slóð
+með fyrirspurn skilar gögnunum:
+
+| Tafla | Slóð í vefþjónustu |
+|---|---|
+| MAN08000 | <https://px.hagstofa.is/pxis/api/v1/is/Ibuar/mannfjoldi/1_yfirlit/Yfirlit_mannfjolda/MAN08000.px> |
+| SKO04205c | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04205c.px> |
+
+Fyrirspurnin fyrir mannfjöldann er tóm, þ.e. öll taflan. Brautskráningataflan
+er of stór til að sækja í einu lagi og er því sótt eftir prófgráðu, ein
+fyrirspurn á hverja:
+
+```json
+{
+  "query": [
+    {"code": "Prófgráða", "selection": {"filter": "item", "values": ["4"]}}
+  ],
+  "response": {"format": "json"}
+}
+```
+
+Hver fyrirspurn og svarið við henni eru geymd í töflunni `fetch` í
+`data/hagstofa.sqlite`.
+
 ### Flokkun námsbrauta
 
 Hvaða námsbrautir teljast verkfræði og hverjar tæknifræði er ákveðið fyrir fram
