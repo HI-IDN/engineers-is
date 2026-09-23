@@ -14,6 +14,9 @@ Reads the PX-Web API at px.hagstofa.is. Every run adds a snapshot, as fetch_lice
                A graduation is a degree awarded, not a person; one person can count twice.
   programme_group  config/programme_groups.csv: which programmes count as verkfræði and which
                as tæknifræði. Replaced whole each run; the CSV is the source.
+  programme_field  config/programme_fields.csv: every programme's HÍ school (svið) -- 'FVS',
+               'HVS', 'HUG', 'MVS', 'VON' or 'HOL' (Háskóli Íslands á Hólum). Replaced whole
+               each run.
   population_current, graduation_current (views)  the newest fetch of each table.
 
 These are aggregate public statistics; nothing here concerns individuals.
@@ -32,6 +35,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_DB = ROOT / "data" / "hagstofa.sqlite"
 PROGRAMME_GROUPS = ROOT / "config" / "programme_groups.csv"
+PROGRAMME_FIELDS = ROOT / "config" / "programme_fields.csv"
 API = "https://px.hagstofa.is/pxis/api/v1/is/"
 POPULATION = "Ibuar/mannfjoldi/1_yfirlit/Yfirlit_mannfjolda/MAN08000.px"
 GRADUATION = "Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04205c.px"
@@ -76,6 +80,13 @@ create table programme_group (
     programme       text not null,
     programme_group text not null,     -- 'verkfraedi' | 'taeknifraedi'
     note            text
+);
+drop table if exists programme_field;
+create table programme_field (
+    programme_code  text primary key,
+    programme       text not null,
+    svid            text not null,     -- HÍ school: FVS, HVS, HUG, MVS, VON, HOL
+    note            text               -- why, when it differs from the ISCED field
 );
 create view if not exists population_current as
 select * from population where fetch_id in (
@@ -169,6 +180,15 @@ def load_programme_groups(con):
     return len(rows)
 
 
+def load_programme_fields(con):
+    with PROGRAMME_FIELDS.open(encoding="utf-8") as f:
+        rows = [(r["programme_code"], r["programme"], r["svid"], r["note"] or None)
+                for r in csv.DictReader(f)]
+    with con:
+        con.executemany("insert into programme_field values (?, ?, ?, ?)", rows)
+    return len(rows)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--db", type=Path, default=DEFAULT_DB)
@@ -180,6 +200,7 @@ def main():
     print(f"population: {fetch_population(con)} rows", file=sys.stderr)
     print(f"graduation: {fetch_graduation(con)} rows", file=sys.stderr)
     print(f"programme_group: {load_programme_groups(con)} programmes", file=sys.stderr)
+    print(f"programme_field: {load_programme_fields(con)} programmes", file=sys.stderr)
     con.close()
     print(f"written to {args.db}", file=sys.stderr)
 

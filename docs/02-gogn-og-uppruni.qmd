@@ -269,6 +269,13 @@ if (file.exists(hdb)) {
       left join programme_group p using (programme_code)
       where g.sex = 'total'
       group by 1, 2"),
+    svid = if (DBI::dbExistsTable(con, "programme_field")) DBI::dbGetQuery(con, "
+      select g.year, f.svid, p.programme_group, sum(g.n) as n
+      from graduation_current g
+      join programme_field f using (programme_code)
+      left join programme_group p using (programme_code)
+      where g.sex = 'total' and g.degree_code = 'Alls'
+      group by 1, 2, 3"),
     utan = DBI::dbGetQuery(con, "
       select programme, programme_code,
              coalesce(sum(case when degree_code = '2' then n end), 0) as bs,
@@ -365,6 +372,46 @@ if (!is.null(hag)) {
   knitr::kable(w, row.names = FALSE, align = "lrrrr",
                caption = paste0("Hlutfall verkfræði og tæknifræði af öllum brautskráningum ",
                                 "sömu prófgráðu, eftir tímabilum."))
+}
+```
+
+Til samanburðar eru allar námsbrautir flokkaðar á fræðasvið Háskóla Íslands í
+`config/programme_fields.csv`. Grunnurinn er námssvið Hagstofunnar, en þar sem
+deildaskipting HÍ er önnur ræður hún, t.d. telst sálfræði til
+Heilbrigðisvísindasviðs og félagsráðgjöf til Félagsvísindasviðs. Tæknifræði telst
+til Verkfræði- og náttúruvísindasviðs. Námsbrautir annarra háskóla fylgja því
+sviði sem næst stendur; listnám telst þannig til Hugvísindasviðs.
+
+```{r hagstofa-svid}
+#| echo: false
+if (!is.null(hag) && !is.null(hag$svid)) {
+  d <- hag$svid
+  bil <- c(1995, 2000, 2010, 2020, 2025)
+  d$timabil <- cut(d$year, bil, labels = paste0(bil[-5] + 1, "–", bil[-1]))
+  heiti <- c(FVS = "Félagsvísindasvið", HVS = "Heilbrigðisvísindasvið", HUG = "Hugvísindasvið",
+             MVS = "Menntavísindasvið", VON = "Verkfræði- og náttúruvísindasvið",
+             HOL = "Háskóli Íslands á Hólum")
+  radir <- list()
+  for (k in names(heiti)) {
+    radir[[heiti[[k]]]] <- d$svid == k
+    if (k == "VON") {
+      radir[["þar af verkfræði"]] <- d$svid == k & d$programme_group %in% "verkfraedi"
+      radir[["þar af tæknifræði"]] <- d$svid == k & d$programme_group %in% "taeknifraedi"
+    }
+  }
+  alls <- tapply(d$n, d$timabil, sum)
+  t <- do.call(rbind, lapply(radir, function(i) {
+    x <- tapply(d$n[i], d$timabil[i], sum)
+    x[is.na(x)] <- 0
+    c(sub(".", ",", sprintf("%.1f%%", 100 * x / alls), fixed = TRUE), sum(d$n[i]))
+  }))
+  t <- rbind(t, "**Samtals**" = c(rep("**100%**", length(alls)), paste0("**", sum(d$n), "**")))
+  t <- data.frame(Svið = rownames(t), t, check.names = FALSE, row.names = NULL)
+  names(t)[-1] <- c(levels(d$timabil), paste0("Alls ", bil[1] + 1, "–", bil[5]))
+  t$Svið <- ifelse(startsWith(t$Svið, "þar af"), paste0("*", t$Svið, "*"), t$Svið)
+  knitr::kable(t, align = "lrrrrr",
+               caption = paste0("Hlutfall fræðasviða af öllum brautskráningum eftir ",
+                                "tímabilum, og fjöldi brautskráninga alls."))
 }
 ```
 
