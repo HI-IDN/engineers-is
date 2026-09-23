@@ -55,8 +55,8 @@ if (file.exists(ldb) && file.exists(hdb)) {
 
 Hér er nýliðun mæld sem ný starfsheitaleyfi á ári á hverja 100.000 íbúa, eins
 og lagt er upp með í fyrstu undirspurningunni. Leyfin eru úr leyfisskránum og
-mannfjöldinn er meðalmannfjöldi Hagstofunnar (sjá [Gögn og
-uppruni](02-gogn-og-uppruni.qmd)). Verkfræðingar eru taldir frá
+mannfjöldinn er meðalmannfjöldi Hagstofunnar (sjá hluta [-@sec-gogn-leyfi] og
+[-@sec-gogn-hagstofa]). Verkfræðingar eru taldir frá
 `r nyl$upphaf[["verkfraedingur"]]` og tæknifræðingar frá
 `r nyl$upphaf[["taeknifraedingur"]]`, fyrsta leyfisári hvorrar skrár, til
 `r nyl$til`, síðasta árs sem mannfjöldatölur ná til.
@@ -121,7 +121,7 @@ tímamót](03-saga-og-timamot.qmd)), en nálægð í tíma sannar ekki orsök.
   mannfjöldatölur ná ekki til þeirra og árið er ekki liðið.
 - `r nyl$fyrir` leyfi eru skráð veitt „fyrir“ tiltekinn dag og eru talin á
   þeim degi, svo eldri leyfi safnast á fá ár.
-- Færslur með ólæsilegu auðkenni teljast ekki með (sjá kafla 3.1); þær eru fáar
+- Færslur með ólæsilegu auðkenni teljast ekki með (sjá hluta [-@sec-gogn-leyfi]); þær eru fáar
   miðað við heildina.
 - Kanna þarf hvort lág gildi um 1992–1994 endurspegli skráningareyðu fremur en
   raunverulega fækkun leyfa (sjá [Aðferðir](04-adferdir.qmd)).

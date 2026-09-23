@@ -1,6 +1,10 @@
-# Gögn og uppruni
+# Gögn {#sec-vidauki-gogn}
 
-## Starfsheitaleyfi
+Þessi viðauki lýsir hverri gagnalind fyrir sig: hvaðan hún kemur, hvernig hún er
+sótt og lesin, hvaða reglum er beitt og hvaða fyrirvarar fylgja. Yfirlit er í
+[Gögn](02-gogn.qmd).
+
+## Starfsheitaleyfi {#sec-gogn-leyfi}
 
 Opinberar skrár Stjórnarráðsins yfir verkfræðinga [@stjr_verkfraedingar] og
 tæknifræðinga [@stjr_taeknifraedingar] eru aðalgagnagrunnur rannsóknarinnar.
@@ -142,7 +146,7 @@ if (!is.null(leyfi)) {
 }
 ```
 
-## Kyn eftir nafnahefð
+## Kyn eftir nafnahefð {#sec-gogn-kyn}
 
 ```{r kyn-gogn}
 #| include: false
@@ -235,7 +239,7 @@ leyfishafa, voru skoðuð handvirkt. Þau eru að mestu erlend nöfn af ólíkum
 reynt að giska á það, hvorki út frá nafnavenjum annarra landa né með mállíkani;
 þau eru látin standa sem óráðin.
 
-## Mannfjöldi og brautskráningar
+## Mannfjöldi og brautskráningar {#sec-gogn-hagstofa}
 
 ```{r hagstofa-gogn}
 #| include: false
@@ -820,17 +824,11 @@ Samfellt árin `r nem$fleiri_erlendis[1]`–`r nem$fleiri_erlendis[2]` voru flei
 endurspegla því að verulegu leyti nám erlendis, sem brautskráningargögn
 íslenskra skóla ná ekki til.
 
-## Skemman
+## Skemman {#sec-gogn-skemman}
 
 Skemmu-gögn koma úr `skemman-harvester`. Þetta verkefni endurtekur hvorki
 söfnun né þáttun þeirra. Tenging ritgerðarhöfunda við leyfisskrá verður
 aukagreining með skráðum styrkleikaflokkum samsvarana og næmnigreiningu.
-
-## Persónuvernd og birting
-
-Kennitölur eða önnur bein auðkenni verða ekki vistuð í þessu kóðasafni.
-Nafnabyggð áætlun um kynjasamsetningu verður aðeins birt sem samantekin
-tölfræði með flokknum óþekkt/óvíst og skýrum næmnibilum.
 
 ## Heimildir {.unnumbered}
 

@@ -1,0 +1,23 @@
+# Gögn
+
+Rannsóknin byggir á fjórum gagnalindum. Hverri þeirra er lýst í [Viðauka
+A](vidauki-a-gogn.qmd): hvaðan hún kemur, hvernig hún er sótt og lesin og hvaða
+fyrirvarar fylgja.
+
+| Gagnalind | Hvað hún geymir | Tímabil | Lýsing |
+|---|---|---|---|
+| Leyfisskrár Stjórnarráðsins | Hvern leyfishafa með fæðingarári og leyfisdegi | Frá 1962 (verkfræðingar) og 1965 (tæknifræðingar) | @sec-gogn-leyfi |
+| Kyn eftir nafnahefð | Áætlað kyn leyfishafa út frá nafni | Eins og leyfisskrárnar | @sec-gogn-kyn |
+| Hagstofa Íslands | Mannfjölda, brautskráningar, nemendur og afdrif nýnema | Mannfjöldi frá 1841, brautskráningar frá 1996 | @sec-gogn-hagstofa |
+| Skemman | Lokaritgerðir og höfunda þeirra; ekki enn lesin inn | – | @sec-gogn-skemman |
+
+Allar gagnalindir eru sóttar með skriftum í `scripts/` í litla SQLite-gagnagrunna
+í `data/`, sem eru utan útgáfustýringar. Hver sókn er varðveitt með
+söfnunartíma og SHA-256 af svarinu, svo breytingar á upprunanum eru
+rekjanlegar.
+
+## Persónuvernd og birting
+
+Kennitölur eða önnur bein auðkenni verða ekki vistuð í þessu kóðasafni.
+Nafnabyggð áætlun um kynjasamsetningu verður aðeins birt sem samantekin
+tölfræði með flokknum óþekkt/óvíst og skýrum næmnibilum.
