@@ -50,8 +50,8 @@ PLAUSIBLE_AGE = (18, 90)
 # (kennitala or old-style birth date) anywhere; the name is whatever precedes it.
 #   kennitala:  ddmmyy-nnnn, and the variants typed on the page: dd.mm.yy-nnnn, ddmmyy/nnnn,
 #               ddmmyy--nnnn, ddmmyy- nnnn, ddmmyy nnnn, ddmmyynnnn
-#   birth date: "f. dd.mm.yy", also "f. dd. mm.yy" and "f dd.mm.yy"
-#   bare date:  "dd.mm.yy" or "dd.mm.yyyy" with no "f."; the last two digits are the year
+#   birth date: the older form, "f. dd.mm.yy" -- "f." optional ("f", or none at all), spaces
+#               allowed, year of two or four digits; the last two digits are the birth year
 # Only the text before "Fær leyfi" is searched, so the licence date is never taken for one.
 ID = re.compile(
     r"(?<!\d)(\d{2}\.?\d{2}\.?\d{2}\s*(?:--?|/|\.)?\s*\d{4})(?!\d)"
@@ -113,15 +113,12 @@ def id_format(printed):
     kennitala          ddmmyy-nnnn, as it should be
     kennitala_variant  ten digits, another separator: dd.mm.yy-nnnn, ddmmyy/nnnn, ddmmyy--nnnn, ...
     kennitala_typo     five or seven digits before the separator, or a comma inside
-    birth_date         the older "f. dd.mm.yy"
-    birth_date_bare    a date with no "f.": "dd.mm.yy" or "dd.mm.yyyy"
+    birth_date         the older "f. dd.mm.yy", "f." optional, year of two or four digits
     """
     if printed is None:
         return "kennitala_typo"
     if printed.startswith("f."):
         return "birth_date"
-    if printed == "bare":
-        return "birth_date_bare"
     return "kennitala" if re.fullmatch(r"\d{6}-\d{4}", printed) else "kennitala_variant"
 
 
@@ -137,13 +134,13 @@ def parse_entry(text):
         return None
     head = text[:dm.start()]
     idm = ID.search(head)
-    if idm and idm.group(3):
-        # Bare date: keep the last two digits of the year, as "f. dd.mm.yy" does.
-        d, mo, y = idm.group(3).split(".")
-        ident, fmt = f"f. {d}.{mo}.{y[-2:]}", id_format("bare")
+    if idm and not idm.group(1):
+        # Birth date, with or without "f.": keep only the last two digits of the year.
+        d, mo, y = re.sub(r"\s", "", idm.group(2) or idm.group(3)).split(".")
+        ident, fmt = f"f. {d}.{mo}.{y[-2:]}", id_format("f.")
     elif idm:
-        fmt = id_format(idm.group(1) or "f.")
-        ident = idm.group(1) or "f. " + re.sub(r"\s", "", idm.group(2))
+        fmt = id_format(idm.group(1))
+        ident = idm.group(1)
         if idm.group(1):
             digits = re.sub(r"\D", "", idm.group(1))
             if not is_person_kennitala(digits):
@@ -235,10 +232,11 @@ def parse_page(page, lst, this_year):
         if year is None:
             no_date += 1
             continue
-        if m["fmt"] == "birth_date_bare" and iso:
-            # The licence date typed again where the birth date belongs is not a birth date.
-            d, mo = (int(x) for x in m["id"][3:].split(".")[:2])
-            if (d, mo) == (int(iso[8:10]), int(iso[5:7])):
+        if m["fmt"] == "birth_date" and iso:
+            # The licence date typed again where the birth date belongs is not a birth date. Day,
+            # month and year must all match: a birthday can share the licence's day and month.
+            d, mo, yy = m["id"][3:].split(".")
+            if (int(d), int(mo), yy) == (int(iso[8:10]), int(iso[5:7]), iso[2:4]):
                 unparsed += 1
                 continue
         born, corrected, implausible = birth_year(m["id"]), False, False
