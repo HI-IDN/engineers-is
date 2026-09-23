@@ -25,6 +25,12 @@ Reads the PX-Web API at px.hagstofa.is. Every run adds a snapshot, as fetch_lice
                programme in a given year, six years on: graduated in the same field, in
                another, from other study, dropped out, or still studying -- by field
                (ISCED-F 2013) and sex, as counts and percentages. Cohorts 2014 and 2017.
+  cohort_status  SKO04207 and SKO04208a: the same kind of cohort follow-up for all fields,
+               three and six years after entry, for the cohorts 2004, 2011, 2014 and 2017
+               (SKO04207, grp 'Alls') and by public and private institutions for 2014 and 2017
+               (SKO04208a, grp 'Opinberir skólar' / 'Einkaskólar'). Both time points are
+               shares of the whole cohort; 'Brottfallnir' is a status on the day -- neither
+               graduated nor enrolled -- not a running total, so it can fall.
   programme_group  config/programme_groups.csv: which programmes count as verkfræði and which
                as tæknifræði. Replaced whole each run; the CSV is the source.
   population_current, graduation_current (views)  the newest fetch of each table.
@@ -51,6 +57,10 @@ GRADUATION = "Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04205c.px"
 ENROLMENT = "Samfelag/skolamal/4_haskolastig/3_hseldra/SKO04103.px"
 STUDENT = "Samfelag/skolamal/4_haskolastig/0_hsNemendur/SKO04105b.px"
 COHORT = "Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04208b.px"
+COHORT_ALL = "Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04207.px"
+COHORT_SECTOR = "Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04208a.px"
+# Cohort tables' time codes: 'n' three years after entry, 'n+3' six.
+YEARS_AFTER = {"n": 3, "n+3": 6}
 PLACE = {"Alls": "total", "2": "iceland", "3": "abroad"}
 SEX = {"Total": "total", "Alls": "total", "1": "male", "2": "female", "3": "other"}
 # SKO04105b and SKO04208b code sex as '0' for both.
@@ -117,6 +127,17 @@ create table if not exists cohort (
     sex          text not null,
     value        real not null
 );
+create table if not exists cohort_status (
+    fetch_id     integer not null references fetch(fetch_id),
+    table_id     text not null,        -- 'SKO04207' or 'SKO04208a'
+    entry_year   integer not null,
+    years_after  integer not null,     -- 3 or 6
+    outcome      text not null,        -- e.g. 'Brautskráðir alls', 'Brottfallnir'
+    measure      text not null,        -- 'count' or 'percent'
+    grp          text not null,        -- 'Alls', or the type of institution in SKO04208a
+    sex          text not null,
+    value        real not null
+);
 drop table if exists programme_group;
 create table programme_group (
     programme_code  text primary key,
@@ -140,6 +161,12 @@ create view if not exists cohort_current as
 select * from cohort where fetch_id in (
     select fetch_id from fetch where table_id = 'SKO04208b' and run_at = (
         select max(run_at) from fetch where table_id = 'SKO04208b'));
+create view if not exists cohort_status_current as
+select c.* from cohort_status c
+join (select table_id, max(run_at) as run_at from fetch
+      where table_id in ('SKO04207', 'SKO04208a') group by 1) f using (table_id)
+where c.fetch_id in (select fetch_id from fetch x
+                     where x.table_id = f.table_id and x.run_at = f.run_at);
 create view if not exists graduation_current as
 select * from graduation where fetch_id in (
     select fetch_id from fetch where table_id = 'SKO04205c' and run_at = (
@@ -295,6 +322,32 @@ def fetch_cohort(con):
     return len(rows)
 
 
+def fetch_cohort_status(con, path, table_id):
+    """A cohort table with both time points: SKO04207 (all) or SKO04208a (by sector)."""
+    meta = metadata(path)
+    names = {v["code"]: dict(zip(v["values"], v["valueTexts"])) for v in meta["variables"]}
+    q, body, data = query(path, [])
+    cols = [c["code"] for c in data["columns"]]
+    rows = []
+    for d in data["data"]:
+        k = dict(zip(cols, d["key"]))
+        value = d["values"][0]
+        if value in MISSING:
+            continue
+        measure = names["Fjöldi/Hlutfall"][k["Fjöldi/Hlutfall"]]
+        grp = names["Rekstrarform"][k["Rekstrarform"]].strip() if "Rekstrarform" in k else "Alls"
+        rows.append((table_id, int(names["Innritunarár"][k["Innritunarár"]]),
+                     YEARS_AFTER[k["Tími"]], names["Nemendur"][k["Nemendur"]].strip(),
+                     "percent" if "%" in measure else "count", grp,
+                     SEX_STUDENT.get(k["Kyn"], SEX.get(k["Kyn"])), float(value)))
+    with con:
+        fid = record_fetch(con, table_id, " ".join(meta.get("title", table_id).split()), path,
+                           q, body, len(rows))
+        con.executemany("insert into cohort_status values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        [(fid, *r) for r in rows])
+    return len(rows)
+
+
 def load_programme_groups(con):
     with PROGRAMME_GROUPS.open(encoding="utf-8") as f:
         rows = [(r["programme_code"], r["programme"], r["programme_group"], r["note"] or None)
@@ -317,6 +370,9 @@ def main():
     print(f"enrolment: {fetch_enrolment(con)} rows", file=sys.stderr)
     print(f"student: {fetch_student(con)} rows", file=sys.stderr)
     print(f"cohort: {fetch_cohort(con)} rows", file=sys.stderr)
+    for path, tid in [(COHORT_ALL, "SKO04207"), (COHORT_SECTOR, "SKO04208a")]:
+        print(f"cohort_status {tid}: {fetch_cohort_status(con, path, tid)} rows",
+              file=sys.stderr)
     print(f"programme_group: {load_programme_groups(con)} programmes", file=sys.stderr)
     con.close()
     print(f"written to {args.db}", file=sys.stderr)

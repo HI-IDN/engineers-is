@@ -314,6 +314,9 @@ if (file.exists(hdb)) {
       select entry_year, outcome, measure, field, value from cohort_current
       where sex = 'total'
         and field in ('Alls', 'Verkfræði, framleiðsla og mannvirkjagerð')"),
+    stada = if (DBI::dbExistsTable(con, "cohort_status")) DBI::dbGetQuery(con, "
+      select table_id, grp, entry_year, years_after, outcome, value
+      from cohort_status_current where measure = 'percent' and sex = 'total'"),
     nemar = if (DBI::dbExistsTable(con, "enrolment")) DBI::dbGetQuery(con, "
       select year, place, n from enrolment_current
       where field_code = '7' and sex = 'total' and place in ('iceland', 'abroad')
@@ -360,6 +363,8 @@ með fyrirspurn skilar gögnunum:
 | SKO04103 | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/3_hseldra/SKO04103.px> |
 | SKO04105b | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/0_hsNemendur/SKO04105b.px> |
 | SKO04208b | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04208b.px> |
+| SKO04207 | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04207.px> |
+| SKO04208a | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04208a.px> |
 
 Mannfjöldataflan, eldri nemendataflan og árgangataflan eru sóttar í heild í
 einu kalli. Brautskráningataflan og nemendataflan eftir námsbraut eru of stórar
@@ -500,7 +505,7 @@ if (!is.null(hag) && !is.null(hag$svid)) {
 ```
 
 Svið Hagstofunnar falla ekki að skipulagi háskólanna. Verkfræði- og
-náttúruvísindasvið Háskóla Íslands svarar að mestu til sviða 4 og 5, auk hluta
+náttúruvísindasvið Háskóla Íslands [@hi_fraedasvid] svarar að mestu til sviða 4 og 5, auk hluta
 af sviðum 6 og 8 (t.d. umhverfis- og auðlindafræði og ferðamálafræði).
 Sambærileg eining í Háskólanum í Reykjavík er Tæknisvið, með Verkfræðideild,
 Iðn- og tæknifræðideild og Tölvunarfræðideild [@hr_svid_deildir]. Það svarar
@@ -643,11 +648,44 @@ if (!is.null(hag) && !is.null(hag$flaedi)) flaedi_plot("meistara")
 :::
 
 Árlega röð um brottfall er ekki að finna. Hagstofan rekur hins vegar árganga
-nýnema í þriggja ára bakkalárnámi sex ár fram og birtir afdrif þeirra eftir
-námssviði [@hagstofa_sko04208b]. Sviðin fylgja nýrri flokkun, ISCED-F 2013, og
+nýnema í þriggja ára bakkalárnámi og birtir stöðu þeirra þremur og sex árum eftir
+innritun [@hagstofa_sko04207]. Báðir tímapunktar eru hlutföll af öllum
+árganginum. *Brottfallinn* merkir að nemandinn hafi hvorki lokið prófi né sé
+skráður í nám á þeim degi; það er staða en ekki uppsöfnuð tala, og getur því
+lækkað milli tímapunkta þegar nemendur sem höfðu hætt snúa aftur og ljúka námi.
+
+```{r argangar-stada}
+#| echo: false
+#| fig-cap: >
+#|   Staða nýnema í þriggja ára bakkalárnámi þremur og sex árum eftir innritun,
+#|   eftir innritunarári, sem hlutfall af öllum árganginum. Öll námssvið.
+if (!is.null(hag) && !is.null(hag$stada)) {
+  d <- hag$stada[hag$stada$table_id == "SKO04207" &
+                 hag$stada$outcome %in% c("Brautskráðir alls", "Enn í námi", "Brottfallnir"), ]
+  d$x <- paste0(d$entry_year, ", eftir ", d$years_after, " ár")
+  d <- d[order(d$entry_year, d$years_after), ]
+  flokkar <- c("Brautskráðir alls" = "Lokið", "Enn í námi" = "Enn í námi",
+               "Brottfallnir" = "Hætt námi")
+  litir <- c("Lokið" = "#10099F", "Enn í námi" = "#8C8FD9", "Hætt námi" = "#d61f69")
+  p <- plotly::plot_ly()
+  for (o in names(flokkar)) {
+    x <- d[d$outcome == o, ]
+    p <- plotly::add_trace(
+      p, x = factor(x$x, levels = unique(d$x)), y = x$value, type = "bar",
+      name = flokkar[[o]], marker = list(color = litir[[flokkar[[o]]]]),
+      hovertemplate = paste0("%{x}: %{y:.1f}%<extra>", flokkar[[o]], "</extra>"))
+  }
+  plotly::layout(p, barmode = "stack", xaxis = list(title = ""),
+                 yaxis = list(title = "% af árganginum", range = c(0, 100)),
+                 legend = list(orientation = "h", y = -0.25))
+}
+```
+
+Eftir námssviði eru aðeins árgangarnir 2014 og 2017 raktir, og aðeins sex ár
+fram [@hagstofa_sko04208b]. Sviðin fylgja nýrri flokkun, ISCED-F 2013, og
 sviðið *Verkfræði, framleiðsla og mannvirkjagerð* nær yfir tæknifræði,
-byggingar og framleiðslugreinar auk verkfræði. Meistaranám er ekki rakið með
-þessum hætti.
+byggingar og framleiðslugreinar auk verkfræði; verkfræði og tæknifræði verða
+því ekki greindar í sundur. Meistaranám er ekki rakið með þessum hætti.
 
 ```{r argangar}
 #| echo: false
@@ -682,6 +720,45 @@ if (!is.null(hag) && !is.null(hag$argangar)) {
                                 "innritun, eftir innritunarári."))
 }
 ```
+
+Árgangarnir eru ekki greindir eftir skóla, svo ekki er hægt að bera saman
+verkfræði í HÍ og HR. Næst því kemst skipting í opinbera skóla og einkaskóla
+[@hagstofa_sko04208a], en hún er ekki eftir námssviði. Opinberir skólar eru HÍ,
+Háskólinn á Akureyri, Landbúnaðarháskólinn og Hólar; einkaskólar eru HR,
+Háskólinn á Bifröst og Listaháskólinn.
+
+```{r argangar-rekstur}
+#| echo: false
+if (!is.null(hag) && !is.null(hag$stada)) {
+  d <- hag$stada[hag$stada$table_id == "SKO04208a" & hag$stada$grp != "Alls", ]
+  radir <- list("Lokið eftir 3 ár" = c(3, "Brautskráðir úr háskólanámi"),
+                "Lokið eftir 6 ár" = c(6, "Brautskráðir úr háskólanámi"),
+                "Hætt námi eftir 6 ár" = c(6, "Brottfallnir"),
+                "Enn í námi eftir 6 ár" = c(6, "Enn í námi"))
+  dalkar <- expand.grid(ar = c(2014, 2017), grp = c("Opinberir skólar", "Einkaskólar"),
+                        stringsAsFactors = FALSE)
+  t <- do.call(rbind, lapply(radir, function(r) sapply(seq_len(nrow(dalkar)), function(i) {
+    v <- d$value[d$grp == dalkar$grp[i] & d$entry_year == dalkar$ar[i] &
+                 d$years_after == as.numeric(r[1]) & d$outcome == r[2]]
+    if (length(v)) sub(".", ",", sprintf("%.1f%%", v), fixed = TRUE) else "–"
+  })))
+  t <- data.frame(names(radir), t, check.names = FALSE)
+  names(t) <- c("", paste0(dalkar$grp, ", ", dalkar$ar))
+  knitr::kable(t, align = "lrrrr", row.names = FALSE,
+               caption = paste0("Staða nýnema í þriggja ára bakkalárnámi eftir rekstrarformi ",
+                                "skóla og innritunarári."))
+}
+```
+
+Tölurnar eru unnar eftir skilgreiningum OECD og því sambærilegar við önnur
+aðildarríki. Samkvæmt *Education at a Glance 2025* ljúka 44% nýnema í
+bakkalárnámi á Íslandi prófi á tilætluðum tíma, 62% ári síðar og 74% þremur
+árum síðar, en meðaltal OECD er 43%, 59% og 70% [@oecd_eag2025_is]. Ísland er
+því rétt yfir meðaltali í námslokum, en fleiri hætta eftir fyrsta árið: 18% á
+móti 13%. Í raunvísindum, tækni, verkfræði og stærðfræði (STEM) hafa 62% lokið
+prófi á sama sviði innan þriggja ára frá áætluðum námslokum, á móti 58% að
+meðaltali í OECD. Tölur einstakra landa, t.d. Norðurlandanna, eru í töflu B5.1
+í *Education at a Glance* og hafa ekki verið sóttar hér.
 
 ### Fyrir 1996: nemendur heima og erlendis {#sec-fyrir-1996}
 
@@ -754,3 +831,8 @@ aukagreining með skráðum styrkleikaflokkum samsvarana og næmnigreiningu.
 Kennitölur eða önnur bein auðkenni verða ekki vistuð í þessu kóðasafni.
 Nafnabyggð áætlun um kynjasamsetningu verður aðeins birt sem samantekin
 tölfræði með flokknum óþekkt/óvíst og skýrum næmnibilum.
+
+## Heimildir {.unnumbered}
+
+::: {#refs}
+:::
