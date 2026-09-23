@@ -80,7 +80,7 @@ Hinar kennitölurnar eru lesnar eftir tveimur reglum:
   sér, sem aldarreglan hér á eftir leiðréttir ef þarf.
 
 Gefi aldarstafurinn ótrúlegan aldur við leyfisveitingu, yngri en 18 ára eða
-eldri en 90, er hann innsláttarvilla. Þá er valin sú öld sem gefur trúverðugan
+eldri en 90, er hann líklega innsláttarvilla. Þá er valin sú öld sem gefur trúverðugan
 aldur, ef aðeins ein gerir það; fæðingarár í framtíðinni, t.d. 2070 með leyfi
 2007, verður þannig 1970. Þetta á við `r leyfi$alls$old` færslur
 (`century_corrected`). Gangi engin öld upp er fæðingarárið látið standa en
