@@ -82,6 +82,8 @@ create table if not exists fetch (
     n_entries     integer not null,        -- rows written to licence
     n_unparsed    integer not null,        -- "Fær leyfi" paragraphs that could not be read
     n_no_date     integer not null,        -- identified, but no licence date could be read
+    n_not_person  integer not null,        -- of n_unparsed: first two digits above 31, or the
+                                           -- month outside 1-12 -- not a person's kennitala
     page_redacted blob not null            -- gzip of the page with kennitölur replaced by <kt>
 );
 create table if not exists licence (
@@ -128,6 +130,10 @@ def is_person_kennitala(digits):
     return 1 <= int(digits[:2]) <= 31 and 1 <= int(digits[2:4]) <= 12
 
 
+# parse_entry()'s answer for an entry whose kennitala is not a person's, so it can be counted.
+NOT_PERSON = "not_person"
+
+
 def parse_entry(text):
     dm = DATE.search(text)
     if not dm:
@@ -144,7 +150,7 @@ def parse_entry(text):
         if idm.group(1):
             digits = re.sub(r"\D", "", idm.group(1))
             if not is_person_kennitala(digits):
-                return None
+                return NOT_PERSON
             ident = digits[:6] + "-" + digits[6:]
     else:
         idm = ID_TYPO.search(head)
@@ -219,13 +225,15 @@ def fetch(url):
 
 def parse_page(page, lst, this_year):
     """Entries of one page, plus counts of the paragraphs that were skipped."""
-    rows, unparsed, no_date = [], 0, 0
+    rows, unparsed, no_date, not_person = [], 0, 0, 0
     for p in re.findall(r"<p>(.*?)</p>", page, re.S):
         text = html.unescape(re.sub(r"<[^>]+>", "", p)).replace("\xa0", " ").strip()
         if "Fær leyfi" not in text:
             continue
         m = parse_entry(re.sub(r"\s+", " ", text))
-        if not m:
+        if m == NOT_PERSON:
+            not_person += 1
+        if not m or m == NOT_PERSON:
             unparsed += 1
             continue
         year, iso, upper, not_collected = licence_date(m["date"], this_year)
@@ -262,7 +270,7 @@ def parse_page(page, lst, this_year):
         if key not in seen:
             seen.add(key)
             unique.append(r)
-    return unique, unparsed, no_date
+    return unique, unparsed, no_date, not_person
 
 
 def main():
@@ -277,14 +285,15 @@ def main():
         fetched_at = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
         status, raw = fetch(url)
         page = raw.decode("utf-8", "replace")
-        rows, unparsed, no_date = parse_page(page, lst, fetched_at.year)
+        rows, unparsed, no_date, not_person = parse_page(page, lst, fetched_at.year)
         redacted = gzip.compress(ID_SHAPED.sub("<kt>", page).encode("utf-8"))
         with con:
             cur = con.execute(
                 "insert into fetch (list, url, fetched_at, http_status, sha256, n_entries, "
-                "n_unparsed, n_no_date, page_redacted) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "n_unparsed, n_no_date, n_not_person, page_redacted) "
+                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (lst, url, fetched_at.isoformat(), status, hashlib.sha256(raw).hexdigest(),
-                 len(rows), unparsed, no_date, redacted))
+                 len(rows), unparsed, no_date, not_person, redacted))
             con.executemany(
                 "insert into licence (fetch_id, list, name, birth_year, id_format, century_corrected, "
                 "implausible_age, licence_year, licence_date, date_is_upper_bound, not_collected, "

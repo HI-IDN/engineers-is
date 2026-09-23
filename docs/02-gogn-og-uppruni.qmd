@@ -30,7 +30,7 @@ if (file.exists(db)) {
   con <- DBI::dbConnect(RSQLite::SQLite(), db, flags = RSQLite::SQLITE_RO)
   leyfi <- list(
     sokn = DBI::dbGetQuery(con, "
-      select f.list, f.fetched_at, f.n_entries, f.n_unparsed, f.n_no_date,
+      select f.list, f.fetched_at, f.n_entries, f.n_unparsed, f.n_no_date, f.n_not_person,
              min(l.licence_year) as fyrst, max(l.licence_year) as sidast
       from fetch f join licence l using (fetch_id)
       where f.fetch_id in (select max(fetch_id) from fetch group by list)
@@ -46,7 +46,13 @@ if (file.exists(db)) {
   )
   DBI::dbDisconnect(con)
   leyfi$olaesilegt <- sum(leyfi$sokn$n_unparsed)
+  leyfi$ekki_einstaklingur <- sum(leyfi$sokn$n_not_person)
+  leyfi$sokn$n_not_person <- NULL  # counted in prose, not a table column
   leyfi$kt <- function(fmt) sum(leyfi$snid$n[leyfi$snid$id_format %in% fmt])
+}
+# "1 færslu" but "2 færslur": the count with the right form of the noun (accusative).
+faerslur <- function(n) {
+  if (n == 1) "eina færslu" else paste(n, "færslur")
 }
 ```
 
@@ -88,7 +94,8 @@ færslan merkt sem líkleg innsláttarvilla (`implausible_age`,
 `r leyfi$alls$otrulegt` færslur); leyfið telst með.
 
 Tveir fyrstu tölustafir kennitölu eru fæðingardagur og mega því ekki vera
-hærri en 31. Byrji kennitala á hærra gildi telst færslan ólæsileg.
+hærri en 31. Byrji kennitala á hærra gildi telst færslan ólæsileg; það á við
+`r faerslur(leyfi$ekki_einstaklingur)`.
 
 `r leyfi$olaesilegt` færslur hafa ekkert læsilegt auðkenni og eru ekki taldar
 með. Flestar eru eldri tæknifræðingar sem skráðir eru með nafni og leyfisdegi
