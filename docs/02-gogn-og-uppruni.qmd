@@ -269,24 +269,21 @@ if (file.exists(hdb)) {
       left join programme_group p using (programme_code)
       where g.sex = 'total'
       group by 1, 2"),
-    svid = if (DBI::dbExistsTable(con, "programme_field")) DBI::dbGetQuery(con, "
-      select g.year, f.svid, p.programme_group, sum(g.n) as n
+    # Hagstofa's own fields: the programme code follows ÍSNÁM2008 (ISCED 97), so its first
+    # digit is the broad field (almennt svið) and its first two the narrow field.
+    svid = DBI::dbGetQuery(con, "
+      select g.year, substr(g.programme_code, 1, 1) as svid, p.programme_group, sum(g.n) as n
       from graduation_current g
-      join programme_field f using (programme_code)
       left join programme_group p using (programme_code)
-      where g.sex = 'total' and g.degree_code = 'Alls'
+      where g.sex = 'total' and g.degree_code = 'Alls' and g.programme_code <> 'Alls'
       group by 1, 2, 3"),
-    # Field against field. Business is every business and management programme (ISCED 34x)
-    # except tæknifræði/iðnfræði (345d, 345g) and school leadership (345h); law is 38x.
+    # Field against field: Hagstofa's narrow fields as they are, and verkfræði and
+    # tæknifræði by our own classification of programmes.
     greinar = DBI::dbGetQuery(con, "
       select g.year,
              case when p.programme_group = 'verkfraedi' then 'Verkfræði'
                   when p.programme_group = 'taeknifraedi' then 'Tæknifræði'
-                  when g.programme_code like '34%'
-                       and g.programme_code not in ('345d', '345g', '345h')
-                    then 'Viðskipta- og stjórnunarnám'
-                  when g.programme_code like '38%' then 'Lögfræði'
-                  when g.programme_code = '481c' then 'Tölvunarfræði'
+                  else substr(g.programme_code, 1, 2)
              end as grein,
              sum(g.n) as n
       from graduation_current g
@@ -377,6 +374,19 @@ if (!is.null(hag)) {
 }
 ```
 
+```{r hagstofa-utan}
+#| include: false
+utan <- function(kodi, dalkur) if (is.null(hag)) NA else
+  hag$utan[[dalkur]][hag$utan$programme_code == kodi]
+```
+
+Nokkrar brautir utan flokkunarinnar gætu geymt verkfræðipróf og eru skráðar hér
+svo ákvörðunin sé sýnileg: *Orkufræði* (`r utan("522j", "ms")` meistaragráður),
+sem gæti falið í sér meistaranám í orkuverkfræði; *Umhverfisfræði*
+(`r utan("422a", "ms")` meistaragráður), sem er blanda ólíkra námsleiða; og
+*Tölvunarfræði* (`r utan("481c", "bs")` fyrstu gráður), sem er ekki verkfræði í
+skilningi starfsheitalaganna. Þær eru viljandi ekki teknar með.
+
 Taflan geymir allar námsbrautir, ekki aðeins verkfræði og tæknifræði, ásamt
 heildartölu Hagstofunnar. Því má segja hve stór hluti allra brautskráninga
 verkfræði og tæknifræði eru:
@@ -405,12 +415,17 @@ if (!is.null(hag)) {
 }
 ```
 
-Til samanburðar eru allar námsbrautir flokkaðar á fræðasvið Háskóla Íslands í
-`config/programme_fields.csv`. Grunnurinn er námssvið Hagstofunnar, en þar sem
-deildaskipting HÍ er önnur ræður hún, t.d. telst sálfræði til
-Heilbrigðisvísindasviðs og félagsráðgjöf til Félagsvísindasviðs. Tæknifræði telst
-til Verkfræði- og náttúruvísindasviðs. Námsbrautir annarra háskóla fylgja því
-sviði sem næst stendur; listnám telst þannig til Hugvísindasviðs.
+Engar brautskráningar í verkfræði eða tæknifræði eru skráðar sem próf á
+háskólastigi án gráðu (ISCED 5B) eða viðbótarnám eftir fyrstu gráðu; þær eru
+með í heildinni en ekki í töflunni.
+
+Til samanburðar má flokka allar brautskráningar eftir almennum sviðum
+Hagstofunnar. Kóði námsbrautar fylgir ÍSNÁM2008, íslenskri útgáfu ISCED 97:
+fyrsti tölustafurinn er almennt svið og tveir fyrstu afmarkað svið. Verkfræði og
+tæknifræði eru sýndar sér innan sviðs 5, *Verkfræði, framleiðsla og
+mannvirkjagerð*, sem einnig nær til arkitektúrs, skipulags og matvælafræði.
+Þrjár brautir í flokkun okkar liggja utan þess sviðs hjá Hagstofunni:
+Lífverkfræði og Reikniverkfræði (svið 4) og Iðnaðartæknifræði (svið 3).
 
 ```{r hagstofa-svid}
 #| echo: false
@@ -418,13 +433,16 @@ if (!is.null(hag) && !is.null(hag$svid)) {
   d <- hag$svid
   bil <- c(1995, 2000, 2010, 2020, 2025)
   d$timabil <- cut(d$year, bil, labels = paste0(bil[-5] + 1, "–", bil[-1]))
-  heiti <- c(FVS = "Félagsvísindasvið", HVS = "Heilbrigðisvísindasvið", HUG = "Hugvísindasvið",
-             MVS = "Menntavísindasvið", VON = "Verkfræði- og náttúruvísindasvið",
-             HOL = "Háskóli Íslands á Hólum")
+  heiti <- c("1" = "1 Menntun", "2" = "2 Hugvísindi og listir",
+             "3" = "3 Félagsvísindi, viðskipti og lögfræði",
+             "4" = "4 Raunvísindi, stærðfræði og tölvunarfræði",
+             "5" = "5 Verkfræði, framleiðsla og mannvirkjagerð",
+             "6" = "6 Landbúnaður og dýralækningar", "7" = "7 Heilbrigði og velferð",
+             "8" = "8 Þjónusta")
   radir <- list()
   for (k in names(heiti)) {
     radir[[heiti[[k]]]] <- d$svid == k
-    if (k == "VON") {
+    if (k == "5") {
       radir[["þar af verkfræði"]] <- d$svid == k & d$programme_group %in% "verkfraedi"
       radir[["þar af tæknifræði"]] <- d$svid == k & d$programme_group %in% "taeknifraedi"
     }
@@ -440,21 +458,35 @@ if (!is.null(hag) && !is.null(hag$svid)) {
   names(t)[-1] <- c(levels(d$timabil), paste0("Alls ", bil[1] + 1, "–", bil[5]))
   t$Svið <- ifelse(startsWith(t$Svið, "þar af"), paste0("*", t$Svið, "*"), t$Svið)
   knitr::kable(t, align = "lrrrrr",
-               caption = paste0("Hlutfall fræðasviða af öllum brautskráningum eftir ",
-                                "tímabilum, og fjöldi brautskráninga alls."))
+               caption = paste0("Hlutfall almennra sviða Hagstofunnar af öllum brautskráningum ",
+                                "eftir tímabilum, og fjöldi brautskráninga alls."))
 }
 ```
 
-Svið HÍ eru misstór og geyma ólíkar greinar. Til að bera verkfræði saman við
-aðrar stórar námsgreinar er hver grein tekin í heild, með öllum námsbrautum
-sínum: viðskipta- og stjórnunarnám er allt nám í viðskiptum og stjórnun (ISCED
-34), t.d. viðskiptafræði, viðskiptastjórnun, markaðsfræði, fjármál og
-endurskoðun, en án tæknifræði, iðnfræði og skólastjórnunar.
+Fræðasvið Háskóla Íslands falla ekki nákvæmlega að þessum sviðum.
+Verkfræði- og náttúruvísindasvið svarar að mestu til sviða 4 og 5, auk hluta af
+sviði 6 og sviði 8 (t.d. umhverfis- og auðlindafræði og ferðamálafræði).
+Menntavísindasvið svarar til sviðs 1 og Hugvísindasvið til sviðs 2.
+Félagsvísindasvið svarar til sviðs 3, að sálfræði frátalinni, auk
+félagsráðgjafar úr sviði 7. Heilbrigðisvísindasvið svarar til sviðs 7, auk
+sálfræði og matvæla- og næringarfræði.
+
+Svið Hagstofunnar eru misstór og geyma ólíkar greinar. Til að bera verkfræði
+saman við aðrar stórar greinar eru hér notuð afmörkuð svið Hagstofunnar
+óbreytt, t.d. *viðskipti og stjórnun* (34), sem nær yfir viðskiptafræði,
+viðskiptastjórnun, markaðsfræði, fjármál og endurskoðun. Verkfræði og
+tæknifræði eru eftir flokkun okkar og ekki taldar með í sínum sviðum
+Hagstofunnar.
 
 ```{r hagstofa-greinar}
 #| echo: false
 if (!is.null(hag)) {
-  d <- hag$greinar[!is.na(hag$greinar$grein), ]
+  afmorkud <- c("34" = "Viðskipti og stjórnun (34)", "38" = "Lögfræði (38)",
+                "48" = "Tölvunarfræði (48)", "72" = "Heilbrigði (72)",
+                "14" = "Kennaramenntun og menntunarfræði (14)")
+  d <- hag$greinar
+  d$grein <- ifelse(d$grein %in% names(afmorkud), afmorkud[d$grein], d$grein)
+  d <- d[d$grein %in% c(afmorkud, "Verkfræði", "Tæknifræði"), ]
   bil <- c(1995, 2000, 2010, 2020, 2025)
   d$timabil <- cut(d$year, bil, labels = paste0(bil[-5] + 1, "–", bil[-1]))
   t <- as.data.frame.matrix(xtabs(n ~ grein + timabil, d))
@@ -462,13 +494,10 @@ if (!is.null(hag)) {
   t <- t[order(-t$Alls), ]
   names(t)[ncol(t)] <- paste0("Alls ", bil[1] + 1, "–", bil[5])
   knitr::kable(cbind(Námsgrein = rownames(t), t), row.names = FALSE, align = "lrrrrr",
-               caption = "Brautskráningar í verkfræði og nokkrum öðrum stórum námsgreinum.")
+               caption = paste0("Brautskráningar í verkfræði og tæknifræði og nokkrum stórum ",
+                                "afmörkuðum sviðum Hagstofunnar."))
 }
 ```
-
-Engar brautskráningar í verkfræði eða tæknifræði eru skráðar sem próf á
-háskólastigi án gráðu (ISCED 5B) eða viðbótarnám eftir fyrstu gráðu; þær eru
-með í heildinni en ekki í töflunni.
 
 ### Fyrir 1996: nemendur heima og erlendis {#sec-fyrir-1996}
 
@@ -483,21 +512,21 @@ tæmandi, svo röðin er sýnd frá 1977.
 
 ```{r hagstofa-nemar}
 #| echo: false
-#| fig-height: 4
 #| fig-cap: >
 #|   Nemendur í tæknigreinum og verkfræði á háskólastigi, á Íslandi og erlendis,
-#|   1977–2006. Fjöldi skráðra nemenda, ekki brautskráninga.
+#|   1977–2006. Fjöldi skráðra nemenda, ekki brautskráninga. Færðu bendilinn yfir
+#|   línurnar til að sjá gildi hvers árs.
 if (!is.null(hag) && !is.null(hag$nemar)) {
-  library(ggplot2)
   d <- hag$nemar
   d$place <- factor(c(iceland = "Á Íslandi", abroad = "Erlendis")[d$place],
                     levels = c("Á Íslandi", "Erlendis"))
-  ggplot(d, aes(year, n, colour = place)) +
-    geom_line(linewidth = 1) +
-    scale_colour_manual(values = c("Á Íslandi" = "#10099F", "Erlendis" = "#d61f69")) +
-    labs(x = NULL, y = "Nemendur", colour = NULL) +
-    theme_minimal(base_size = 13) +
-    theme(legend.position = "bottom", panel.grid.minor = element_blank())
+  plotly::plot_ly(d, x = ~year, y = ~n, color = ~place, type = "scatter",
+                  mode = "lines+markers",
+                  colors = c("Á Íslandi" = "#10099F", "Erlendis" = "#d61f69"),
+                  hovertemplate = "%{x}: %{y} nemendur<extra>%{fullData.name}</extra>") |>
+    plotly::layout(xaxis = list(title = ""),
+                   yaxis = list(title = "Nemendur", rangemode = "tozero"),
+                   legend = list(orientation = "h", y = -0.15))
 }
 ```
 
@@ -522,19 +551,6 @@ Samfellt árin `r nem$fleiri_erlendis[1]`–`r nem$fleiri_erlendis[2]` voru flei
 `r nem$ar_erlendis` af þeim `r nem$ar_alls` árum sem röðin nær yfir. Leyfi þess tíma
 endurspegla því að verulegu leyti nám erlendis, sem brautskráningargögn
 íslenskra skóla ná ekki til.
-
-```{r hagstofa-utan}
-#| include: false
-utan <- function(kodi, dalkur) if (is.null(hag)) NA else
-  hag$utan[[dalkur]][hag$utan$programme_code == kodi]
-```
-
-Nokkrar brautir utan flokkunarinnar gætu geymt verkfræðipróf og eru skráðar hér
-svo ákvörðunin sé sýnileg: *Orkufræði* (`r utan("522j", "ms")` meistaragráður),
-sem gæti falið í sér meistaranám í orkuverkfræði; *Umhverfisfræði*
-(`r utan("422a", "ms")` meistaragráður), sem er blanda ólíkra námsleiða; og
-*Tölvunarfræði* (`r utan("481c", "bs")` fyrstu gráður), sem er ekki verkfræði í
-skilningi starfsheitalaganna. Þær eru viljandi ekki teknar með.
 
 ## Skemman
 
