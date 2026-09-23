@@ -1,0 +1,27 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Local data and generated outputs
+data/
+outputs/
+*.duckdb
+*.db
+
+# Quarto build products. Track _freeze when data-dependent output is needed.
+site/
+.quarto/
+*_files/
+*.quarto_ipynb
+*.knit.md
+*.rmarkdown
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
