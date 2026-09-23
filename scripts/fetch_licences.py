@@ -43,6 +43,8 @@ UA = "Mozilla/5.0 (research; engineers-is; contact via repo owner)"
 MONTHS = {"janúar": 1, "febrúar": 2, "mars": 3, "apríl": 4, "maí": 5, "júní": 6, "júlí": 7,
           "ágúst": 8, "september": 9, "október": 10, "nóvember": 11, "desember": 12}
 FIRST_LICENCE_YEAR = 1937
+# Age at licensing that a birth year must give; outside it the century digit is a typo.
+PLAUSIBLE_AGE = (18, 90)
 
 # The source is hand-typed: separators, "kt.", "f." and title spellings vary. Find the id
 # (kennitala or old-style birth date) anywhere; the name is whatever precedes it.
@@ -83,7 +85,8 @@ create table if not exists licence (
     list          text not null,
     name          text not null,
     birth_year    integer not null,
-    birth_year_from_typo integer not null, -- 1: read from a mistyped kennitala (see ID_TYPO)
+    birth_year_from_typo integer not null, -- 1: read from a mistyped kennitala (ID_TYPO), or
+                                           --    its century corrected (PLAUSIBLE_AGE)
     licence_year  integer not null,
     licence_date  text,                    -- ISO date, null when the source gives only a year
     date_is_upper_bound integer not null,  -- 1: "fyrir dd.mm.yy", granted before that date
@@ -183,14 +186,24 @@ def parse_page(page, lst, this_year):
         if "Fær leyfi" not in text:
             continue
         m = parse_entry(re.sub(r"\s+", " ", text))
-        if not m or not 1880 <= birth_year(m["id"]) <= this_year - 15:
+        if not m:
             unparsed += 1
             continue
         year, iso, upper, not_collected = licence_date(m["date"], this_year)
         if year is None:
             no_date += 1
             continue
-        rows.append((lst, m["name"].strip(), birth_year(m["id"]), int(m["typo"]), year, iso, int(upper),
+        born, typo = birth_year(m["id"]), m["typo"]
+        if not PLAUSIBLE_AGE[0] <= year - born <= PLAUSIBLE_AGE[1]:
+            # A mistyped century digit (e.g. 0 for 9: born "2070", licensed 2007). Take the
+            # century that gives a plausible age at licensing, if exactly one does. Otherwise
+            # the typo is elsewhere (licence date, birth year digits); the licence still counts,
+            # with the birth year as printed.
+            fits = [c + born % 100 for c in (1800, 1900, 2000)
+                    if PLAUSIBLE_AGE[0] <= year - (c + born % 100) <= PLAUSIBLE_AGE[1]]
+            if len(fits) == 1:
+                born, typo = fits[0], True
+        rows.append((lst, m["name"].strip(), born, int(typo), year, iso, int(upper),
                      int(not_collected), ID_SHAPED.sub("<kt>", m["date"].strip())))
     # The source prints a few people twice, once with the date spelled out and once numeric:
     # the same grant, so it counts once.

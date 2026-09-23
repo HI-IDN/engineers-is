@@ -22,7 +22,10 @@ eru rekjanlegar með því að bera saman tvær sóknir:
 Kennitalan er aðeins lesin í minni til að finna fæðingarár og er hvergi vistuð. Sé kennitalan
 rangt slegin inn, t.d. með fimm eða sjö tölustöfum á undan bandstrikinu, eru
 tveir síðustu tölustafirnir á undan því lesnir sem fæðingarár og síðasti
-tölustafurinn sem öld. Slíkar færslur eru merktar `birth_year_from_typo`.
+tölustafurinn sem öld. Gefi aldarstafurinn ótrúlegan aldur við leyfisveitingu
+(yngri en 18 ára eða eldri en 90), t.d. fæðingarár 2070 og leyfi 2007, er valin
+sú öld sem gefur trúverðugan aldur, ef aðeins ein gerir það. Slíkar færslur eru
+merktar `birth_year_from_typo`.
 Afrit síðunnar er geymt með kennitölum afmáðum; SHA-256 er reiknað af
 upprunalegu síðunni svo óbreytt síða þekkist án þess að auðkennin séu geymd.
 Leyfisdagur er fyrsta dagsetningin á eftir „Fær leyfi“. Á eftir henni koma
