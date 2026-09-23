@@ -2,17 +2,17 @@
 
     python scripts/estimate_gender.py
 
-Uses kyngreinir (https://github.com/HI-IDN/kyngreinir): -dóttir, then the given names in
+Uses icename-gender (https://github.com/HI-IDN/icename-gender): -dóttir, then the given names in
 Þjóðskrá's name register, then -son. Replaces the table `name_gender` whole, one row per
-distinct name in `licence`, so a re-run after a new fetch or a new kyngreinir is a re-run.
+distinct name in `licence`, so a re-run after a new fetch or a new icename-gender is a re-run.
 
   name_gender   name, gender ('female' | 'male' | null), rule ('dottir' | 'given_name' | 'son'),
                 the given name that decided and its position among the given names (1 = the
-                first; kyngreinir passes over unisex, middle and unregistered names), the
+                first; icename-gender passes over unisex, middle and unregistered names), the
                 agreement of the evidence ('unanimous' | 'conflicting' | 'none') and, when it
                 conflicts, how ('given_names': two given names disagree; 'suffix': -dóttir/-son
                 disagrees with the estimate; 'both'), how many parts say female and male, and
-                the kyngreinir version that made the estimate.
+                the icename-gender version that made the estimate.
   licence_gender (view)  licence_current with its name's estimate.
 
 This is an estimate from naming convention only, not anyone's sex or gender, and is reported in
@@ -23,8 +23,8 @@ import sqlite3
 import sys
 from pathlib import Path
 
-import kyngreinir
-from kyngreinir.classify import tokens
+import icename_gender
+from icename_gender.classify import tokens
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_DB = ROOT / "data" / "licences.sqlite"
@@ -41,7 +41,7 @@ create table name_gender (
     conflict    text,
     n_female    integer not null,
     n_male      integer not null,
-    kyngreinir  text not null
+    icename_gender text not null
 );
 drop view if exists licence_gender;
 create view licence_gender as
@@ -83,10 +83,10 @@ def main():
     names = [r[0] for r in con.execute("select distinct name from licence order by name")]
     rows = []
     for name in names:
-        ex = kyngreinir.explain(name)
+        ex = icename_gender.explain(name)
         est = ex.estimate
         rows.append((name, est.gender, est.rule, est.given_name, given_position(name, est),
-                     ex.agreement, conflict(ex), ex.female, ex.male, kyngreinir.__version__))
+                     ex.agreement, conflict(ex), ex.female, ex.male, icename_gender.__version__))
     with con:
         con.executescript(SCHEMA)
         con.executemany("insert into name_gender values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", rows)
@@ -94,7 +94,7 @@ def main():
             "select gender_rule, gender, count(*) from licence_gender group by 1, 2 order by 3 desc"):
         print(f"  {gender or 'unknown':7} {rule or '-':11} {n}", file=sys.stderr)
     con.close()
-    print(f"{len(rows)} names estimated with kyngreinir {kyngreinir.__version__}", file=sys.stderr)
+    print(f"{len(rows)} names estimated with icename-gender {icename_gender.__version__}", file=sys.stderr)
 
 
 if __name__ == "__main__":

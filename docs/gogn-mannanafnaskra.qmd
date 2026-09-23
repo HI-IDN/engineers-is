@@ -9,12 +9,12 @@ Kyn leyfishafa er áætlað út frá nafni. Gagnalindin er Mannanafnaskrá Þjó
 [@mannanafnaskra], sem skráir hvert samþykkt eiginnafn sem drengjanafn,
 stúlknanafn eða millinafn. Skráin hefur ekki opið gagnasafn; hún er lesin um
 leitarvél island.is og afrit af henni allri fylgir pakkanum
-[`kyngreinir`](https://github.com/HI-IDN/kyngreinir), svo matið þarf ekki netsamband.
+[`icename-gender`](https://github.com/HI-IDN/icename-gender), svo matið þarf ekki netsamband.
 Skráin fjallar um nöfn, ekki fólk, og geymir engar persónuupplýsingar.
 
 ## Reglur
 
-Matið er gert með `kyngreinir` (útgáfa `r kyn$utgafa`), sem
+Matið er gert með `icename-gender` (útgáfa `r kyn$utgafa`), sem
 `scripts/estimate_gender.py` keyrir á hvert nafn í `licence`. Reglurnar eru
 þrjár og sú fyrsta sem sker úr ræður:
 

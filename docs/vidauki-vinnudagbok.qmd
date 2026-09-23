@@ -28,8 +28,9 @@
 ## 23. september 2026 — Kyn eftir nafnahefð
 
 - Kynjamat út frá nafni var skilið frá sem sérstakur pakki,
-  [`kyngreinir`](https://github.com/HI-IDN/kyngreinir), byggður eins og
-  `skemman-harvester`.
+  [`kyngreinir`](https://github.com/HI-IDN/icename-gender), byggður eins og
+  `skemman-harvester`. Hann var síðar sama dag endurnefndur `icename-gender`
+  (áður `kyngreinir`) svo að nafnið skiljist utan Íslands.
 - Reglan í `skemman-msc` skoðaði *-son* á undan eiginnöfnum og taldi því konu
   með ættarnafni sem endar á *-son* sem karl. Nú ræður eiginnafnið á undan
   *-son*.

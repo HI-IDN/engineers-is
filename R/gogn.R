@@ -51,7 +51,7 @@ if (file.exists(db)) {
       d = DBI::dbGetQuery(con, "
         select list, gender, gender_rule, given_position, gender_agreement, gender_conflict
         from licence_gender"),
-      utgafa = DBI::dbGetQuery(con, "select max(kyngreinir) as v from name_gender")$v
+      utgafa = DBI::dbGetQuery(con, "select max(icename_gender) as v from name_gender")$v
     )
   }
   DBI::dbDisconnect(con)
