@@ -77,6 +77,10 @@ aldur, ef aðeins ein gerir það; fæðingarár í framtíðinni, t.d. 2070 me�
 2007, verður þannig 1970. Þetta á við `r leyfi$alls$old` færslur
 (`century_corrected`).
 
+Kennitala einstaklings byrjar á raunverulegum degi og mánuði. Kennitala
+fyrirtækis hefur dag að viðbættum 40 (41–71) og segir ekkert um fæðingarár;
+færsla með slíkri kennitölu telst ólæsileg.
+
 `r leyfi$olaesilegt` færslur hafa ekkert læsilegt auðkenni og eru ekki taldar
 með. Flestar eru eldri tæknifræðingar sem skráðir eru með nafni og leyfisdegi
 einum saman.

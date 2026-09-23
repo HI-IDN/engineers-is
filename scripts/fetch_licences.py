@@ -116,6 +116,12 @@ def id_format(printed):
     return "kennitala" if re.fullmatch(r"\d{6}-\d{4}", printed) else "kennitala_variant"
 
 
+def is_person_kennitala(digits):
+    """A person's kennitala starts with a real day and month. A company's has the day plus 40
+    (41-71), so it gives no birth year and the entry is left unread."""
+    return 1 <= int(digits[:2]) <= 31 and 1 <= int(digits[2:4]) <= 12
+
+
 def parse_entry(text):
     idm, dm = ID.search(text), DATE.search(text)
     if not dm:
@@ -125,6 +131,8 @@ def parse_entry(text):
         ident = idm.group(1) or "f. " + re.sub(r"\s", "", idm.group(2))
         if idm.group(1):
             digits = re.sub(r"\D", "", idm.group(1))
+            if not is_person_kennitala(digits):
+                return None
             ident = digits[:6] + "-" + digits[6:]
     else:
         idm = ID_TYPO.search(text)
