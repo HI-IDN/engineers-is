@@ -97,7 +97,9 @@ einum saman.
 
 ### Leyfisdagur
 
-Leyfisdagur er fyrsta dagsetningin á eftir „Fær leyfi“. Á eftir henni koma
+Leyfisdagur er fyrsta dagsetningin á eftir „Fær leyfi“. Aðallega er
+litið til ársins; þriggja stafa ár, t.d. *30.05.022*, er innsláttarvilla og
+tveir síðustu tölustafirnir eru lesnir sem ár. Á eftir henni koma
 stundum athugasemdir sem eru varðveittar óbreyttar í `raw_date`, t.d.
 „Endurútgefið …“ eða „Látinn“. Tvær þeirra eru merktar sérstaklega:
 

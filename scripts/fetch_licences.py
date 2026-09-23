@@ -179,7 +179,9 @@ def birth_year(ident):
 # is kept in raw_date: "Endurútgefið dd.mm.yy", "og dd.mm.yy", "Látinn", and the note
 # "dd.mm.yy hefur ekki sótt leyfi" -- from a one-time cleanup of the lists (dated 1999): the
 # licence was granted, but the holder never collected the document. It is still a licence.
-DATE_NUM = re.compile(r"(?<!\d)(\d{1,2})\s*[.,]+\s*(\d{1,2})\s*[.,]*\s*(\d{2}|\d{4})(?!\d)")
+# A three-digit year ("30.05.022") is a typo; only the year matters, so its last two digits
+# are read as a two-digit year.
+DATE_NUM = re.compile(r"(?<!\d)(\d{1,2})\s*[.,]+\s*(\d{1,2})\s*[.,]*\s*(\d{2,4})(?!\d)")
 DATE_MONTH = re.compile(r"(?<!\d)(\d{1,2})\.?\s*([a-záéíóúýþæö]+)\.?\s*(\d{2}|\d{4})(?!\d)", re.I)
 YEAR_ONLY = re.compile(r"(?<!\d)(1[89]\d\d|20\d\d)(?!\d)")
 
@@ -201,7 +203,7 @@ def licence_date(raw, this_year):
     upper = False
     if found:
         start, d, mo, y = min(found)
-        y = int(y) if len(y) == 4 else year2(int(y))
+        y = int(y) if len(y) == 4 else year2(int(y[-2:]))
         iso = f"{y:04d}-{mo:02d}-{d:02d}"
         upper = "fyrir" in raw[:start].lower()
     else:
