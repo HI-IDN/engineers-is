@@ -33,12 +33,30 @@ different evidence.
   data model.
 - **`skemman-msc`** owns the broader longitudinal study of Icelandic MSc
   theses and engineering education.
+- **`kyngreinir`** owns the name-based gender estimate and its copy of
+  Þjóðskrá's name register.
 - **`engineers-is`** owns the longitudinal analysis of professional-title
   licences, population denominators, graduation flows and the institutional
   history needed to interpret them.
 
 The Skemman author-to-licence linkage is a secondary cohort analysis here, not
 the definition of the profession or the main outcome.
+
+## Helper package
+
+Gender is estimated from names with
+[`kyngreinir`](https://github.com/HI-IDN/kyngreinir), a small Python package split out for
+reuse: *-dóttir*, then the given names in Þjóðskrá's name register, then *-son*. It is an
+estimate from naming convention only and is reported in aggregate.
+
+```powershell
+python -m venv .venv
+.venv\Scripts\activate
+pip install git+https://github.com/HI-IDN/kyngreinir.git
+
+python scripts/fetch_licences.py     # the licence lists, into data/licences.sqlite
+python scripts/estimate_gender.py    # name_gender, from kyngreinir
+```
 
 ## Working method
 

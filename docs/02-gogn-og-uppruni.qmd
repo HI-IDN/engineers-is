@@ -142,6 +142,52 @@ if (!is.null(leyfi)) {
 }
 ```
 
+## Kyn eftir nafnahefð
+
+```{r kyn-gogn}
+#| include: false
+kyn <- NULL
+if (file.exists(db)) {
+  con <- DBI::dbConnect(RSQLite::SQLite(), db, flags = RSQLite::SQLITE_RO)
+  if (DBI::dbExistsTable(con, "name_gender")) {
+    kyn <- list(
+      regla = DBI::dbGetQuery(con, "
+        select gender, gender_rule, count(*) as n from licence_gender group by 1, 2"),
+      samraemi = DBI::dbGetQuery(con, "
+        select gender_agreement, count(*) as n from licence_gender group by 1"),
+      utgafa = DBI::dbGetQuery(con, "select max(kyngreinir) as v from name_gender")$v
+    )
+    kyn$n <- function(g = NULL, r = NULL) sum(kyn$regla$n[
+      (is.null(g) | kyn$regla$gender %in% g) & (is.null(r) | kyn$regla$gender_rule %in% r)])
+    kyn$sam <- function(a) sum(kyn$samraemi$n[kyn$samraemi$gender_agreement == a])
+  }
+  DBI::dbDisconnect(con)
+}
+```
+
+Kyn leyfishafa er metið út frá nafni með pakkanum
+[`kyngreinir`](https://github.com/HI-IDN/kyngreinir) (útgáfa `r kyn$utgafa`), sem
+`scripts/estimate_gender.py` keyrir á hvert nafn í `licence`. Reglurnar eru
+þrjár og sú fyrsta sem sker úr ræður:
+
+1. **-dóttir** (`dottir`): eftirnafn sem endar á *-dóttir* er alltaf konu.
+2. **Eiginnafn** (`given_name`): fyrsta eiginnafnið sem Mannanafnaskrá Þjóðskrár
+   skráir aðeins sem drengjanafn eða aðeins sem stúlknanafn. Nöfn sem skráð eru
+   fyrir bæði kyn, og millinöfn, eru hlaupin yfir.
+3. **-son** (`son`): eftirnafn sem endar á *-son*. Það er aðeins skoðað á eftir
+   eiginnöfnunum, því *-son* getur líka verið ættarnafn konu.
+
+Þetta er einfalt mat út frá nafnahefð og þeim nöfnum sem teljast lögleg
+drengja- og stúlknanöfn. Það segir ekkert um kyn eða kynvitund einstaklingsins
+og er aðeins birt sem samantekin tölfræði, með óþekktum sér.
+
+Af `r kyn$n()` leyfishöfum eru `r kyn$n("female")` metnir konur og
+`r kyn$n("male")` karlar; `r kyn$n(NA)` eru óþekkt. Eiginnafn réð hjá
+`r kyn$n(r = "given_name")`, *-dóttir* hjá `r kyn$n(r = "dottir")` og *-son*
+aðeins hjá `r kyn$n(r = "son")`. Vísbendingar nafnsins eru samhljóða hjá
+`r kyn$sam("unanimous")` en stangast á hjá `r kyn$sam("conflicting")`, t.d.
+kvenmannsnafn með ættarnafni sem endar á *-son*; þá ræður eiginnafnið.
+
 ## Mannfjöldi og brautskráningar
 
 Mannfjöldatölur Hagstofu Íslands verða notaðar til að reikna ný leyfi á hverja

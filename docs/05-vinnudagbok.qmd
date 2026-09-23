@@ -25,6 +25,17 @@
   aldrei sótt (tiltekt 1999); leyfið var veitt. Þær færslur, og aðrar með
   óvenjulegum dagsetningarsniðum, eru nú taldar með.
 
+## 23. september 2026 — Kyn eftir nafnahefð
+
+- Kynjamat út frá nafni var skilið frá sem sérstakur pakki,
+  [`kyngreinir`](https://github.com/HI-IDN/kyngreinir), byggður eins og
+  `skemman-harvester`.
+- Reglan í `skemman-msc` skoðaði *-son* á undan eiginnöfnum og taldi því konu
+  með ættarnafni sem endar á *-son* sem karl. Nú ræður eiginnafnið á undan
+  *-son*.
+- `scripts/estimate_gender.py` skrifar matið í `name_gender`; kaflinn um gögn
+  birtir aðeins samantekt.
+
 ## Næstu skref
 
 1. Festa frumheimildir fyrir HÍ-tímalínuna, sérstaklega áfangann 1944 og
