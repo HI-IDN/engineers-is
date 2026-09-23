@@ -87,9 +87,8 @@ aldur, ef aðeins ein gerir það; fæðingarár í framtíðinni, t.d. 2070 me�
 færslan merkt sem líkleg innsláttarvilla (`implausible_age`,
 `r leyfi$alls$otrulegt` færslur); leyfið telst með.
 
-Kennitala einstaklings byrjar á raunverulegum degi og mánuði. Kennitala
-fyrirtækis hefur dag að viðbættum 40 (41–71) og segir ekkert um fæðingarár;
-færsla með slíkri kennitölu telst ólæsileg.
+Tveir fyrstu tölustafir kennitölu eru fæðingardagur og mega því ekki vera
+hærri en 31. Byrji kennitala á hærra gildi telst færslan ólæsileg.
 
 `r leyfi$olaesilegt` færslur hafa ekkert læsilegt auðkenni og eru ekki taldar
 með. Flestar eru eldri tæknifræðingar sem skráðir eru með nafni og leyfisdegi
