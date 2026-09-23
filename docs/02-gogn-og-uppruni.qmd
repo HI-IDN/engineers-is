@@ -19,7 +19,10 @@ eru rekjanlegar með því að bera saman tvær sóknir:
   leyfisdag, og tvö merki lesin úr texta leyfisdagsins (sjá hér á eftir);
 - `licence_current` sýnir færslur nýjustu sóknar hvorrar skrár.
 
-Kennitalan er aðeins lesin í minni til að finna fæðingarár og er hvergi vistuð.
+Kennitalan er aðeins lesin í minni til að finna fæðingarár og er hvergi vistuð. Sé kennitalan
+rangt slegin inn, t.d. með fimm eða sjö tölustöfum á undan bandstrikinu, eru
+tveir síðustu tölustafirnir á undan því lesnir sem fæðingarár og síðasti
+tölustafurinn sem öld. Slíkar færslur eru merktar `birth_year_from_typo`.
 Afrit síðunnar er geymt með kennitölum afmáðum; SHA-256 er reiknað af
 upprunalegu síðunni svo óbreytt síða þekkist án þess að auðkennin séu geymd.
 Leyfisdagur er fyrsta dagsetningin á eftir „Fær leyfi“. Á eftir henni koma
