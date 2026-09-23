@@ -420,7 +420,8 @@ háskólastigi án gráðu (ISCED 5B) eða viðbótarnám eftir fyrstu gráðu; 
 með í heildinni en ekki í töflunni.
 
 Til samanburðar má flokka allar brautskráningar eftir almennum sviðum
-Hagstofunnar. Kóði námsbrautar fylgir ÍSNÁM2008, íslenskri útgáfu ISCED 97:
+Hagstofunnar. Kóði námsbrautar fylgir ÍSNÁM2008 [@hagstofa_isnam2008], íslenskri
+útgáfu ISCED 97 [@unesco_isced1997]:
 fyrsti tölustafurinn er almennt svið og tveir fyrstu afmarkað svið. Verkfræði og
 tæknifræði eru sýndar sér innan sviðs 5, *Verkfræði, framleiðsla og
 mannvirkjagerð*, sem einnig nær til arkitektúrs, skipulags og matvælafræði.
