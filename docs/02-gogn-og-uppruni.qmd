@@ -220,15 +220,115 @@ sýndur neðst í töflunni, undir samtölu, sem varnagli: þar er matið síst 
 if (!is.null(kyn)) kyn_tafla()
 ```
 
+```{r kyn-othekkt}
+#| include: false
+if (!is.null(kyn)) {
+  kyn$othekkt <- sum(is.na(kyn$d$gender))
+  kyn$othekkt_hlutfall <- sub(".", ",", sprintf("%.1f", 100 * kyn$othekkt / nrow(kyn$d)),
+                              fixed = TRUE)
+}
+```
+
+Nöfnin `r kyn$othekkt` sem engin regla sker úr, `r kyn$othekkt_hlutfall`% allra
+leyfishafa, voru skoðuð handvirkt. Þau eru að mestu erlend nöfn af ólíkum
+þjóðernum og engin ein heimild er til sem segir til um kyn þeirra. Ekki er
+reynt að giska á það, hvorki út frá nafnavenjum annarra landa né með mállíkani;
+þau eru látin standa sem óráðin.
+
 ## Mannfjöldi og brautskráningar
 
-Mannfjöldatölur Hagstofu Íslands verða notaðar til að reikna ný leyfi á hverja
-100.000 íbúa og, eftir atvikum, á viðeigandi aldurshóp. Samræmdar
-brautskráningartölur eftir námsbraut, prófgráðu og kyni verða notaðar fyrir
-síðara rannsóknartímabilið.
+```{r hagstofa-gogn}
+#| include: false
+hdb <- file.path("..", "data", "hagstofa.sqlite")
+hag <- NULL
+if (file.exists(hdb)) {
+  con <- DBI::dbConnect(RSQLite::SQLite(), hdb, flags = RSQLite::SQLITE_RO)
+  hag <- list(
+    sott = DBI::dbGetQuery(con, "select substr(max(run_at), 1, 10) as d from fetch")$d,
+    mf = DBI::dbGetQuery(con, "
+      select min(year) as fra, max(year) as til from population_current
+      where sex = 'total' and age is null"),
+    br = DBI::dbGetQuery(con, "
+      select min(year) as fra, max(year) as til, min(academic_year) as fyrsta,
+             max(academic_year) as sidasta from graduation_current"),
+    flokkun = DBI::dbGetQuery(con, "
+      select p.programme_group, p.programme, p.programme_code, p.note,
+             coalesce(sum(case when g.degree_code = '2' then g.n end), 0) as bs,
+             coalesce(sum(case when g.degree_code = '4' then g.n end), 0) as ms,
+             coalesce(sum(case when g.degree_code not in ('2', '4', 'Alls') then g.n end), 0)
+               as annad
+      from programme_group p
+      left join graduation_current g on g.programme_code = p.programme_code and g.sex = 'total'
+      group by 1, 2, 3, 4 order by 1 desc, bs + ms + annad desc"),
+    utan = DBI::dbGetQuery(con, "
+      select programme, programme_code,
+             coalesce(sum(case when degree_code = '2' then n end), 0) as bs,
+             coalesce(sum(case when degree_code = '4' then n end), 0) as ms
+      from graduation_current
+      where sex = 'total' and programme_code in ('522j', '422a', '481c')
+      group by 1, 2")
+  )
+  DBI::dbDisconnect(con)
+}
+```
 
-Flokkun námsbrauta í verkfræði, tæknifræði eða aðra grein verður skilgreind
-fyrir fram og varðveitt sem endurgeranleg gagnatafla.
+Mannfjöldi er meðalmannfjöldi Hagstofu Íslands eftir kyni og aldri
+[@hagstofa_man08000], árin `r hag$mf$fra`–`r hag$mf$til`. Hann er nefnarinn
+þegar ný leyfi eru reiknuð á hverja 100.000 íbúa og, eftir atvikum, á
+viðeigandi aldurshóp. Hagstofan breytti aðferð sinni við mat á mannfjölda árið
+2024 og birtir sérstaklega mat á ofmati áranna 2011–2024; kanna þarf hvort
+munurinn skipti máli fyrir hlutföllin.
+
+Brautskráningar eru úr töflu Hagstofunnar eftir námsbraut, prófgráðu og kyni
+[@hagstofa_sko04205c], skólaárin `r hag$br$fyrsta` til `r hag$br$sidasta`.
+Skólaár er talið til síðara almanaksársins, svo `r hag$br$fyrsta` telst
+`r hag$br$fra`. Taflan telur prófgráður, ekki einstaklinga: sá sem lýkur BS- og
+síðar MS-prófi telst tvisvar. Fyrir `r hag$br$fra` eru engin samræmd
+brautskráningargögn, svo samanburður við leyfi nær aðeins til síðara
+rannsóknartímabilsins.
+
+`scripts/fetch_hagstofa.py` sækir báðar töflur um vefþjónustu Hagstofunnar
+(PX-Web) í `data/hagstofa.sqlite`, með sama hætti og leyfisskrárnar: hver sókn
+er varðveitt með fyrirspurn, söfnunartíma, SHA-256 og svarinu sjálfu. Nýjasta
+sókn er frá `r hag$sott`.
+
+### Flokkun námsbrauta
+
+Hvaða námsbrautir teljast verkfræði og hverjar tæknifræði er ákveðið fyrir fram
+í `config/programme_groups.csv`. Flokkunin fylgir heiti námsbrautar fremur en
+námssviði Hagstofunnar (ISCED-F), því nokkrar brautir sem bera heiti verkfræði
+eða tæknifræði eru flokkaðar undir önnur svið.
+
+```{r hagstofa-flokkun}
+#| echo: false
+if (!is.null(hag)) {
+  f <- hag$flokkun
+  f$programme_group <- c(verkfraedi = "Verkfræði", taeknifraedi = "Tæknifræði")[f$programme_group]
+  f$note <- ifelse(is.na(f$note), "", f$note)
+  knitr::kable(
+    f[, c("programme_group", "programme", "programme_code", "bs", "ms", "annad")],
+    col.names = c("Flokkur", "Námsbraut", "Kóði", "Fyrsta gráða", "Meistaragráða",
+                  "Annað"),
+    row.names = FALSE, align = "lllrrr",
+    caption = paste0("Námsbrautir sem teljast verkfræði eða tæknifræði, með fjölda ",
+                     "brautskráninga ", hag$br$fra, "–", hag$br$til, " eftir prófgráðu.")
+  )
+}
+```
+
+```{r hagstofa-utan}
+#| include: false
+utan <- function(kodi, dalkur) if (is.null(hag)) NA else
+  hag$utan[[dalkur]][hag$utan$programme_code == kodi]
+```
+
+Nokkrar brautir utan flokkunarinnar gætu geymt verkfræðipróf og eru skráðar hér
+svo ákvörðunin sé sýnileg: *Orkufræði* (`r utan("522j", "ms")` meistaragráður),
+sem gæti falið í sér meistaranám í orkuverkfræði; *Umhverfisfræði*
+(`r utan("422a", "ms")` meistaragráður), sem er blanda ólíkra námsleiða; og
+*Tölvunarfræði* (`r utan("481c", "bs")` fyrstu gráður), sem er ekki verkfræði í
+skilningi starfsheitalaganna. Þær eru utan flokkunarinnar þar til skorið hefur
+verið úr um þær.
 
 ## Skemman
 

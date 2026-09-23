@@ -56,6 +56,7 @@ pip install git+https://github.com/HI-IDN/kyngreinir.git
 
 python scripts/fetch_licences.py     # the licence lists, into data/licences.sqlite
 python scripts/estimate_gender.py    # name_gender, from kyngreinir
+python scripts/fetch_hagstofa.py     # population and graduations, into data/hagstofa.sqlite
 ```
 
 ## Working method
