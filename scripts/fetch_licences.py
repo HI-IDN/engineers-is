@@ -9,7 +9,8 @@ so a change on the live page can be traced by comparing two fetches:
 
   fetch     one row per list per run: URL, fetch time (UTC), HTTP status, SHA-256 of the page
             as served, parse counts, and a copy of the page with every kennitala redacted.
-  licence   the parsed entries of that fetch: name, birth year, licence year and date, list.
+  licence   the parsed entries of that fetch: name, birth year, licence year and date, list,
+            and two flags read off the date text (see licence_date()).
   licence_current (view)  the entries of the newest fetch of each list.
 
 PRIVACY: each entry on the source page carries the person's kennitala. It is parsed in memory
@@ -69,7 +70,7 @@ create table if not exists fetch (
     sha256        text not null,           -- of the page as served, before redaction
     n_entries     integer not null,        -- rows written to licence
     n_unparsed    integer not null,        -- "Fær leyfi" paragraphs that could not be read
-    n_not_licensed integer not null,       -- listed, but the page says never applied
+    n_no_date     integer not null,        -- identified, but no licence date could be read
     page_redacted blob not null            -- gzip of the page with kennitölur replaced by <kt>
 );
 create table if not exists licence (
@@ -79,7 +80,9 @@ create table if not exists licence (
     birth_year    integer not null,
     licence_year  integer not null,
     licence_date  text,                    -- ISO date, null when the source gives only a year
-    raw_date      text not null            -- the date as printed, kennitala-shaped text redacted
+    date_is_upper_bound integer not null,  -- 1: "fyrir dd.mm.yy", granted before that date
+    not_collected integer not null,        -- 1: "dd.mm.yy hefur ekki sótt leyfi", see below
+    raw_date      text not null            -- the date text as printed, kennitala-shaped redacted
 );
 create index if not exists licence_fetch on licence(fetch_id);
 create view if not exists licence_current as
@@ -115,19 +118,41 @@ def birth_year(ident):
     return y if y > 999 else 1900 + y
 
 
-def licence_date(raw):
-    """Return (year, ISO date or None), tolerating 06.07.18 / 1.júní 2026 / 4.10.2001 / 1975."""
-    raw = raw.strip().rstrip(".")
-    m = re.match(r"(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{2,4})$", raw)
-    if m:
-        d, mo, y = int(m[1]), int(m[2]), int(m[3])
-        y = y if y > 999 else year2(y)
-        return y, f"{y:04d}-{mo:02d}-{d:02d}"
-    m = re.match(r"(\d{1,2})\.\s*([a-záéíóúýþæö]+)\s*(\d{4})$", raw, re.I)
-    if m and m[2].lower() in MONTHS:
-        return int(m[3]), f"{int(m[3]):04d}-{MONTHS[m[2].lower()]:02d}-{int(m[1]):02d}"
-    m = re.search(r"(\d{4})", raw)
-    return (int(m[1]), None) if m else (None, None)
+# A licence date is the first date in the text after "Fær leyfi". What follows it varies and
+# is kept in raw_date: "Endurútgefið dd.mm.yy", "og dd.mm.yy", "Látinn", and the note
+# "dd.mm.yy hefur ekki sótt leyfi" -- from a one-time cleanup of the lists (dated 1999): the
+# licence was granted, but the holder never collected the document. It is still a licence.
+DATE_NUM = re.compile(r"(?<!\d)(\d{1,2})\s*[.,]+\s*(\d{1,2})\s*[.,]*\s*(\d{2}|\d{4})(?!\d)")
+DATE_MONTH = re.compile(r"(?<!\d)(\d{1,2})\.?\s*([a-záéíóúýþæö]+)\.?\s*(\d{2}|\d{4})(?!\d)", re.I)
+YEAR_ONLY = re.compile(r"(?<!\d)(1[89]\d\d|20\d\d)(?!\d)")
+
+
+def licence_date(raw, this_year):
+    """(year, ISO date or None, date_is_upper_bound, not_collected) from the text after
+    "Fær leyfi". Tolerates 06.07.18, 12,05.82, 12.05 82, 1.júní 2026, 8.maí.25, 1975."""
+    raw = ID_SHAPED.sub("", raw)  # a kennitala typed where the date belongs is not a date
+    found = []
+    for m in DATE_NUM.finditer(raw):
+        d, mo = int(m[1]), int(m[2])
+        if 1 <= d <= 31 and 1 <= mo <= 12:
+            found.append((m.start(), d, mo, m[3]))
+            break
+    for m in DATE_MONTH.finditer(raw):
+        if m[2].lower() in MONTHS:
+            found.append((m.start(), int(m[1]), MONTHS[m[2].lower()], m[3]))
+            break
+    upper = False
+    if found:
+        start, d, mo, y = min(found)
+        y = int(y) if len(y) == 4 else year2(int(y))
+        iso = f"{y:04d}-{mo:02d}-{d:02d}"
+        upper = "fyrir" in raw[:start].lower()
+    else:
+        m = YEAR_ONLY.search(raw)
+        y, iso = (int(m[1]), None) if m else (None, None)
+    if y is not None and not FIRST_LICENCE_YEAR <= y <= this_year:  # typos in the source
+        y, iso = None, None
+    return y, iso, upper, "hefur ekki sótt" in raw.lower()
 
 
 def fetch(url):
@@ -138,7 +163,7 @@ def fetch(url):
 
 def parse_page(page, lst, this_year):
     """Entries of one page, plus counts of the paragraphs that were skipped."""
-    rows, unparsed, not_licensed = [], 0, 0
+    rows, unparsed, no_date = [], 0, 0
     for p in re.findall(r"<p>(.*?)</p>", page, re.S):
         text = html.unescape(re.sub(r"<[^>]+>", "", p)).replace("\xa0", " ").strip()
         if "Fær leyfi" not in text:
@@ -147,15 +172,12 @@ def parse_page(page, lst, this_year):
         if not m or not 1880 <= birth_year(m["id"]) <= this_year - 15:
             unparsed += 1
             continue
-        year, iso = licence_date(m["date"])
-        if year is not None and not FIRST_LICENCE_YEAR <= year <= this_year:  # typos in the source
-            year, iso = None, None
+        year, iso, upper, not_collected = licence_date(m["date"], this_year)
         if year is None:
-            # "... hefur ekki sótt leyfi": qualified and listed, but never licensed.
-            not_licensed += 1
+            no_date += 1
             continue
-        rows.append((lst, m["name"].strip(), birth_year(m["id"]), year, iso,
-                     ID_SHAPED.sub("<kt>", m["date"].strip())))
+        rows.append((lst, m["name"].strip(), birth_year(m["id"]), year, iso, int(upper),
+                     int(not_collected), ID_SHAPED.sub("<kt>", m["date"].strip())))
     # The source prints a few people twice, once with the date spelled out and once numeric:
     # the same grant, so it counts once.
     seen, unique = set(), []
@@ -164,7 +186,7 @@ def parse_page(page, lst, this_year):
         if key not in seen:
             seen.add(key)
             unique.append(r)
-    return unique, unparsed, not_licensed
+    return unique, unparsed, no_date
 
 
 def main():
@@ -179,20 +201,21 @@ def main():
         fetched_at = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
         status, raw = fetch(url)
         page = raw.decode("utf-8", "replace")
-        rows, unparsed, not_licensed = parse_page(page, lst, fetched_at.year)
+        rows, unparsed, no_date = parse_page(page, lst, fetched_at.year)
         redacted = gzip.compress(ID_SHAPED.sub("<kt>", page).encode("utf-8"))
         with con:
             cur = con.execute(
                 "insert into fetch (list, url, fetched_at, http_status, sha256, n_entries, "
-                "n_unparsed, n_not_licensed, page_redacted) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "n_unparsed, n_no_date, page_redacted) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (lst, url, fetched_at.isoformat(), status, hashlib.sha256(raw).hexdigest(),
-                 len(rows), unparsed, not_licensed, redacted))
+                 len(rows), unparsed, no_date, redacted))
             con.executemany(
                 "insert into licence (fetch_id, list, name, birth_year, licence_year, "
-                "licence_date, raw_date) values (?, ?, ?, ?, ?, ?, ?)",
+                "licence_date, date_is_upper_bound, not_collected, raw_date) "
+                "values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 [(cur.lastrowid, *r) for r in rows])
         print(f"{lst}: {len(rows)} entries, {unparsed} unparsed, "
-              f"{not_licensed} listed but not licensed", file=sys.stderr)
+              f"{no_date} without a readable licence date", file=sys.stderr)
     con.close()
     print(f"written to {args.db}", file=sys.stderr)
 

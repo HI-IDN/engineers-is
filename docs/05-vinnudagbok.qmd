@@ -20,6 +20,10 @@
   viðbótarpakka og hver sókn er ein skrá.
 - Hver sókn er varðveitt með söfnunartíma, SHA-256 og afriti síðunnar án
   kennitalna.
+- „hefur ekki sótt leyfi“ var fyrst lesið sem svo að viðkomandi hefði aldrei
+  sótt um leyfi, og 321 leyfi féllu út. Athugasemdin merkir að leyfisbréfið var
+  aldrei sótt (tiltekt 1999); leyfið var veitt. Þær færslur, og aðrar með
+  óvenjulegum dagsetningarsniðum, eru nú taldar með.
 
 ## Næstu skref
 
