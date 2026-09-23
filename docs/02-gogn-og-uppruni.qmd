@@ -568,6 +568,13 @@ og flokkurinn „Tæknigreinar, verkfræði“ er víðari en verkfræði og tæ
 Árin 1975–1976 vantar nám erlendis og heildartölur eru of lágar til að vera
 tæmandi, svo röðin er sýnd frá 1977.
 
+Röðin skiptir nemendum ekki eftir námsstigi, svo ekki er hægt að segja hve
+margir voru í grunnnámi og hve margir í framhaldsnámi. Fyrir 1997 átti skiptingin
+auk þess ekki við verkfræðinám í HÍ, sem lauk með fjögurra ára lokaprófi (sjá
+[Saga og tímamót](03-saga-og-timamot.qmd)). Frá 1997 skiptir Hagstofan
+nemendum á Íslandi eftir prófgráðu, en nemendum erlendis aðeins eftir landi og
+almennu sviði.
+
 ```{r hagstofa-nemar}
 #| echo: false
 #| fig-cap: >
