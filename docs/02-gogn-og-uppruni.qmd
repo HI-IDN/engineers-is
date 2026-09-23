@@ -526,6 +526,10 @@ greinar_plot <- function(y, snid, titill) {
 }
 ```
 
+::: {.panel-tabset}
+
+## Fjöldi
+
 ```{r hagstofa-greinar-fjoldi}
 #| echo: false
 #| fig-cap: >
@@ -534,12 +538,16 @@ greinar_plot <- function(y, snid, titill) {
 if (!is.null(greinar)) greinar_plot(~n, "%{y} brautskráningar", "Brautskráningar á ári")
 ```
 
+## Hlutfall
+
 ```{r hagstofa-greinar-hlutfall}
 #| echo: false
 #| fig-cap: >
 #|   Sömu greinar sem hlutfall af öllum brautskráningum hvers árs.
 if (!is.null(greinar)) greinar_plot(~pct, "%{y:.1f}%", "% af öllum brautskráningum")
 ```
+
+:::
 
 ### Fyrir 1996: nemendur heima og erlendis {#sec-fyrir-1996}
 
