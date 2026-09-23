@@ -466,13 +466,13 @@ if (!is.null(hag) && !is.null(hag$svid)) {
 }
 ```
 
-Fræðasvið Háskóla Íslands falla ekki nákvæmlega að þessum sviðum.
-Verkfræði- og náttúruvísindasvið svarar að mestu til sviða 4 og 5, auk hluta af
-sviði 6 og sviði 8 (t.d. umhverfis- og auðlindafræði og ferðamálafræði).
-Menntavísindasvið svarar til sviðs 1 og Hugvísindasvið til sviðs 2.
-Félagsvísindasvið svarar til sviðs 3, að sálfræði frátalinni, auk
-félagsráðgjafar úr sviði 7. Heilbrigðisvísindasvið svarar til sviðs 7, auk
-sálfræði og matvæla- og næringarfræði.
+Svið Hagstofunnar falla ekki að skipulagi háskólanna. Verkfræði- og
+náttúruvísindasvið Háskóla Íslands svarar að mestu til sviða 4 og 5, auk hluta
+af sviðum 6 og 8 (t.d. umhverfis- og auðlindafræði og ferðamálafræði).
+Sambærileg eining í Háskólanum í Reykjavík er Tæknisvið, með Verkfræðideild,
+Iðn- og tæknifræðideild og Tölvunarfræðideild [@hr_svid_deildir]. Það svarar
+til sviðs 5 og tölvunarfræðinnar í sviði 4, auk iðnfræði og tæknifræði sem
+Hagstofan telur að hluta til sviðs 3; raunvísindi eru ekki kennd þar.
 
 Svið Hagstofunnar eru misstór og geyma ólíkar greinar. Til að bera verkfræði
 saman við aðrar stórar greinar eru hér notuð afmörkuð svið Hagstofunnar
