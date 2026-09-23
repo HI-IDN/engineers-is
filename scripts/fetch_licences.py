@@ -45,11 +45,19 @@ FIRST_LICENCE_YEAR = 1937
 
 # The source is hand-typed: separators, "kt.", "f." and title spellings vary. Find the id
 # (kennitala or old-style birth date) anywhere; the name is whatever precedes it.
-ID = re.compile(r"(?<!\d)(\d{6}[-.\s]?\d{4})(?!\d)|f\.\s*(\d{1,2}\.\d{1,2}\.\d{2,4})")
+#   kennitala:  ddmmyy-nnnn, and the variants typed on the page: dd.mm.yy-nnnn, ddmmyy/nnnn,
+#               ddmmyy--nnnn, ddmmyy- nnnn, ddmmyy nnnn, ddmmyynnnn
+#   birth date: "f. dd.mm.yy", also "f. dd. mm.yy" and "f dd.mm.yy"
+ID = re.compile(
+    r"(?<!\d)(\d{2}\.?\d{2}\.?\d{2}\s*(?:--?|/|\.)?\s*\d{4})(?!\d)"
+    r"|(?<!\w)f\.?\s*(\d{1,2}\.\s*\d{1,2}\.\s*\d{2,4})(?!\d)"
+)
 DATE = re.compile(r"Fær leyfi\s*(.*?)\.?\s*$")
 # Anything shaped like a kennitala. Some entries repeat it after "Fær leyfi" instead of a
 # date (a typo on the government page), so raw_date and the page copy are both scrubbed.
-ID_SHAPED = re.compile(r"(?<!\d)\d{6}[-.\s]?\d{4}(?!\d)")
+# Looser than ID on purpose -- it also catches the mistyped ones with seven digits before the
+# separator or five after, which ID does not accept but which must not be stored either.
+ID_SHAPED = re.compile(r"(?<!\d)\d{2}\.?\d{2}\.?\d{2,3}\s*(?:--?|/|\.)?\s*\d{4,5}(?!\d)")
 
 SCHEMA = """
 create table if not exists fetch (
@@ -85,7 +93,7 @@ def parse_entry(text):
     idm, dm = ID.search(text), DATE.search(text)
     if not idm or not dm:
         return None
-    ident = idm.group(1) or "f. " + idm.group(2)
+    ident = idm.group(1) or "f. " + re.sub(r"\s", "", idm.group(2))
     if idm.group(1):
         digits = re.sub(r"\D", "", idm.group(1))
         ident = digits[:6] + "-" + digits[6:]
