@@ -5,6 +5,8 @@ project:
     - .nojekyll
     - /img/hi
 
+bibliography: references.bib
+
 book:
   title: "Verkfræðingar á Íslandi"
   subtitle: "Vinnudagbók um þróun lögverndaðrar fagstéttar"
@@ -74,6 +76,7 @@ language:
   copy-button-tooltip: "Afrita"
   copy-button-tooltip-success: "Afritað!"
   search-no-results-text: "Engar niðurstöður"
+  section-title-references: "Heimildir"
   crossref-ch-prefix: "Kafli"
   crossref-sec-prefix: "Hluti"
   crossref-fig-title: "Mynd"

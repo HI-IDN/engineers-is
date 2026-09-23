@@ -2,12 +2,10 @@
 
 ## Starfsheitaleyfi
 
-Opinberar skrár Stjórnarráðsins yfir
-[verkfræðinga](https://www.stjornarradid.is/verkefni/atvinnuvegir/starfsrettindi/verkfraedingar/)
-og
-[tæknifræðinga](https://www.stjornarradid.is/verkefni/atvinnuvegir/starfsrettindi/taeknifraedingar/)
-eru aðalgagnagrunnur rannsóknarinnar. Þær eru lifandi vefsíður, ein málsgrein á
-hvern leyfishafa með nafni, kennitölu eða fæðingardegi og leyfisdegi.
+Opinberar skrár Stjórnarráðsins yfir verkfræðinga [@stjr_verkfraedingar] og
+tæknifræðinga [@stjr_taeknifraedingar] eru aðalgagnagrunnur rannsóknarinnar.
+Þær eru lifandi vefsíður, ein málsgrein á hvern leyfishafa með nafni, kennitölu
+eða fæðingardegi og leyfisdegi.
 
 `scripts/fetch_licences.py` sækir báðar síður og vistar þær í litlum
 SQLite-gagnagrunni, `data/licences.sqlite`, sem er utan útgáfustýringar. Hver
