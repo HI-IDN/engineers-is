@@ -40,6 +40,7 @@ if (file.exists(db)) {
       from licence_current group by list, id_format"),
     alls = DBI::dbGetQuery(con, "
       select count(*) as n, sum(century_corrected) as old,
+             sum(implausible_age) as otrulegt,
              sum(not_collected) as ekki_sott, sum(date_is_upper_bound) as fyrir
       from licence_current")
   )
@@ -66,10 +67,11 @@ réttu sniði (*ddmmáá-nnnn*) og `r leyfi$kt("birth_date")` með fæðingardag
   bili, t.d. *dd.mm.áá-nnnn* eða *ddmmáá/nnnn*. Þær eru lesnar eins og rétt
   kennitala.
 - **Rangur fjöldi tölustafa** (`kennitala_typo`, `r leyfi$kt("kennitala_typo")`
-  færslur): fimm eða sjö tölustafir á undan bandstrikinu, eða komma inni í
-  kennitölunni. Sé fjórtölustafahlutinn á eftir bandstrikinu eðlilegur eru tveir
-  síðustu tölustafirnir á undan bandstrikinu lesnir sem fæðingarár og síðasti
-  tölustafurinn sem öld.
+  færslur): fimm eða sjö tölustafir á undan bandstrikinu, fimm á eftir því, eða
+  komma inni í kennitölunni. Tveir síðustu tölustafirnir á undan bandstrikinu
+  eru lesnir sem fæðingarár. Séu fjórir tölustafir á eftir bandstrikinu er sá
+  síðasti öldin; séu þeir fimm er óljóst hver er aukalegur og 20. öld er gefin
+  sér, sem aldarreglan hér á eftir leiðréttir ef þarf.
 - **Fæðingardagur án „f.“** (`birth_date_bare`,
   `r leyfi$kt("birth_date_bare")` færslur): *dd.mm.áá* eða *dd.mm.áááá* á milli
   nafns og starfsheitis. Tveir síðustu tölustafir ársins eru lesnir sem
@@ -81,7 +83,9 @@ Gefi aldarstafurinn ótrúlegan aldur við leyfisveitingu, yngri en 18 ára eða
 eldri en 90, er hann innsláttarvilla. Þá er valin sú öld sem gefur trúverðugan
 aldur, ef aðeins ein gerir það; fæðingarár í framtíðinni, t.d. 2070 með leyfi
 2007, verður þannig 1970. Þetta á við `r leyfi$alls$old` færslur
-(`century_corrected`).
+(`century_corrected`). Gangi engin öld upp er fæðingarárið látið standa en
+færslan merkt sem líkleg innsláttarvilla (`implausible_age`,
+`r leyfi$alls$otrulegt` færslur); leyfið telst með.
 
 Kennitala einstaklings byrjar á raunverulegum degi og mánuði. Kennitala
 fyrirtækis hefur dag að viðbættum 40 (41–71) og segir ekkert um fæðingarár;
