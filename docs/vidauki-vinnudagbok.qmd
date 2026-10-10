@@ -37,6 +37,17 @@
 - `scripts/estimate_gender.py` skrifar matið í `name_gender`; kaflinn um gögn
   birtir aðeins samantekt.
 
+## 9. október 2026 — Útgáfustaður og kynning fyrir VFÍ
+
+![](../img/ije-logo.svg){width=260 fig-alt="Icelandic Journal of Engineering"}
+
+- Greinin verður að lokum send til
+  [*Icelandic Journal of Engineering*](https://www.ije.is/) (IJE). Greinardrögin
+  þurfa að fylgja leiðbeiningum tímaritsins til höfunda.
+- Kynning fyrir VFÍ, *Þróun verkfræðinnar á Íslandi: nýliðun, menntun og
+  undirgreinar*, er í `kynning/` og birt á [kynning/](../kynning/). Hún er
+  byggð á niðurstöðum vinnudagbókarinnar og sniðmátinu `quarto-hi`.
+
 ## Næstu skref
 
 1. Festa frumheimildir fyrir HÍ-tímalínuna, sérstaklega áfangann 1944 og

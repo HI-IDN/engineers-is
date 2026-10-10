@@ -1,6 +1,4 @@
----
-title: "Verkfræðingar á Íslandi"
----
+# Formáli {.unnumbered}
 
 Þetta er vinnudagbók rannsóknar á þróun og nýliðun í lögverndaða
 verkfræðinga- og tæknifræðingastétt á Íslandi. Hér eru heimildir, kóði,
@@ -38,6 +36,8 @@ hennar er:
 
 > **Nýliðun í lögverndaða verkfræðinga- og tæknifræðingastétt á Íslandi
 > 1962–2026: langtímagreining starfsheitaleyfa, lýðfræði og brautskráninga**
+
+[Opna greinardrögin](grein/) · [Kynning fyrir VFÍ](kynning/) ·[GitHub-kóðasafn](https://github.com/HI-IDN/engineers-is)
 
 Samsvörun höfunda í Skemmu við leyfisskrár verður afmörkuð aukagreining með
 tilliti til mismunandi eftirfylgnitíma, en ekki aðalrammi rannsóknarinnar.

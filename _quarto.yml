@@ -27,6 +27,11 @@ book:
     logo: img/hi/hi_named_logo-is.svg
     logo-alt: "Háskóli Íslands"
     background: primary
+    left:
+      - text: "Verktækni"
+        href: grein/
+      - text: "Kynning"
+        href: kynning/
     tools:
       - icon: github
         href: https://github.com/HI-IDN/engineers-is
