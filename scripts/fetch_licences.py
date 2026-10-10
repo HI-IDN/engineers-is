@@ -70,6 +70,14 @@ DATE = re.compile(r"Fær leyfi\s*(.*?)\.?\s*$")
 # Looser than ID on purpose -- it also catches the mistyped ones with seven digits before the
 # separator or five after, which ID does not accept but which must not be stored either.
 ID_SHAPED = re.compile(r"(?<!\d)\d{2}\.?\d{2}\.?\d{2,3}\s*(?:--?|/|\.)?\s*\d{4,5}(?!\d)")
+# What is redacted before anything is stored: every kennitala-shaped run that ID, ID_TYPO or
+# ID_SHAPED could read -- five to seven digits, optionally with dots or commas between them, a
+# separator, then four or five digits -- also in the raw page, where digits can be split by
+# &nbsp; or a tag. Looser than all three on purpose: a date or two that is redacted too costs
+# nothing, a kennitala that is not would be stored.
+_SEP = r"(?:\s|&nbsp;|&#160;|<[^>]+>)*"
+REDACT = re.compile(r"(?<!\d)\d(?:[.,]?" + _SEP + r"\d){4,6}" + _SEP + r"(?:--?|/|\.)?" + _SEP
+                    + r"\d{4,5}(?!\d)")
 
 SCHEMA = """
 create table if not exists fetch (
@@ -164,9 +172,9 @@ def parse_entry(text):
     return {"name": name, "id": ident, "date": dm.group(1), "fmt": fmt} if name else None
 
 
-def year2(yy):
-    """Two-digit year -> full year; licences start in 1937, so 27..99 -> 19xx else 20xx."""
-    return 1900 + yy if yy > 26 else 2000 + yy
+def year2(yy, this_year):
+    """Two-digit year -> full year: 20yy unless that is still in the future, else 19yy."""
+    return 2000 + yy if 2000 + yy <= this_year else 1900 + yy
 
 
 def birth_year(ident):
@@ -206,7 +214,7 @@ def licence_date(raw, this_year):
     upper = False
     if found:
         start, d, mo, y = min(found)
-        y = int(y) if len(y) == 4 else year2(int(y[-2:]))
+        y = int(y) if len(y) == 4 else year2(int(y[-2:]), this_year)
         iso = f"{y:04d}-{mo:02d}-{d:02d}"
         upper = "fyrir" in raw[:start].lower()
     else:
@@ -226,7 +234,7 @@ def fetch(url):
 def parse_page(page, lst, this_year):
     """Entries of one page, plus counts of the paragraphs that were skipped."""
     rows, unparsed, no_date, not_person = [], 0, 0, 0
-    for p in re.findall(r"<p>(.*?)</p>", page, re.S):
+    for p in re.findall(r"<p(?:\s[^>]*)?>(.*?)</p>", page, re.S):
         text = html.unescape(re.sub(r"<[^>]+>", "", p)).replace("\xa0", " ").strip()
         if "Fær leyfi" not in text:
             continue
@@ -261,7 +269,7 @@ def parse_page(page, lst, this_year):
                 implausible = True
         rows.append((lst, m["name"].strip(), born, m["fmt"], int(corrected), int(implausible),
                      year, iso, int(upper),
-                     int(not_collected), ID_SHAPED.sub("<kt>", m["date"].strip())))
+                     int(not_collected), REDACT.sub("<kt>", m["date"].strip())))
     # The source prints a few people twice, once with the date spelled out and once numeric:
     # the same grant, so it counts once.
     seen, unique = set(), []
@@ -286,7 +294,7 @@ def main():
         status, raw = fetch(url)
         page = raw.decode("utf-8", "replace")
         rows, unparsed, no_date, not_person = parse_page(page, lst, fetched_at.year)
-        redacted = gzip.compress(ID_SHAPED.sub("<kt>", page).encode("utf-8"))
+        redacted = gzip.compress(REDACT.sub("<kt>", page).encode("utf-8"))
         with con:
             cur = con.execute(
                 "insert into fetch (list, url, fetched_at, http_status, sha256, n_entries, "

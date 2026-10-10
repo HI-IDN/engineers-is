@@ -63,10 +63,12 @@ thema <- theme_minimal(base_size = 15) +
 # Licence holders with the name-based gender estimate; 2026 is not a full year.
 lg <- les(ldb, "select list, licence_year as year, birth_year, gender from licence_gender") |>
   mutate(skra = factor(skrar[list], levels = skrar), aldur = year - birth_year)
-til <- max(hag$hlutfall$year)
-lg_heil <- filter(lg, year <= til)
+til <- max(hag$hlutfall$year)  # last year with graduation figures
 mf <- les(hdb, "select year, n as pop from population_current
                 where sex = 'total' and age is null and year >= 1962")
+# Licences up to the last year with population figures, the last full year.
+til_leyfi <- max(mf$year)
+lg_heil <- filter(lg, year <= til_leyfi)
 # Master's degrees in verkfræði programmes per year, by our classification.
 ms_vf <- les(hdb, "
   select g.year, sum(g.n) as n from graduation_current g
@@ -167,7 +169,7 @@ Leyfisskráin mælir fyrst og fremst **þriðja þrepið**. Uppsafnaður fjöldi
 nyl <- lg_heil |>
   count(skra, year) |>
   group_by(skra) |>
-  complete(year = full_seq(c(min(year), til), 1), fill = list(n = 0)) |>
+  complete(year = full_seq(c(min(year), til_leyfi), 1), fill = list(n = 0)) |>
   ungroup() |>
   inner_join(mf, by = "year") |>
   mutate(rate = 1e5 * n / pop) |>
@@ -177,7 +179,7 @@ nyl <- lg_heil |>
 timabil <- function(fra, tl) nyl |> filter(year >= fra, year <= tl) |>
   group_by(skra) |> summarise(r = 1e5 * sum(n) / sum(pop))
 t7009 <- timabil(1970, 2009)
-t2020 <- timabil(2020, til)
+t2020 <- timabil(2020, til_leyfi)
 
 ggplot(nyl, aes(year, colour = skra)) +
   geom_line(aes(y = rate), linewidth = 0.3, alpha = 0.5) +
@@ -227,7 +229,8 @@ ggplot(kon, aes(bil + 2, konur, colour = skra)) +
   scale_x_continuous(breaks = seq(1960, 2030, 10)) +
   scale_y_continuous(labels = \(x) paste0(x, "%"), limits = c(0, NA)) +
   labs(x = NULL, y = "Áætlaðar konur af nýjum leyfum", colour = NULL,
-       caption = "Fimm ára tímabil. Kyn áætlað út frá nafni; nöfn sem engin regla sker úr (4%) teljast í nefnara.") +
+       caption = paste0("Fimm ára tímabil. Kyn áætlað út frá nafni; nöfn sem engin regla sker úr (",
+                        kyn$othekkt_hlutfall, "%) teljast í nefnara.")) +
   thema
 ```
 

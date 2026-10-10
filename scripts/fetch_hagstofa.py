@@ -222,10 +222,11 @@ def fetch_population(con):
 
 
 def fetch_graduation(con):
-    """One query per degree: the whole table at once is refused as too large."""
+    """One query per degree: the whole table at once is refused as too large. All degrees are
+    written in one transaction, so a failed query never leaves a partial run as the newest."""
     meta = metadata(GRADUATION)
     names = {v["code"]: dict(zip(v["values"], v["valueTexts"])) for v in meta["variables"]}
-    total = 0
+    fetched = []
     for degree in names["Prófgráða"]:
         selection = [{"code": "Prófgráða", "selection": {"filter": "item", "values": [degree]}}]
         q, body, data = query(GRADUATION, selection)
@@ -238,12 +239,13 @@ def fetch_graduation(con):
             rows.append((academic_year, int(academic_year[-4:]), programme,
                          names["Námsbraut"][programme].strip(), deg,
                          names["Prófgráða"][deg].strip(), SEX[sex], int(float(value))))
-        with con:
+        fetched.append((q, body, rows))
+    with con:
+        for q, body, rows in fetched:
             fid = record_fetch(con, "SKO04205c", meta["title"], GRADUATION, q, body, len(rows))
             con.executemany("insert into graduation values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                             [(fid, *r) for r in rows])
-        total += len(rows)
-    return total
+    return sum(len(rows) for _, _, rows in fetched)
 
 
 def fetch_enrolment(con):
@@ -267,11 +269,11 @@ def fetch_enrolment(con):
 
 def fetch_student(con):
     """All levels and types of study together, one query per degree: the whole table is
-    too large for one."""
+    too large for one. Written in one transaction, as in fetch_graduation."""
     meta = metadata(STUDENT)
     names = {v["code"]: dict(zip(v["values"], v["valueTexts"])) for v in meta["variables"]}
     title = " ".join(meta["title"].split())
-    total = 0
+    fetched = []
     for degree in names["Prófgráður"]:
         selection = [
             {"code": "Skólastig", "selection": {"filter": "item", "values": ["0"]}},
@@ -289,12 +291,13 @@ def fetch_student(con):
             rows.append((int(k["Ár"]), k["Námsbraut"], names["Námsbraut"][k["Námsbraut"]].strip(),
                          k["Prófgráður"], names["Prófgráður"][k["Prófgráður"]].strip(),
                          SEX_STUDENT[k["Kyn"]], int(float(value))))
-        with con:
+        fetched.append((q, body, rows))
+    with con:
+        for q, body, rows in fetched:
             fid = record_fetch(con, "SKO04105b", title, STUDENT, q, body, len(rows))
             con.executemany("insert into student values (?, ?, ?, ?, ?, ?, ?, ?)",
                             [(fid, *r) for r in rows])
-        total += len(rows)
-    return total
+    return sum(len(rows) for _, _, rows in fetched)
 
 
 def fetch_cohort(con):
@@ -365,6 +368,9 @@ def main():
 
     con = sqlite3.connect(args.db)
     con.executescript(SCHEMA)
+    # Refilled at once: SCHEMA has just emptied it, and a failed fetch below must not leave the
+    # classification empty for the book.
+    print(f"programme_group: {load_programme_groups(con)} programmes", file=sys.stderr)
     print(f"population: {fetch_population(con)} rows", file=sys.stderr)
     print(f"graduation: {fetch_graduation(con)} rows", file=sys.stderr)
     print(f"enrolment: {fetch_enrolment(con)} rows", file=sys.stderr)
@@ -373,7 +379,6 @@ def main():
     for path, tid in [(COHORT_ALL, "SKO04207"), (COHORT_SECTOR, "SKO04208a")]:
         print(f"cohort_status {tid}: {fetch_cohort_status(con, path, tid)} rows",
               file=sys.stderr)
-    print(f"programme_group: {load_programme_groups(con)} programmes", file=sys.stderr)
     con.close()
     print(f"written to {args.db}", file=sys.stderr)
 

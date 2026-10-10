@@ -20,7 +20,8 @@ verkfræði og tæknifræði eru:
 if (!is.null(hag)) {
   h <- hag$hlutfall
   h$vt[is.na(h$vt)] <- 0
-  bil <- c(1995, 2000, 2010, 2020, 2025)
+  # The last period runs to the last year there is, so no year falls outside the periods.
+  bil <- c(1995, 2000, 2010, 2020, max(h$year))
   h$timabil <- cut(h$year, bil, labels = paste0(bil[-5] + 1, "–", bil[-1]))
   gradur <- c("2" = "Grunnnám", "4" = "Meistaranám", "5" = "Doktorsnám",
               "Alls" = "Allar prófgráður")
@@ -59,7 +60,7 @@ Hagstofunni: Lífverkfræði og Reikniverkfræði (svið 4) og Iðnaðartæknifr
 #| echo: false
 if (!is.null(hag) && !is.null(hag$svid)) {
   d <- hag$svid
-  bil <- c(1995, 2000, 2010, 2020, 2025)
+  bil <- c(1995, 2000, 2010, 2020, max(d$year))
   d$timabil <- cut(d$year, bil, labels = paste0(bil[-5] + 1, "–", bil[-1]))
   heiti <- c("1" = "1 Menntun", "2" = "2 Hugvísindi og listir",
              "3" = "3 Félagsvísindi, viðskipti og lögfræði",
