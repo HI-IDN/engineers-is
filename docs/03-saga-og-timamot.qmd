@@ -28,30 +28,118 @@ verkfræðikennslunnar [@gudni1961]:
 - **1946–1948:** Sjö verkfræðingar ljúka fullnaðarprófi, sex í desember 1946 og
   einn 15. júní 1948. Kennslan er síðan felld niður og aðeins fyrri hlutinn
   kenndur [@gudni1961, bls. 115–117].
-- **1968:** Kennsla hefst í nýjum raungreinum innan deildarinnar og hún fær
-  nafnið verkfræði- og raunvísindadeild [@aldarafmaeli1968].
-- **1970:** Samfellt fjögurra ára nám til lokaprófs í verkfræði tekið upp.
-- **1974:** Fyrstu verkfræðingarnir úr því námi brautskrást. Hálfrar aldar
-  afmælis þeirrar brautskráningar var minnst í Aðalbyggingu HÍ árið 2024.
-- **1997:** Þriggja ára BS- og tveggja ára MS-skipulag tekið upp.
+- **1968–1969:** Raungreinum er bætt við og deildin fær heitið Verkfræði- og
+  raunvísindadeild; henni er síðar skipt í skorir [@aldarafmaeli1968;
+  @hi_verkfraedisaga].
+- **1970:** Reglugerð breytist og formlega er komið á fjögurra ára, 120 eininga
+  samfelldu námi til lokaprófs í byggingar-, rafmagns- og vélaverkfræði. Þetta
+  er upphaf þessa samfellda lokaprófsnáms, ekki upphaf verkfræðikennslu við HÍ.
+  Fyrsti hópurinn samkvæmt nýju reglugerðinni innritast haustið 1970
+  [@hi_verkfraedisaga].
+- **1974:** Fyrstu nemendurnir úr fjögurra ára lokaprófsnáminu brautskrást.
+  Nær-samtímafrásögn frá 1977 segir að fyrstu verkfræðingarnir hafi verið
+  brautskráðir það ár [@hi_verkfraedisaga; @vfi_1977].
+- **1985:** Verkfræðideild og Raunvísindadeild verða aðskildar deildir
+  [@hi_verkfraedisaga].
+- **1989–1991:** 30 eininga meistaranám hefst 1989 og fyrsti nemandinn lýkur
+  meistaraprófi í verkfræði 1991 [@hi_verkfraedisaga].
+- **1993–1994:** Fyrsta doktorsvörnin eftir skipulagt doktorsnám fer fram 1993;
+  árið eftir fær lokapróf í verkfræði heitið *Candidatus Scientiarum*
+  [@hi_verkfraedisaga].
+- **1997:** Fyrra fjögurra ára lokaprófskerfi er leyst af hólmi með þriggja ára,
+  90 eininga BS-námi og tveggja ára, 60 eininga MS-námi. Samantekt HÍ segir
+  jafnframt að MS-próf hafi þá orðið nauðsynlegt til að uppfylla menntunarkröfu
+  starfsheitisins verkfræðingur. Fyrstu BS-nemendurnir brautskrást 1998
+  [@hi_verkfraedisaga]. Ekki liggur hér fyrir frumheimild sem sundurgreinir
+  innleiðinguna eftir verkfræðigrein eða nákvæmri dagsetningu.
+- **2000–2001:** Tölvunarfræðiskor flyst til Verkfræðideildar árið 2000 og
+  kennsla í efnaverkfræði og hugbúnaðarverkfræði hefst skólaárið 2001–2002
+  [@hi_verkfraedisaga].
+- **1. júlí 2008:** Verkfræðideild skiptist í þrjár deildir innan
+  Verkfræði- og náttúruvísindasviðs: Iðnaðarverkfræði-, vélaverkfræði- og
+  tölvunarfræðideild, Umhverfis- og byggingarverkfræðideild og Rafmagns- og
+  tölvuverkfræðideild [@hi_deildaskipting_2008].
 
-::: {.callout-warning title="Heimildir vantar fyrir 1970, 1974 og 1997"}
-Ártölin 1970, 1974 og 1997 og afmælið 2024 eru ekki enn staðfest með rituðum
-heimildum. Líklegast er að finna þær í *Aldarsögu Háskóla Íslands 1911–2011*
-eða í Árbókum Háskóla Íslands frá þeim árum.
-:::
+Árbækur HÍ og kennsluskrár eftir árum eru bestu leiðirnar til að endurgera
+framboð námsleiða. Ekki fannst ein opinber heildarskrá sem nær yfir allar
+verkfræðinámsleiðir frá 1940 til dagsins í dag; því þarf að greina á milli þess
+að námsleið hafi verið í boði og þess að nemandi hafi raunverulega brautskráðst.
+
+## Verkfræðinám við Háskólann í Reykjavík
+
+Saga tæknimenntunar sem síðar varð hluti Háskólans í Reykjavík hefst með
+Tækniskóla Íslands árið 1964. Skólinn bauð fyrst upp á nám í tæknifræði og
+fyrstu tæknifræðingarnir brautskráðust 1971; þeir voru tæknifræðingar, ekki
+verkfræðingar [@ru_saga; @althingi_taekniskoli_1972]. Tölvuháskóli
+Verzlunarskóla Íslands var stofnaður 1988 og Háskólinn í Reykjavík tók til
+starfa 1998. Tækniskólinn varð Tækniháskóli Íslands 2002 [@althingi_53_2002].
+HR og Tækniháskólinn sameinuðust 1. júlí 2005; þá varð tækni- og verkfræðideild til og
+Verkfræðideild HR hóf starfsemi. Framhaldsnám í verkfræði hófst 2008
+[@ru_saga; @ru_verkfraedideild_20ara; @ru_arsskyrsla_2008].
+
+Því er rétt að lýsa 1964 sem upphafi tæknimenntunarhefðar forvera HR, en 2005
+sem stofnári Verkfræðideildar HR. Tæknifræði, iðnfræði og byggingafræði eru
+aðgreind frá verkfræðinámi í núverandi skipulagi. Tæknisvið HR skiptist nú í
+þrjár akademískar deildir; verkfræðin er í Verkfræðideild en tæknifræði,
+iðnfræði og byggingafræði í Tæknifræðideild
+[@ru_taeknisvid; @ru_idn_taeknifraedideild].
+
+Formlegt doktorsnám við HR hófst 2008 samkvæmt sögulegu yfirliti skólans;
+framhaldsnám í verkfræði hófst sama ár [@ru_verkfraedideild_20ara].
+
+## Núverandi skipulag og námsleiðir
+
+Eftirfarandi er yfirlit yfir námsleiðir sem bera verkfræðiheiti í núverandi
+kennsluskrá HÍ og námsframboði HR. Námsleiðir geta breyst milli kennsluára;
+kennsluskráin, ekki þessi samantekt, ræður úrslitum um stöðu hverju sinni
+[@hi_kennsluskra_2026; @ru_verkfraedideild].
+
+| HÍ-deild | BS | MS | Doktorsnám |
+|---|---|---|---|
+| Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild | Efnaverkfræði; hugbúnaðarverkfræði; iðnaðarverkfræði; vélaverkfræði | Hugbúnaðarverkfræði; iðnaðarverkfræði; reikniverkfræði; vélaverkfræði | Efnaverkfræði; hugbúnaðarverkfræði; iðnaðarverkfræði; lífverkfræði; reikniverkfræði; vélaverkfræði |
+| Umhverfis- og byggingarverkfræðideild | Umhverfis- og byggingarverkfræði | Byggingarverkfræði; umhverfisverkfræði | Byggingarverkfræði; umhverfisfræði; umhverfisverkfræði |
+| Rafmagns- og tölvuverkfræðideild | Rafmagns- og tölvuverkfræði | Rafmagns- og tölvuverkfræði | Rafmagnsverkfræði; rafmagns- og tölvuverkfræði; tölvuverkfræði |
+
+Kjörsvið eru ekki sjálfstæðar prófgráður. Læknisfræðileg verkfræði er til dæmis
+kjörsvið innan BS-náms í rafmagns- og tölvuverkfræði; endurnýjanleg orka –
+vistvæn orkuverkfræði er kjörsvið á MS-stigi. Reikniverkfræði er hins vegar
+sjálfstæð MS-námsleið og doktorsnám. Fjármálaverkfræði er ekki sjálfstæð
+núverandi námsleið við HÍ samkvæmt núverandi kennsluskrá
+[@hi_kennsluskra_2026].
+
+Verkfræðideild HR býður námsleiðir á BSc- og MSc-stigi. Núverandi framboð er
+samandregið hér að neðan [@ru_verkfraedideild]:
+
+| Grunnnám (BSc) | Meistaranám (MSc) |
+|---|---|
+| Fjármálaverkfræði; hátækniverkfræði; heilbrigðisverkfræði; orkuverkfræði; raforkuverkfræði; rekstrarverkfræði; vélaverkfræði; verkfræði með eigin vali | Fjármálaverkfræði; hátækniverkfræði; heilbrigðisverkfræði; ISE; orkuverkfræði; raforkuverkfræði; rekstrarverkfræði; vélaverkfræði; verkfræði með eigin vali |
+
+Deildin býður einnig doktorsnám í verkfræði [@ru_doktorsnam]. ISE er
+merkt á meistaranámsstigi í núverandi framboðslista, en þar eru ekki tilgreind
+fullt prófgráðuheiti eða einingafjöldi; því er ekki gengið út frá því að hún sé
+sjálfstæð verkfræðigrein. Verkfræðinám HR er almennt fimm ára samfellt ferli:
+þriggja ára BSc-nám og tveggja ára MSc-nám. Heiti á leiðum eru ekki alltaf
+samhverf milli stiga; til dæmis nefnist leiðin rafmagnsverkfræði á BSc-stigi og
+raforkuverkfræði á MSc-stigi [@ru_verkfraedideild].
+
+Byggingarverkfræði birtist í kennsluskrá HR 2024, en ekki í núverandi
+framhaldsnámsframboði sem hér var skoðað. Hún er því höfð með í sögulegu
+yfirliti en ekki talin núverandi námsleið án staðfestingar frá HR. Samkvæmt
+aðgengilegum upplýsingum er heldur ekki ein sameinuð söguleg skrá yfir allar
+námsleiðir HR; þarf að sameina eldri kennsluskrár, ársskýrslur, lög og núverandi
+námsframboð [@ru_saga; @ru_arsskyrsla_2008].
 
 ## Lög um starfsheitin
 
-Starfsheitin verkfræðingur og tæknifræðingur hafa verið lögvernduð frá 1937.
-Lögin hafa verið endurskoðuð fjórum sinnum [@althingi_frv_1996]:
+Réttur til að nota starfsheiti verkfræðings og tæknifræðings hefur verið
+lögbundinn frá 1937. Taflan sýnir þau lög og breytingar sem snerta þessi tvö
+starfsheiti; hún er ekki yfirlit yfir öll starfsheiti sem hafa fallið undir
+lög um tæknigreinar og hönnun [@althingi_frv_1996]:
 
 | Lög | Helsta efni |
 |---|---|
 | Nr. 24, 13. júní 1937 | Réttur manna til að kalla sig verkfræðinga, húsameistara eða iðnfræðinga |
 | Nr. 44, 3. apríl 1963 | Starfsheitið tæknifræðingur kemur í stað iðnfræðings |
-| Nr. 73, 9. október 1968 | Byggingafræðingur bætist við, sem áður féll undir iðnfræðing |
-| Nr. 62, 5. september 1986 | Húsgagna- og innanhússhönnuðir og landslagshönnuðir bætast við |
 | Nr. 8, 11. mars 1996 | Núgildandi lög um löggildingu starfsheita sérfræðinga í tækni- og hönnunargreinum |
 
 Samkvæmt núgildandi lögum hafa þeir einir rétt til að kalla sig verkfræðing eða
@@ -110,13 +198,19 @@ if (!is.null(fyrstu)) {
     heimild = "leyfisskrá"))
 }
 flokkar <- c("Menntun", "Löggjöf", "Fagfélög", "Leyfishafar")
-litir <- c(Menntun = "#10099F", Löggjöf = "#d61f69", Fagfélög = "#2DD2C0",
-           Leyfishafar = "#FFA05F")
+litir <- stats::setNames(c("#10099F", "#d61f69", "#2DD2C0", "#FFA05F"), flokkar)
 t$flokkur <- factor(t$flokkur, levels = rev(flokkar))
 t$stadfest <- nzchar(t$heimild)
 heimildir <- c(vfi_saga = "Verkfræðingafélag Íslands, Saga VFÍ",
                gudni1961 = "Guðni Jónsson 1961, Saga Háskóla Íslands",
                aldarafmaeli1968 = "Háskóli Íslands, aldarafmælisvefur",
+               hi_verkfraedisaga = "Háskóli Íslands, Saga og þróun verkfræðináms",
+               hi_deildaskipting_2008 = "Háskóli Íslands, skipulagsbreyting 2008",
+               vfi_1977 = "Tímarit Verkfræðingafélags Íslands, 1977, bls. 11",
+               ru_saga = "Háskólinn í Reykjavík, Saga HR",
+               ru_verkfraedideild_20ara = "Háskólinn í Reykjavík, Saga Verkfræðideildar",
+               althingi_taekniskoli_1972 = "Alþingi, ræða um Tækniskóla Íslands, 1972",
+               althingi_53_2002 = "Lög nr. 53/2002 um Tækniháskóla Íslands",
                althingi_frv_1996 = "Alþingi, þskj. 107, 120. lþ.",
                althingi_8_1996 = "Lög nr. 8/1996",
                "leyfisskrá" = "Leyfisskrá Stjórnarráðsins")

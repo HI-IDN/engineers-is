@@ -1,0 +1,72 @@
+/* Article page styled after the HÍ Quarto article template. */
+
+:root {
+  --hi-blue: #10099f;
+  --hi-teal: #2dd2c0;
+  --hi-paper: #f5f5f5;
+  --hi-ink: #262626;
+}
+
+body {
+  color: var(--hi-ink);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+h1, h2, h3 {
+  color: var(--hi-blue);
+  font-weight: 800;
+}
+
+h1 {
+  border-bottom: 3px solid var(--hi-teal);
+  padding-bottom: .25em;
+}
+
+.quarto-title-block .quarto-title-banner {
+  background: white;
+}
+
+.quarto-title-meta .quarto-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+  margin: .25rem 0 0;
+}
+
+.quarto-title-meta .quarto-category {
+  background: var(--hi-teal);
+  color: var(--hi-blue);
+  border: 0;
+  border-radius: 999px;
+  padding: .1rem .55rem;
+  margin: 0;
+  font-size: .68rem;
+  font-weight: 650;
+  line-height: 1.5;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  opacity: 1;
+}
+
+.article-links {
+  margin: .5rem 0 1.5rem;
+  font-size: .9rem;
+}
+
+.article-links a {
+  color: var(--hi-blue);
+  font-weight: 650;
+}
+
+.pub-note,
+.article-abstract {
+  background: var(--hi-paper);
+  border-left: 4px solid var(--hi-teal);
+  padding: .85rem 1rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.pub-note p,
+.article-abstract p { margin: 0; }
+
+a { color: var(--hi-blue); }

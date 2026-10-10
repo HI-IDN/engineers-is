@@ -1,0 +1,31 @@
+project:
+  type: website
+  output-dir: ../site/grein
+  render:
+    - index.qmd
+
+website:
+  title: "Nýliðun í verkfræði- og tæknifræðistétt"
+  site-url: https://hi-idn.github.io/engineers-is/grein/
+  favicon: ../img/hi/favicon.svg
+
+format:
+  html:
+    theme: cosmo
+    css: styles/article.css
+    toc: false
+    number-sections: false
+    title-block-categories: true
+    title-block-style: default
+    smooth-scroll: true
+  typst:
+    papersize: a4
+    margin:
+      x: 24mm
+      y: 24mm
+
+execute:
+  freeze: auto
+  echo: false
+  warning: false
+  message: false

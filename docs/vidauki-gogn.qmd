@@ -3,3 +3,12 @@
 Þessi hluti viðaukanna lýsir hverri gagnalind fyrir sig: hvaðan hún kemur,
 hvernig hún er sótt og lesin, hvaða reglum er beitt og hvaða fyrirvarar fylgja.
 Yfirlit er í [Gögn](02-gogn.qmd).
+
+## Yfirlit gagnalinda
+
+| Gagnalind | Í hnotskurn | Helsti fyrirvari |
+|---|---|---|
+| [Leyfisskrár Stjórnarráðsins](gogn-leyfisskrar.qmd) | Leyfishafar, fæðingarár og leyfisdagar; aðalgögn um ný leyfi. | Skrárnar eru lifandi vefsíður og færslur handskráðar. |
+| [Mannanafnaskrá Þjóðskrár](gogn-mannanafnaskra.qmd) | Nöfn notuð til að áætla kynjasamsetningu leyfishafa. | Nafnavenjur segja ekki til um kyn eða kynvitund einstaklings. |
+| [Hagstofa Íslands](gogn-hagstofa.qmd) | Mannfjöldi sem nefnari og opinberar talningar á nemendum og brautskráningum. | Brautskráningataflan telur prófgráður, ekki einstaka einstaklinga. |
+| [Skemman](gogn-skemman.qmd) | Ritgerðarupplýsingar fyrir afmarkaða aukagreiningu. | Höfundatenging við leyfisskrá er óviss og krefst næmnigreiningar. |
