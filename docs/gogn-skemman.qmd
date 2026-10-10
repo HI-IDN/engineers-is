@@ -1,0 +1,5 @@
+# Skemman {#sec-gogn-skemman}
+
+Skemmu-gögn koma úr `skemman-harvester`. Þetta verkefni endurtekur hvorki
+söfnun né þáttun þeirra. Tenging ritgerðarhöfunda við leyfisskrá verður
+aukagreining með skráðum styrkleikaflokkum samsvarana og næmnigreiningu.

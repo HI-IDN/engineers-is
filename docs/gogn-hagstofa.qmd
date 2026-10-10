@@ -1,0 +1,96 @@
+# Hagstofa Íslands {#sec-gogn-hagstofa}
+
+```{r setup}
+#| include: false
+source("../R/gogn.R")
+```
+
+Mannfjöldi er meðalmannfjöldi Hagstofu Íslands eftir kyni og aldri
+[@hagstofa_man08000], árin `r hag$mf$fra`–`r hag$mf$til`. Hann er nefnarinn
+þegar ný leyfi eru reiknuð á hverja 100.000 íbúa og, eftir atvikum, á
+viðeigandi aldurshóp. Hagstofan breytti aðferð sinni við mat á mannfjölda árið
+2024 og birtir sérstaklega mat á ofmati áranna 2011–2024; kanna þarf hvort
+munurinn skipti máli fyrir hlutföllin.
+
+Brautskráningar eru úr töflu Hagstofunnar eftir námsbraut, prófgráðu og kyni
+[@hagstofa_sko04205c], skólaárin `r hag$br$fyrsta` til `r hag$br$sidasta`.
+Skólaár er talið til síðara almanaksársins, svo `r hag$br$fyrsta` telst
+`r hag$br$fra`. Taflan telur prófgráður, ekki einstaklinga: sá sem lýkur BS- og
+síðar MS-prófi telst tvisvar. Fyrir `r hag$br$fra` eru engin samræmd
+brautskráningargögn; um það tímabil, sjá @sec-fyrir-1996.
+
+`scripts/fetch_hagstofa.py` sækir töflurnar um vefþjónustu Hagstofunnar
+(PX-Web) í `data/hagstofa.sqlite`, með sama hætti og leyfisskrárnar: hver sókn
+er varðveitt með fyrirspurn, söfnunartíma, SHA-256 og svarinu sjálfu. Nýjasta
+sókn er frá `r hag$sott`.
+
+Töflurnar eru sóttar af þessum slóðum. `GET` á slóðina skilar lýsigögnum
+töflunnar sem JSON (breytur, kóðar og heiti gilda), og `POST` á sömu slóð
+með fyrirspurn skilar gögnunum:
+
+| Tafla | Slóð í vefþjónustu |
+|---|---|
+| MAN08000 | <https://px.hagstofa.is/pxis/api/v1/is/Ibuar/mannfjoldi/1_yfirlit/Yfirlit_mannfjolda/MAN08000.px> |
+| SKO04205c | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04205c.px> |
+| SKO04103 | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/3_hseldra/SKO04103.px> |
+| SKO04105b | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/0_hsNemendur/SKO04105b.px> |
+| SKO04208b | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04208b.px> |
+| SKO04207 | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04207.px> |
+| SKO04208a | <https://px.hagstofa.is/pxis/api/v1/is/Samfelag/skolamal/4_haskolastig/1_hsProf/SKO04208a.px> |
+
+Mannfjöldataflan, eldri nemendataflan og árgangataflan eru sóttar í heild í
+einu kalli. Brautskráningataflan og nemendataflan eftir námsbraut eru of stórar
+til þess og eru sóttar eftir prófgráðu, eitt kall á hverja.
+
+Hver fyrirspurn og svarið við henni eru geymd í töflunni `fetch` í
+`data/hagstofa.sqlite`.
+
+## Flokkun námsbrauta
+
+Hvaða námsbrautir teljast verkfræði og hverjar tæknifræði er ákveðið fyrir fram
+í `config/programme_groups.csv`. Flokkunin fylgir heiti námsbrautar fremur en
+námssviði Hagstofunnar (ISCED-F), því nokkrar brautir sem bera heiti verkfræði
+eða tæknifræði eru flokkaðar undir önnur svið.
+
+```{r hagstofa-flokkun}
+#| echo: false
+#| results: asis
+# One table per group, each with a bold total row.
+if (!is.null(hag)) {
+  for (hopur in c("verkfraedi", "taeknifraedi")) {
+    f <- hag$flokkun[hag$flokkun$programme_group == hopur, ]
+    t <- data.frame(Námsbraut = f$programme, Kóði = f$programme_code,
+                    Grunnnám = f$bs, Meistaranám = f$ms, Doktorsnám = f$phd)
+    t <- rbind(t, data.frame(Námsbraut = "Samtals", Kóði = "", Grunnnám = sum(f$bs),
+                             Meistaranám = sum(f$ms), Doktorsnám = sum(f$phd)))
+    t[] <- lapply(t, as.character)
+    n <- nrow(t)
+    t[n, ] <- ifelse(t[n, ] == "", "", paste0("**", t[n, ], "**"))
+    heiti <- c(verkfraedi = "verkfræði", taeknifraedi = "tæknifræði")[[hopur]]
+    print(knitr::kable(
+      t, row.names = FALSE, align = "llrrr",
+      caption = paste0("Námsbrautir sem teljast ", heiti, ", með fjölda brautskráninga ",
+                       hag$br$fra, "–", hag$br$til, " eftir prófgráðu.")
+    ))
+    cat("\n\n")
+  }
+}
+```
+
+Nokkrar brautir utan flokkunarinnar gætu geymt verkfræðipróf og eru skráðar hér
+svo ákvörðunin sé sýnileg: *Orkufræði* (`r utan("522j", "ms")` meistaragráður),
+sem gæti falið í sér meistaranám í orkuverkfræði; *Umhverfisfræði*
+(`r utan("422a", "ms")` meistaragráður), sem er blanda ólíkra námsleiða; og
+*Tölvunarfræði* (`r utan("481c", "bs")` fyrstu gráður), sem er ekki verkfræði í
+skilningi starfsheitalaganna. Þær eru viljandi ekki teknar með.
+
+## Flokkun eftir sviðum
+
+Kóði námsbrautar fylgir ÍSNÁM2008 [@hagstofa_isnam2008], íslenskri útgáfu ISCED
+97 [@unesco_isced1997]: fyrsti tölustafurinn er *almennt svið* Hagstofunnar (t.d.
+5, verkfræði, framleiðsla og mannvirkjagerð) og tveir fyrstu *afmarkað svið*
+(t.d. 34, viðskipti og stjórnun). Heitin eru Hagstofunnar. Árgangatöflurnar um
+afdrif nýnema fylgja hins vegar nýrri flokkun, ISCED-F 2013, og sviðin þar eru
+ekki alveg þau sömu.
+
+## Heimildir {.unnumbered}

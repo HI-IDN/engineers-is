@@ -1,0 +1,11 @@
+project:
+  type: default
+  output-dir: ../site/kynning
+  render:
+    - index.qmd
+
+execute:
+  freeze: auto
+  echo: false
+  warning: false
+  message: false

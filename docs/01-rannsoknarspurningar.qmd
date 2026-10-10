@@ -1,0 +1,30 @@
+# Rannsóknarspurningar
+
+## Aðalspurning
+
+Hvernig hefur nýliðun í lögverndaða verkfræðinga- og tæknifræðingastétt á
+Íslandi þróast frá 1962/1965 til 2026 með tilliti til umfangs, aldurs og
+áætlaðrar kynjasamsetningar, og hvernig tengist þróunin lýðfræði,
+brautskráningum og breytingum á menntun, stofnanaumhverfi og regluverki?
+
+## Undirspurningar
+
+1. Hvernig hafa árleg ný starfsheitaleyfi og leyfi á hverja 100.000 íbúa
+   þróast hjá verkfræðingum og tæknifræðingum?
+2. Hvernig hafa aldur við leyfisveitingu og áætluð kynjasamsetning nýliðunar
+   breyst milli tímabila?
+3. Hvernig tengjast brautskráningar úr viðeigandi námsleiðum leyfisstraumnum
+   frá því samræmd brautskráningargögn verða tiltæk?
+4. Hve stór hluti af afmörkuðum Skemmu-árgöngum birtist síðar í leyfisskrá og
+   hver er tíminn að leyfi, þegar tekið er tillit til þess að nýjustu
+   árgangarnir hafa ekki enn haft tíma til að fá leyfi (hægri skerðing, e.
+   *right censoring*)?
+
+## Hugtakanotkun
+
+Notað er **starfsheitaleyfi** eða **leyfi til að nota lögverndað starfsheiti**.
+Leyfið er ekki almennt starfsleyfi til að vinna verkfræðistörf.
+
+Orðið *vinsældir* verður ekki sjálfstæð útkomubreyta nema fyrir liggi bein
+gögn um umsóknir eða námsval. Að öðrum kosti eru notuð afmarkaðri hugtök:
+umfang brautskráninga, leyfisnýliðun og leyfisupptaka.

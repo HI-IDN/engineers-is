@@ -1,0 +1,281 @@
+---
+title: "Nýliðun í lögverndaðar stéttir verkfræðinga og tæknifræðinga á Íslandi 1962–2025"
+subtitle: "Entry into Iceland's Licensed Engineering and Engineering-Technology Professions, 1962–2025"
+title-en: "Entry into Iceland's Licensed Engineering and Engineering-Technology Professions, 1962–2025"
+subtitle-en: "Professional-Title Licences, Graduations and Demographic Development"
+author:
+  - name: "Helga Ingimundardóttir"
+    affiliations:
+      - name: "Iðnaðar-, vélaverkfræði- og tölvunarfræðideild (IVT), Háskóli Íslands"
+    email: "helgaingim@hi.is"
+    corresponding: true
+lang: is
+bibliography: references.bib
+csl: apa.csl
+format-links: false
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    other-links:
+      - text: "PDF-útgáfa"
+        icon: file-pdf
+        href: index.pdf
+      - text: "Vinnudagbók rannsóknarinnar"
+        icon: journal-text
+        href: https://hi-idn.github.io/engineers-is/
+      - text: "GitHub-kóðasafn"
+        icon: github
+        href: https://github.com/HI-IDN/engineers-is
+  typst:
+    number-sections: true
+    section-numbering: "1.1.1"
+    papersize: a4
+    mainfont: "Times New Roman"
+    fontsize: 12pt
+    linestretch: 2.0
+    margin:
+      x: 1in
+      y: 1in
+    include-in-header: typst-header.typ
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
+fig-cap-location: bottom
+tbl-cap-location: top
+crossref:
+  fig-title: "Mynd"
+  tbl-title: "Tafla"
+---
+
+**Undirtitill / Subtitle:** Starfsheitaleyfi, brautskráningar og lýðfræðileg þróun / Professional-Title Licences, Graduations and Demographic Development  
+
+::: {.content-visible when-format="html"}
+::: {.callout-note collapse="true"}
+## Staða handrits
+
+Greinardrög byggð á vinnudagbók rannsóknarinnar. Fjarlægja skal þennan reit fyrir innsendingu.
+
+Aðalgreining nær til heilla almanaksára 1962–2025 fyrir verkfræðinga og 1965–2025 fyrir tæknifræðinga. Gögn ársins 2026 eru aðeins viðbótarathugun og verða birt í supplement nema heildargögn fyrir árið liggi fyrir við lokagerð handrits.
+:::
+:::
+
+# Ágrip {.unnumbered}
+
+**Bakgrunnur:** Lögvernduð starfsheiti verkfræðinga og tæknifræðinga tengja formlega menntun við aðild að skilgreindu starfsréttindakerfi. Þrátt fyrir langa sögu kerfisins hefur þróun árlegrar nýliðunar ekki verið greind heildstætt yfir lengri tíma.
+
+**Markmið:** Að lýsa þróun nýliðunar í leyfiskerfi verkfræðinga og tæknifræðinga á Íslandi og kanna hvernig hún tengist mannfjölda, aldri við leyfisveitingu, áætlaðri kynjasamsetningu nafna og brautskráningum úr viðeigandi námsleiðum.
+
+**Gögn og aðferðir:** Notaðar eru opinberar leyfisskrár Stjórnarráðsins frá 1962 fyrir verkfræðinga og 1965 fyrir tæknifræðinga til 2025. Gögnin eru tengd samanteknum mannfjölda-, nemenda- og brautskráningargögnum Hagstofu Íslands. Kynjasamsetning nafna er áætluð með Mannanafnaskrá Þjóðskrár; niðurstöður eru birtar með flokknum óþekkt/óvíst og næmnigreiningu.
+
+**Niðurstöður:** [TODO: setja inn 3–4 tölulegar meginniðurstöður eftir lokagreiningu.]
+
+**Ályktanir:** [TODO: ein meginályktun um nýliðun og ein hagnýt ályktun um menntunar- eða starfsréttindakerfið.]
+
+**Lykilorð:** verkfræði; tæknifræði; starfsheitaleyfi; fagstéttir; verkfræðimenntun; nýliðun
+
+# Abstract {.unnumbered}
+
+**Background:** The protected professional titles *verkfræðingur* (engineer) and *tæknifræðingur* (engineering technologist) connect formal education to a defined licensing system. Long-term changes in annual entry into this system have not been described comprehensively.
+
+**Objective:** To describe new licences issued to engineers and engineering technologists in Iceland and examine their temporal relationship with population size, age at licensing, inferred name-based gender composition, and graduations from relevant programmes.
+
+**Data and methods:** Public government licence registers are analysed from 1962 for engineers and 1965 for engineering technologists through 2025. Aggregate population, student, and graduation data from Statistics Iceland provide context. Name-based gender composition is estimated from the National Registry name database, with an unknown/uncertain category and sensitivity analysis.
+
+**Results:** [TODO: report three or four numerical findings after the final analysis.]
+
+**Conclusions:** [TODO: state the main conclusion about entry and one practical implication for education or licensing.]
+
+**Keywords:** engineering profession; engineering education; professional-title licensing; workforce entry; Iceland
+
+# Inngangur
+
+Verkfræðingur og tæknifræðingur eru lögvernduð starfsheiti á Íslandi. Leyfi til að nota starfsheitið er ekki almennt starfsleyfi til að vinna verkfræðistörf. Leyfisskrárnar mæla því formlega inngöngu í starfsheitaleyfiskerfið, en uppsafnaður fjöldi leyfishafa jafngildir hvorki fjölda starfandi sérfræðinga né fjölda þeirra sem eru búsettir á Íslandi [@althingi_8_1996; @stjr_verkfraedingar].
+
+Framboð innlendrar verkfræði- og tæknifræðimenntunar, gráðuskipulag og reglur um leyfishæft nám hafa breyst verulega á því tímabili sem leyfisskrárnar ná yfir. Jafnframt hafa margir Íslendingar lokið hluta eða öllu verkfræðinámi sínu erlendis, einkum á fyrri hluta tímabilsins. Við mat á þróun leyfisnýliðunar þarf því að aðgreina þátttöku í námi, brautskráningar, inngöngu í leyfiskerfið og stærð starfandi fagstéttar.
+
+Framlag rannsóknarinnar er þríþætt. Í fyrsta lagi er sett saman langtímaröð nýrra starfsheitaleyfa verkfræðinga og tæknifræðinga. Í öðru lagi er þróunin sett í samhengi við mannfjölda, aldur við leyfisveitingu og áætlaða kynjasamsetningu nafna. Í þriðja lagi eru leyfisraðir bornar saman við opinber gögn um nemendur og brautskráningar, með skýrri aðgreiningu á prófgráðum, einstaklingum og mögulegum tíma frá útskrift til leyfis.
+
+## Rannsóknarspurningar
+
+**Aðalspurning**
+
+Hvernig hefur nýliðun í lögverndaðar stéttir verkfræðinga og tæknifræðinga á Íslandi þróast frá upphafi tiltækra leyfisskráa til 2025 og hvernig tengist þróunin menntunarframboði, brautskráningum og breytingum á starfsréttindakerfinu?
+
+**Undirspurningar**
+
+1. Hvernig hafa árleg ný starfsheitaleyfi, bæði sem fjöldi og á hverja 100.000 íbúa, þróast hjá verkfræðingum og tæknifræðingum?
+2. Hvernig hafa aldur við leyfisveitingu og áætluð kynjasamsetning nafna breyst yfir tímabilið?
+3. Hvernig þróast brautskráningar úr viðeigandi námsleiðum miðað við leyfisnýliðun frá 1996, þegar tekið er tillit til gráðustigs, ólíkra nefnara og mögulegrar tafar?
+4. Hvaða tímalega samhengi sést milli þróunar leyfisnýliðunar og staðfestra breytinga á menntunar- og starfsréttindakerfinu?
+
+::: {.callout-note}
+Skemmu-greining á tíma frá lokaverkefni að fyrsta leyfi er ekki meginrannsóknarspurning. Hún verður sett fram sem aukagreining eða supplement ef tenging einstaklinga, úrtaksrammi og eftirfylgnitími reynast nægilega traust.
+:::
+
+## Stofnana- og sögulegt samhengi {#sec-history}
+
+Saga verkfræði- og tæknifræðimenntunar er hér notuð sem túlkunarrammi fyrir leyfisraðirnar. Breytingar á námsframboði geta breytt fjölda þeirra sem eiga kost á að sækja um starfsheitaleyfi, en nálægð menntabreytingar og breytingar í leyfisröð sýnir ekki ein og sér orsakasamband. Sögulegu tímamótin hjálpa einnig til við að skýra breytingar á prófgráðum, nefnurum og væntanlegri töf milli náms og leyfis.
+
+### Verkfræðimenntun við Háskóla Íslands {#sec-history-hi}
+
+Verkfræðikennsla við Háskóla Íslands hófst 19. október 1940. Námið var upphaflega tveggja ára fyrrihlutanám í bygginga-, véla- og rafmagnsverkfræði, mótað með hliðsjón af Danmarks tekniske Højskole. Gert var ráð fyrir að nemendur lykju síðari hluta námsins erlendis [@gudni1961].
+
+Sex nemendur luku fyrri hluta prófs vorið 1943. Vegna stríðsins gátu þeir ekki haldið utan og var því samþykkt að hefja kennslu til fullnaðarprófs í byggingarverkfræði 1. október 1943. Verkfræðideild var síðan formlega stofnuð með lögum nr. 66 hinn 28. desember 1944. Sex nemendur luku fullnaðarprófi í desember 1946 og einn til viðbótar í júní 1948. Eftir að möguleikar til náms erlendis opnuðust á ný var fullnaðarprófskennslan lögð niður og HÍ kenndi aftur einkum fyrri hluta verkfræðináms [@gudni1961; @hi_verkfraedisaga].
+
+Endurskipulagning hófst árið 1968 þegar kennslu í raunvísindagreinum var bætt við og Verkfræði- og raunvísindadeild varð til. Árið 1969 var deildinni skipt í skorir [@aldarafmaeli1968; @hi_verkfraedisaga]. Þessi breyting myndaði stofnanalegan grunn að fjölbreyttara innlendu námsframboði.
+
+Árið 1970 var formlega komið á fjögurra ára, 120 eininga samfelldu námi til lokaprófs í byggingar-, rafmagns- og vélaverkfræði. Fyrsti hópurinn samkvæmt nýja skipulaginu innritaðist haustið 1970 og fyrstu nemendurnir úr hinu fjögurra ára námi brautskráðust árið 1974 [@hi_verkfraedisaga; @vfi_1977]. Árið 1970 markar því ekki upphaf verkfræðikennslu við HÍ heldur upphaf varanlegs samfellds lokaprófsnáms innanlands. Fyrir leyfisröðina er 1974 fyrsta árið sem nýtt innlent fjögurra ára námskerfi gat farið að skila brautskráðum umsækjendum.
+
+Verkfræðideild og Raunvísindadeild urðu aðskildar deildir árið 1985. Árið 1989 hófst 30 eininga meistaranám og fyrsti nemandinn lauk meistaraprófi árið 1991. Fyrsta doktorsvörn að loknu skipulegu doktorsnámi fór fram 1993. Árið 1994 var heitinu „lokapróf í verkfræði“ breytt í *Candidatus Scientiarum* í verkfræði [@hi_verkfraedisaga].
+
+Árið 1997 var fyrra fjögurra ára lokaprófskerfi leyst af hólmi með þriggja ára, 90 eininga BS-námi og tveggja ára, 60 eininga MS-námi. Samantekt HÍ segir að eftir breytinguna hafi þurft að ljúka meistaraprófi til að uppfylla menntunarkröfu starfsheitisins verkfræðingur og að fyrstu BS-nemendurnir hafi brautskráðst 1998 [@hi_verkfraedisaga]. Breytingin varð áður en Bologna-yfirlýsingin var samþykkt árið 1999 og er því ekki rétt að kalla hana innleiðingu Bologna-ferlisins. Hún var þó sambærileg að formi við tveggja þrepa skipan sem yfirlýsingin setti síðar fram: að minnsta kosti þriggja ára fyrsta námslotu og aðra lotu sem leiðir til meistaraprófs og/eða doktorsprófs [@ehea_bologna_1999]. Ekki liggur þó fyrir í þessari rannsókn frumheimild sem sundurgreinir innleiðinguna eftir hverri verkfræðigrein eða staðfestir eina nákvæma innleiðingardagsetningu. Árið 1997 er því fyrst og fremst mælingafræðilegt brot í skilgreiningu prófgráða: fjögurra ára lokapróf fyrir breytinguna er ekki beint sambærilegt við BS-próf eftir breytinguna.
+
+Tölvunarfræðiskor fluttist til Verkfræðideildar árið 2000 og kennsla í efnaverkfræði og hugbúnaðarverkfræði hófst skólaárið 2001–2002. Frá 1. júlí 2008 hefur verkfræðinámið verið skipulagt í þremur deildum innan Verkfræði- og náttúruvísindasviðs: Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild, Umhverfis- og byggingarverkfræðideild og Rafmagns- og tölvuverkfræðideild [@hi_verkfraedisaga; @hi_deildaskipting_2008]. Þessar síðari breytingar skipta einkum máli sem vísbending um breikkun námsframboðs, en eru ekki meðhöndlaðar sem sjálfstæðar orsakaíhlutanir.
+
+### Tæknimenntun og verkfræðinám við Háskólann í Reykjavík {#sec-history-hr}
+
+Saga þeirrar tæknimenntunar sem síðar varð hluti Háskólans í Reykjavík nær til stofnunar Tækniskóla Íslands árið 1964. Skólinn var stofnaður til að brúa bilið milli iðnmenntunar og háskólamenntunar. Fyrstu tæknifræðingarnir brautskráðust árið 1971; þeir voru tæknifræðingar en ekki verkfræðingar [@ru_saga; @althingi_taekniskoli_1972]. Árið 1964 er því upphaf tæknimenntunarhefðar forvera HR, ekki upphaf verkfræðináms við HR.
+
+Hinn stofnanaþráður HR hófst með Tölvunarfræðiskóla Verzlunarskóla Íslands árið 1988. Viðskiptaskóli Reykjavíkur var stofnaður árið 1998 á grunni tölvunarfræðiskólans og fékk nafnið Háskólinn í Reykjavík árið 2000 [@ru_saga]. Þessi þróun er hluti af stofnanasögu skólans en hafði ekki þegar í stað sömu mælingafræðilegu þýðingu fyrir leyfisnýliðun verkfræðinga og tæknifræðinga og þróun Tækniskólans.
+
+Tækniskóli Íslands varð Tækniháskóli Íslands árið 2002 og starfaði þá sem háskólastofnun [@althingi_53_2002; @ru_saga]. Árið 2005 sameinuðust Tækniháskóli Íslands og Háskólinn í Reykjavík. Við sameininguna varð til tækni- og verkfræðideild og eiginleg Verkfræðideild HR á rætur sínar að rekja til þessara tímamóta [@ru_saga; @ru_verkfraedideild_20ara]. Árið 2005 er því lykilár í greiningunni vegna þess að þá breikkaði stofnanalegur grunnur innlendrar verkfræðimenntunar utan HÍ. Nákvæmur gildistökudagur sameiningarinnar er ekki tilgreindur hér, þar sem dagsetningar í opinberri sögu HR eru ósamræmdar.
+
+Framhaldsnám í verkfræði hófst við HR árið 2008 og formlegt doktorsnám við skólann hófst sama ár [@ru_verkfraedideild_20ara; @ru_arsskyrsla_2008]. Verkfræðinám er nú innan Verkfræðideildar á Tæknisviði, en tæknifræði, iðnfræði og byggingafræði eru skipulagslega aðgreind í Tæknifræðideild. Námsleiðir og deildaskipulag hafa breyst yfir tíma og eru því skráð nánar í supplement fremur en notuð sem föst flokkun yfir allt rannsóknartímabilið.
+
+### Lögverndun starfsheita og leyfiskerfið {#sec-licensing}
+
+Lögvernd starfsheitanna á sér lengri sögu en stafrænu leyfisskrárnar. Lög nr. 24/1937 fjölluðu um rétt manna til að kalla sig verkfræðinga, húsameistara eða iðnfræðinga. Með lögum nr. 44/1963 kom starfsheitið tæknifræðingur í stað iðnfræðings í þessum lagaramma [@althingi_frv_1996].
+
+Núgildandi heildarrammi byggist á lögum nr. 8/1996 um löggildingu nokkurra starfsheita sérfræðinga í tækni- og hönnunargreinum. Samkvæmt lögunum mega þeir einir nota starfsheitið verkfræðingur eða tæknifræðingur sem hafa fengið til þess leyfi ráðherra. Leyfi verður ekki veitt nema umsækjandi hafi lokið fullnaðarprófi í viðkomandi starfsgrein. Fagfélög setja reglur um hvaða nám telst leiða til fullnaðarprófs og reglurnar taka gildi eftir staðfestingu ráðherra og birtingu í Stjórnartíðindum [@althingi_frv_1996; @althingi_8_1996].
+
+Reglur nr. 1105/2015 skilgreina nánar mat á umsóknum um leyfi til að kalla sig verkfræðing og viðmið um nám sem telst fullnaðarmenntun í verkfræði [@althingi_8_1996]. Reglurnar geta því haft áhrif á hvaða menntunarferlar leiða til leyfis og hvernig umsóknir eru metnar. Þær eru þó ekki sjálfkrafa orsök breytinga á fjölda leyfa.
+
+Leyfisskrá verkfræðinga nær aftur til 1962 og skrá tæknifræðinga til 1965, þótt lögverndun starfsheitanna sé eldri [@stjr_verkfraedingar]. Upphaf greiningartímabilsins ræðst því af gagnatækni en ekki af upphafi laganna eða fagstéttanna. Leyfi sem veitt voru fyrr sjást ekki endilega í skránum og upphafsár raðanna má ekki túlka sem upphaf nýliðunar í stéttirnar.
+
+### Tímamót sem túlkunarrammi {#sec-milestones}
+
+| Ár | Tímamót | Þýðing fyrir mælingar |
+|:---|:---|:---|
+| 1970 | HÍ tekur upp fjögurra ára samfellt lokapróf | Innlent framboð fullnaðarprófs eykst |
+| 1974 | Fyrstu brautskráningar úr nýja náminu | Fyrsta mögulega innlenda útskriftarbylgjan |
+| 1996 | Lög nr. 8/1996 taka gildi | Endurnýjaður stjórnsýslurammi |
+| 1997 | BS/MS-skipulag tekið upp við HÍ | Prófgráður og nefnarar verða ósambærilegri |
+| 2005 | HR og Tækniháskóli Íslands sameinast | Innlent námsframboð breikkar |
+| 2015 | Reglur nr. 1105/2015 birtar | Viðmið um leyfishæft nám skýrast |
+
+: Tímamót sem notuð eru við túlkun leyfisraðanna. {#tbl-milestones}
+
+Tímamótin eru ekki skilgreind sem fyrirfram gefnar orsakaíhlutanir. Í myndum eru þau sýnd sem lóðréttar skýringarlínur og í texta er notað orðalag á borð við „fellur í tíma við“, „tímalegt samhengi sést“ eða „röðin breytist um svipað leyti og“. Full tímalína og ítarleg námsleiðaskrá eru í supplement, meðal annars í [sögukafla vinnudagbókarinnar](../docs/03-saga-og-timamot.html).
+
+# Gögn og aðferðir
+
+## Rannsóknarsnið og greiningareining
+
+Rannsóknin er lýsandi langtímarannsókn byggð á stjórnsýslu- og opinberum samantektargögnum. Meginútkoman er fyrsta skráð leyfi einstaklings til að nota lögverndað starfsheiti innan hvorrar stéttar á almanaksári.
+
+<!-- TODO: staðfesta með kóða hvort einstaklingar geti átt fleiri en eina færslu innan sömu skrár og skjalfesta afritunarreglu. -->
+
+Verkfræðingar eru greindir frá 1962 en tæknifræðingar frá 1965. Ósamhverft upphaf raðanna er sýnt í myndum og tekið fram í samanburði milli stétta.
+
+## Gagnalindir
+
+| Gagnalind | Notkun | Helsti fyrirvari |
+|---|---|---|
+| Leyfisskrár Stjórnarráðsins | Leyfisdagur, fæðingarár og leyfisnýliðun | Lifandi vefsíður; eldri færslur geta verið afturvirkar |
+| Hagstofa Íslands | Mannfjöldi, nemendur og brautskráningar | Brautskráningar telja próf/gráður, ekki endilega einstaklinga |
+| Mannanafnaskrá Þjóðskrár | Áætluð kynjasamsetning nafna | Nafn flokkar hvorki kyn né kynvitund einstaklings |
+| Skemman | Afmörkuð cohort-greining á tíma að leyfi | Óviss tenging og hægri skerðing |
+
+: Gagnalindir rannsóknarinnar. {#tbl-data}
+
+Gögn eru sótt með endurkeyranlegum skriftum og vistuð í SQLite-gagnagrunnum. Söfnunartími og SHA-256-gildi upprunasvars eru varðveitt til að gera breytingar á lifandi vefsíðum rekjanlegar.
+
+## Útkomur og nefnarar
+
+Árleg ný leyfi eru sýnd sem hráar talningar og sem leyfi á hverja 100.000 íbúa með meðalmannfjölda ársins sem nefnara. Einnig er sýnt þriggja ára hreyfanlegt meðaltal til að draga úr áhrifum smárra árganga og stjórnsýslulegra afgreiðslulota.
+
+Aldur við leyfisveitingu er nálgaður út frá fæðingarári og leyfisári og tekinn saman með miðgildi og fjórðungsbili.
+
+## Áætluð kynjasamsetning nafna
+
+Flokkunin lýsir áætlaðri kynjasamsetningu nafna, ekki kyni eða kynvitund einstaklinga. Nöfnum er skipt í áætlað kvenkyns nafn, áætlað karlkyns nafn og óþekkt/óvíst.
+
+Næmnigreining sýnir neðri og efri mörk með því að setja öll óviss nöfn til skiptis í hvorn þekkta flokkinn. Niðurstöðurnar eru aukaniðurstaða og verða ekki túlkaðar sem mæling á kynvitund.
+
+## Brautskráningar, nemendur og leyfi
+
+Brautskráningargögn eftir námsbraut eru tiltæk frá 1996. Eins og lýst er í @sec-history-hi er fjögurra ára lokapróf fyrir 1997 ekki beint sambærilegt við BS- eða MS-próf eftir kerfisbreytinguna. BS-, MS- og doktorsgráður eru því greindar aðskilið.
+
+Brautskráningartölur telja próf eða gráður og geta talið sama einstakling oftar en einu sinni. Þeim verður ekki deilt óhliðrað í leyfi sama árs. Lýsandi samanburður verður gerður með fyrirfram skilgreindum töfum, til dæmis 0–5 árum.
+
+Eldri leyfisraðir endurspegla einnig nám erlendis. Nemendagögn Hagstofunnar sýna fjölda íslenskra nemenda í tæknigreinum og verkfræði heima og erlendis frá 1977, en mæla ekki brautskráningar og eru víðari en skilgreining þessarar rannsóknar. Þau eru því notuð sem samhengi fremur en nefnari. Túlkun breytinga á framboði námsleiða byggist á sögulegu samhengi í @sec-history og ítarlegri námsleiðaskrá í supplement.
+
+## Tölfræðileg greining
+
+Meginúrvinnsla er lýsandi:
+
+- árlegur fjöldi leyfa og leyfi á hverja 100.000 íbúa;
+- þriggja ára hreyfanlegt meðaltal;
+- miðgildi og fjórðungsbil aldurs;
+- fjöldi og hlutfall nafnaflokka eftir tímabilum;
+- brautskráningar eftir gráðustigi og fyrirfram skilgreindum töfum.
+
+Formleg brotpunktsgreining er ekki aðalgreining. Hún kemur aðeins til greina sem næmnigreining ef gagnagæði eru stöðug og hugsanlegar stjórnsýslulotur hafa verið greindar.
+
+## Gagnagæði og siðferðileg atriði
+
+Athugaðar verða tvítekningar, afturvirkar skráningar, óvenjulegar dagsetningar, afgreiðslulotur og mögulegar eyður. Skoða þarf sérstaklega hvort lág gildi 1992–1994 endurspegli skráningareyðu.
+
+Kennitölur eða önnur bein auðkenni verða ekki birt eða vistuð í opinberu kóðasafni. Einstaklingsniðurstöður verða aðeins birtar sem samantekin tölfræði.
+
+# Niðurstöður
+
+## Umfang og gæði leyfisskránna
+
+[TODO: lýsa fjölda færslna, tvítekningum, dagsetningagæðum og mörkum leyfisskránna. Upphafsár raðanna og munurinn á skráarupphafi og sögu starfsheitanna er skýrður í @sec-licensing.]
+
+## Langtímaþróun leyfisnýliðunar
+
+Fyrsta meginmyndin sýnir árleg verkfræðinga- og tæknifræðingaleyfi á hverja 100.000 íbúa, bæði sem ársgildi og þriggja ára hreyfanlegt meðaltal.
+
+Lóðréttar skýringarlínur verða settar við 1970, 1974, 1996, 1997, 2005 og 2015. Þær sýna staðfest tímamót úr @sec-milestones en fela ekki í sér orsakatúlkun.
+
+## Aldur við leyfisveitingu og nafnasamsetning
+
+Áætluð kynjasamsetning nafna verður sýnd með sérstökum flokki fyrir óþekkt/óvíst.
+
+## Brautskráningar og menntunarframboð
+
+Brautskráningar frá 1996 eru sýndar eftir stétt og gráðustigi. Leyfi og brautskráningar verða sýnd í samstilltum myndhlutum fremur en á villandi tvöföldum y-ás. Túlkun nær meðal annars til breytingarinnar á prófgráðum við HÍ sem lýst er í @sec-history-hi.
+
+Nemendagögn heima og erlendis 1977–2006 fara að jafnaði í supplement.
+
+## Aukagreining: tími frá lokaverkefni að leyfi
+
+Þessi greining verður aðeins í megintexta ef Skemmu-úrtakið, tenging höfunda og eftirfylgnitími standast fyrirfram skilgreind gæðaviðmið.
+
+# Umræða
+
+## Meginniðurstöður
+
+[TODO: draga saman niðurstöður og bera þær saman við rannsóknarspurningarnar. Setja skal tímamót um menntun og leyfisreglur í samhengi við @sec-history og forðast orsakaályktanir sem gögnin styðja ekki.]
+
+## Menntun, leyfisnýliðun og tímaskekkjur
+
+[TODO: fjalla um mögulega töf frá brautskráningu til leyfis, nám erlendis og breytingar á gráðustigi. Aðgreina þarf sérstaklega 1970/1974 uppbyggingu lokaprófsnáms og BS/MS-brotið 1997, sjá @sec-history-hi.]
+
+## Takmarkanir og framlag
+
+[TODO: fjalla um skráarupphaf, afturvirkar færslur, lýðfræðilega nefnara, óvissa nafnaflokkun og ófullkomna samsvörun brautskráninga og einstaklinga. Sögulegar heimildir staðfesta stofnana- og menntunarsamhengi en sýna ekki einar og sér orsakasamband við leyfisfjölda.]
+
+## Niðurstaða
+
+[TODO: setja inn stutta niðurstöðu eftir lokagreiningu.]
+
+# Þakkir
+
+[TODO: Tilgreina rannsóknarstyrki, aðgang að gögnum og aðstoð sem veitt var við rannsóknina.]

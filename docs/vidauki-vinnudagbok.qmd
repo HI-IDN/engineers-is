@@ -1,0 +1,57 @@
+# Vinnudagbók
+
+## 23. september 2026 — verkefni stofnað
+
+- Afmarkað sem sjálfstætt hliðarverkefni úr `skemman-msc`.
+- Kóðasafnsheitið `engineers-is` valið: stutt en lýsandi fyrir viðfangsefnið.
+- Megináhersla færð frá þröngri tengingu meistararitgerða og leyfa yfir á
+  langtímaþróun og nýliðun fagstéttarinnar.
+- Skemmu-tengingin skilgreind sem aukagreining.
+- HÍ-sagan sett í sérstakan kafla og 2024-spurningin skráð til
+  frumheimildakönnunar.
+- Vinnugrein heitir `profession-history`; áfangar verða squash-merge-aðir í
+  `main`.
+
+## 23. september 2026 — Leyfisskrár í SQLite
+
+- Leyfisskrár Stjórnarráðsins eru sóttar með `scripts/fetch_licences.py` í
+  `data/licences.sqlite`. Lestrarkóðinn er fluttur úr `skemman-msc`.
+- SQLite var valið fram yfir DuckDB: gögnin eru lítil, Python les það án
+  viðbótarpakka og hver sókn er ein skrá.
+- Hver sókn er varðveitt með söfnunartíma, SHA-256 og afriti síðunnar án
+  kennitalna.
+- „hefur ekki sótt leyfi“ var fyrst lesið sem svo að viðkomandi hefði aldrei
+  sótt um leyfi, og 321 leyfi féllu út. Athugasemdin merkir að leyfisbréfið var
+  aldrei sótt (tiltekt 1999); leyfið var veitt. Þær færslur, og aðrar með
+  óvenjulegum dagsetningarsniðum, eru nú taldar með.
+
+## 23. september 2026 — Kyn eftir nafnahefð
+
+- Kynjamat út frá nafni var skilið frá sem sérstakur pakki,
+  [`kyngreinir`](https://github.com/HI-IDN/icename-gender), byggður eins og
+  `skemman-harvester`. Hann var síðar sama dag endurnefndur `icename-gender`
+  (áður `kyngreinir`) svo að nafnið skiljist utan Íslands.
+- Reglan í `skemman-msc` skoðaði *-son* á undan eiginnöfnum og taldi því konu
+  með ættarnafni sem endar á *-son* sem karl. Nú ræður eiginnafnið á undan
+  *-son*.
+- `scripts/estimate_gender.py` skrifar matið í `name_gender`; kaflinn um gögn
+  birtir aðeins samantekt.
+
+## 9. október 2026 — Útgáfustaður og kynning fyrir VFÍ
+
+![](../img/ije-logo.svg){width=260 fig-alt="Icelandic Journal of Engineering"}
+
+- Greinin verður að lokum send til
+  [*Icelandic Journal of Engineering*](https://www.ije.is/) (IJE). Greinardrögin
+  þurfa að fylgja leiðbeiningum tímaritsins til höfunda.
+- Kynning fyrir VFÍ, *Þróun verkfræðinnar á Íslandi: nýliðun, menntun og
+  undirgreinar*, er í `kynning/` og birt á [kynning/](../kynning/). Hún er
+  byggð á niðurstöðum vinnudagbókarinnar og sniðmátinu `quarto-hi`.
+
+## Næstu skref
+
+1. Festa frumheimildir fyrir HÍ-tímalínuna, sérstaklega áfangann 1944 og
+   mögulegan afmælisviðburð 2024.
+2. Sækja og flokka viðeigandi mannfjölda- og brautskráningarraðir Hagstofu.
+3. Endurgera aðalmyndina sem ný leyfi á hverja 100.000 íbúa.
+4. Hanna survival-greiningu fyrir afmarkaða Skemmu-árganga.

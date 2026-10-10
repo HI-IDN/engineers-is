@@ -1,0 +1,245 @@
+# Saga verkfræðimenntunar og fagstéttar
+
+```{r setup}
+#| include: false
+source("../R/gogn.R")
+```
+
+Menntasagan er túlkunarrammi fyrir leyfisröðina en ekki sjálfstæð
+orsakasönnun. Tímamót verða aðeins sett á niðurstöðumyndir þegar þau geta haft
+mælingafræðilega þýðingu og frumheimildir hafa verið staðfestar.
+
+## Verkfræðikennsla í Háskóla Íslands
+
+Fyrstu áfangarnir eru raktir í sögu háskólans frá 1961, þar sem kaflinn um
+verkfræðideild er að mestu eftir Finnboga R. Þorvaldsson, fyrsta forstöðumann
+verkfræðikennslunnar [@gudni1961]:
+
+- **1940:** Undirbúningskennsla í verkfræði hefst með fyrstu kennslustund 19.
+  október 1940. Námið er tveggja ára nám undir fyrra hluta próf í bygginga-,
+  véla- og rafmagnsverkfræði, að fyrirmynd Danmarks tekniske Højskole, en
+  síðari hlutann þarf að taka erlendis [@gudni1961, bls. 112–114].
+- **1943:** Vorið 1943 ljúka sex fyrstu stúdentarnir fyrra hluta prófi. Þeir
+  komast ekki utan vegna stríðsins og kennsla til fullnaðarprófs í
+  byggingarverkfræði er samþykkt um sumarið; hún hefst 1. október 1943
+  [@gudni1961, bls. 114–115].
+- **1944:** Verkfræðideild er stofnuð með lögum nr. 66, 28. desember 1944
+  [@gudni1961, bls. 116].
+- **1946–1948:** Sjö verkfræðingar ljúka fullnaðarprófi, sex í desember 1946 og
+  einn 15. júní 1948. Kennslan er síðan felld niður og aðeins fyrri hlutinn
+  kenndur [@gudni1961, bls. 115–117].
+- **1968–1969:** Raungreinum er bætt við og deildin fær heitið Verkfræði- og
+  raunvísindadeild; henni er síðar skipt í skorir [@aldarafmaeli1968;
+  @hi_verkfraedisaga].
+- **1970:** Reglugerð breytist og formlega er komið á fjögurra ára, 120 eininga
+  samfelldu námi til lokaprófs í byggingar-, rafmagns- og vélaverkfræði. Þetta
+  er upphaf þessa samfellda lokaprófsnáms, ekki upphaf verkfræðikennslu við HÍ.
+  Fyrsti hópurinn samkvæmt nýju reglugerðinni innritast haustið 1970
+  [@hi_verkfraedisaga].
+- **1974:** Fyrstu nemendurnir úr fjögurra ára lokaprófsnáminu brautskrást.
+  Nær-samtímafrásögn frá 1977 segir að fyrstu verkfræðingarnir hafi verið
+  brautskráðir það ár [@hi_verkfraedisaga; @vfi_1977].
+- **1985:** Verkfræðideild og Raunvísindadeild verða aðskildar deildir
+  [@hi_verkfraedisaga].
+- **1989–1991:** 30 eininga meistaranám hefst 1989 og fyrsti nemandinn lýkur
+  meistaraprófi í verkfræði 1991 [@hi_verkfraedisaga].
+- **1993–1994:** Fyrsta doktorsvörnin eftir skipulagt doktorsnám fer fram 1993;
+  árið eftir fær lokapróf í verkfræði heitið *Candidatus Scientiarum*
+  [@hi_verkfraedisaga].
+- **1997:** Fyrra fjögurra ára lokaprófskerfi er leyst af hólmi með þriggja ára,
+  90 eininga BS-námi og tveggja ára, 60 eininga MS-námi. Samantekt HÍ segir
+  jafnframt að MS-próf hafi þá orðið nauðsynlegt til að uppfylla menntunarkröfu
+  starfsheitisins verkfræðingur. Fyrstu BS-nemendurnir brautskrást 1998
+  [@hi_verkfraedisaga]. Ekki liggur hér fyrir frumheimild sem sundurgreinir
+  innleiðinguna eftir verkfræðigrein eða nákvæmri dagsetningu.
+- **2000–2001:** Tölvunarfræðiskor flyst til Verkfræðideildar árið 2000 og
+  kennsla í efnaverkfræði og hugbúnaðarverkfræði hefst skólaárið 2001–2002
+  [@hi_verkfraedisaga].
+- **1. júlí 2008:** Verkfræðideild skiptist í þrjár deildir innan
+  Verkfræði- og náttúruvísindasviðs: Iðnaðarverkfræði-, vélaverkfræði- og
+  tölvunarfræðideild, Umhverfis- og byggingarverkfræðideild og Rafmagns- og
+  tölvuverkfræðideild [@hi_deildaskipting_2008].
+
+Árbækur HÍ og kennsluskrár eftir árum eru bestu leiðirnar til að endurgera
+framboð námsleiða. Ekki fannst ein opinber heildarskrá sem nær yfir allar
+verkfræðinámsleiðir frá 1940 til dagsins í dag; því þarf að greina á milli þess
+að námsleið hafi verið í boði og þess að nemandi hafi raunverulega brautskráðst.
+
+## Verkfræðinám við Háskólann í Reykjavík
+
+Saga tæknimenntunar sem síðar varð hluti Háskólans í Reykjavík hefst með
+Tækniskóla Íslands árið 1964. Skólinn bauð fyrst upp á nám í tæknifræði og
+fyrstu tæknifræðingarnir brautskráðust 1971; þeir voru tæknifræðingar, ekki
+verkfræðingar [@ru_saga; @althingi_taekniskoli_1972]. Tölvuháskóli
+Verzlunarskóla Íslands var stofnaður 1988 og Háskólinn í Reykjavík tók til
+starfa 1998. Tækniskólinn varð Tækniháskóli Íslands 2002 [@althingi_53_2002].
+HR og Tækniháskólinn sameinuðust 1. júlí 2005; þá varð tækni- og verkfræðideild til og
+Verkfræðideild HR hóf starfsemi. Framhaldsnám í verkfræði hófst 2008
+[@ru_saga; @ru_verkfraedideild_20ara; @ru_arsskyrsla_2008].
+
+Því er rétt að lýsa 1964 sem upphafi tæknimenntunarhefðar forvera HR, en 2005
+sem stofnári Verkfræðideildar HR. Tæknifræði, iðnfræði og byggingafræði eru
+aðgreind frá verkfræðinámi í núverandi skipulagi. Tæknisvið HR skiptist nú í
+þrjár akademískar deildir; verkfræðin er í Verkfræðideild en tæknifræði,
+iðnfræði og byggingafræði í Tæknifræðideild
+[@ru_taeknisvid; @ru_idn_taeknifraedideild].
+
+Formlegt doktorsnám við HR hófst 2008 samkvæmt sögulegu yfirliti skólans;
+framhaldsnám í verkfræði hófst sama ár [@ru_verkfraedideild_20ara].
+
+## Núverandi skipulag og námsleiðir
+
+Eftirfarandi er yfirlit yfir námsleiðir sem bera verkfræðiheiti í núverandi
+kennsluskrá HÍ og námsframboði HR. Námsleiðir geta breyst milli kennsluára;
+kennsluskráin, ekki þessi samantekt, ræður úrslitum um stöðu hverju sinni
+[@hi_kennsluskra_2026; @ru_verkfraedideild].
+
+| HÍ-deild | BS | MS | Doktorsnám |
+|---|---|---|---|
+| Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild | Efnaverkfræði; hugbúnaðarverkfræði; iðnaðarverkfræði; vélaverkfræði | Hugbúnaðarverkfræði; iðnaðarverkfræði; reikniverkfræði; vélaverkfræði | Efnaverkfræði; hugbúnaðarverkfræði; iðnaðarverkfræði; lífverkfræði; reikniverkfræði; vélaverkfræði |
+| Umhverfis- og byggingarverkfræðideild | Umhverfis- og byggingarverkfræði | Byggingarverkfræði; umhverfisverkfræði | Byggingarverkfræði; umhverfisfræði; umhverfisverkfræði |
+| Rafmagns- og tölvuverkfræðideild | Rafmagns- og tölvuverkfræði | Rafmagns- og tölvuverkfræði | Rafmagnsverkfræði; rafmagns- og tölvuverkfræði; tölvuverkfræði |
+
+Kjörsvið eru ekki sjálfstæðar prófgráður. Læknisfræðileg verkfræði er til dæmis
+kjörsvið innan BS-náms í rafmagns- og tölvuverkfræði; endurnýjanleg orka –
+vistvæn orkuverkfræði er kjörsvið á MS-stigi. Reikniverkfræði er hins vegar
+sjálfstæð MS-námsleið og doktorsnám. Fjármálaverkfræði er ekki sjálfstæð
+núverandi námsleið við HÍ samkvæmt núverandi kennsluskrá
+[@hi_kennsluskra_2026].
+
+Verkfræðideild HR býður námsleiðir á BSc- og MSc-stigi. Núverandi framboð er
+samandregið hér að neðan [@ru_verkfraedideild]:
+
+| Grunnnám (BSc) | Meistaranám (MSc) |
+|---|---|
+| Fjármálaverkfræði; hátækniverkfræði; heilbrigðisverkfræði; orkuverkfræði; raforkuverkfræði; rekstrarverkfræði; vélaverkfræði; verkfræði með eigin vali | Fjármálaverkfræði; hátækniverkfræði; heilbrigðisverkfræði; ISE; orkuverkfræði; raforkuverkfræði; rekstrarverkfræði; vélaverkfræði; verkfræði með eigin vali |
+
+Deildin býður einnig doktorsnám í verkfræði [@ru_doktorsnam]. ISE er
+merkt á meistaranámsstigi í núverandi framboðslista, en þar eru ekki tilgreind
+fullt prófgráðuheiti eða einingafjöldi; því er ekki gengið út frá því að hún sé
+sjálfstæð verkfræðigrein. Verkfræðinám HR er almennt fimm ára samfellt ferli:
+þriggja ára BSc-nám og tveggja ára MSc-nám. Heiti á leiðum eru ekki alltaf
+samhverf milli stiga; til dæmis nefnist leiðin rafmagnsverkfræði á BSc-stigi og
+raforkuverkfræði á MSc-stigi [@ru_verkfraedideild].
+
+Byggingarverkfræði birtist í kennsluskrá HR 2024, en ekki í núverandi
+framhaldsnámsframboði sem hér var skoðað. Hún er því höfð með í sögulegu
+yfirliti en ekki talin núverandi námsleið án staðfestingar frá HR. Samkvæmt
+aðgengilegum upplýsingum er heldur ekki ein sameinuð söguleg skrá yfir allar
+námsleiðir HR; þarf að sameina eldri kennsluskrár, ársskýrslur, lög og núverandi
+námsframboð [@ru_saga; @ru_arsskyrsla_2008].
+
+## Lög um starfsheitin
+
+Réttur til að nota starfsheiti verkfræðings og tæknifræðings hefur verið
+lögbundinn frá 1937. Taflan sýnir þau lög og breytingar sem snerta þessi tvö
+starfsheiti; hún er ekki yfirlit yfir öll starfsheiti sem hafa fallið undir
+lög um tæknigreinar og hönnun [@althingi_frv_1996]:
+
+| Lög | Helsta efni |
+|---|---|
+| Nr. 24, 13. júní 1937 | Réttur manna til að kalla sig verkfræðinga, húsameistara eða iðnfræðinga |
+| Nr. 44, 3. apríl 1963 | Starfsheitið tæknifræðingur kemur í stað iðnfræðings |
+| Nr. 8, 11. mars 1996 | Núgildandi lög um löggildingu starfsheita sérfræðinga í tækni- og hönnunargreinum |
+
+Samkvæmt núgildandi lögum hafa þeir einir rétt til að kalla sig verkfræðing eða
+tæknifræðing sem fengið hafa til þess leyfi ráðherra, og leyfi fæst ekki nema
+viðkomandi hafi lokið fullnaðarprófi í greininni. Fagfélögin setja reglur um
+hvaða nám leiðir til fullnaðarprófs, fyrir verkfræðinga reglur nr. 1105/2015
+[@althingi_8_1996, 2.–3. gr.]. Leyfisskrá Stjórnarráðsins telur leyfishafa
+samkvæmt öllum fimm lögunum [@stjr_verkfraedingar].
+
+```{r fyrstu-leyfi}
+#| include: false
+# The first licence holders on each list, by the name-based gender estimate. The lists
+# begin in 1962 and 1965, although the first law is from 1937: anyone licensed earlier is
+# not on them, so these are the first on the list, not necessarily the first ever.
+fyrstu <- NULL
+if (!is.null(kyn)) {
+  con <- DBI::dbConnect(RSQLite::SQLite(), db, flags = RSQLite::SQLITE_RO)
+  fyrstu <- DBI::dbGetQuery(con, "
+    select list, gender, min(licence_year) as ar from licence_gender
+    where gender is not null group by 1, 2")
+  DBI::dbDisconnect(con)
+}
+fyrst <- function(l, g) if (is.null(fyrstu)) NA else
+  fyrstu$ar[fyrstu$list == l & fyrstu$gender == g]
+```
+
+Leyfisskrárnar ná aftur til `r fyrst("verkfraedingur", "male")` (verkfræðingar)
+og `r fyrst("taeknifraedingur", "male")` (tæknifræðingar), þótt fyrstu lögin séu
+frá 1937; þeir sem fengu leyfi fyrr eru ekki á skránum. Fyrsti leyfishafi á
+verkfræðingaskránni sem metinn er kona fékk leyfi `r fyrst("verkfraedingur", "female")`
+og á tæknifræðingaskránni `r fyrst("taeknifraedingur", "female")`. Kyn er metið út
+frá nafni (@sec-gogn-kyn), og þetta eru fyrstu konurnar *á skránum*, ekki
+endilega fyrstu konurnar með leyfi: Kristín Hallberg Jónsdóttir lauk
+verkfræðiprófi 1942 [@vfi_saga].
+
+## Tímalína
+
+Tímalínan dregur saman áfanga í menntun, löggjöf og fagfélögum ásamt fyrstu
+leyfishöfum á skránum. Opnir hringir eru áfangar sem enn vantar heimild fyrir.
+
+```{r timalina}
+#| echo: false
+#| fig-cap: >
+#|   Áfangar í sögu verkfræði og tæknifræði á Íslandi. Færðu bendilinn yfir punkt
+#|   til að sjá atburðinn og heimildina; opinn hringur merkir að heimild vantar.
+t <- read.csv(file.path("..", "config", "timalina.csv"), encoding = "UTF-8",
+              stringsAsFactors = FALSE)
+t$heimild[is.na(t$heimild)] <- ""
+if (!is.null(fyrstu)) {
+  heiti <- c(verkfraedingur = "verkfræðingur", taeknifraedingur = "tæknifræðingur")
+  kyn_heiti <- c(male = "karl", female = "kona")
+  t <- rbind(t, data.frame(
+    ar = fyrstu$ar, flokkur = "Leyfishafar",
+    atburdur = paste0("Fyrsti ", heiti[fyrstu$list], " á skránni sem metinn er ",
+                      kyn_heiti[fyrstu$gender]),
+    heimild = "leyfisskrá"))
+}
+flokkar <- c("Menntun", "Löggjöf", "Fagfélög", "Leyfishafar")
+litir <- stats::setNames(c("#10099F", "#d61f69", "#2DD2C0", "#FFA05F"), flokkar)
+t$flokkur <- factor(t$flokkur, levels = rev(flokkar))
+t$stadfest <- nzchar(t$heimild)
+heimildir <- c(vfi_saga = "Verkfræðingafélag Íslands, Saga VFÍ",
+               gudni1961 = "Guðni Jónsson 1961, Saga Háskóla Íslands",
+               aldarafmaeli1968 = "Háskóli Íslands, aldarafmælisvefur",
+               hi_verkfraedisaga = "Háskóli Íslands, Saga og þróun verkfræðináms",
+               hi_deildaskipting_2008 = "Háskóli Íslands, skipulagsbreyting 2008",
+               vfi_1977 = "Tímarit Verkfræðingafélags Íslands, 1977, bls. 11",
+               ru_saga = "Háskólinn í Reykjavík, Saga HR",
+               ru_verkfraedideild_20ara = "Háskólinn í Reykjavík, Saga Verkfræðideildar",
+               althingi_taekniskoli_1972 = "Alþingi, ræða um Tækniskóla Íslands, 1972",
+               althingi_53_2002 = "Lög nr. 53/2002 um Tækniháskóla Íslands",
+               althingi_frv_1996 = "Alþingi, þskj. 107, 120. lþ.",
+               althingi_8_1996 = "Lög nr. 8/1996",
+               "leyfisskrá" = "Leyfisskrá Stjórnarráðsins")
+t$heimild_texti <- ifelse(t$stadfest, paste0("Heimild: ", heimildir[t$heimild]),
+                          "Heimild vantar")
+p <- plotly::plot_ly()
+for (f in flokkar) {
+  x <- t[t$flokkur == f, ]
+  p <- plotly::add_trace(
+    p, data = x, x = ~ar, y = ~flokkur, type = "scatter", mode = "markers", name = f,
+    marker = list(size = 13, color = ifelse(x$stadfest, litir[[f]], "white"),
+                  line = list(color = litir[[f]], width = 2)),
+    text = ~paste0("<b>", ar, "</b><br>", atburdur, "<br><i>", heimild_texti, "</i>"),
+    hoverinfo = "text")
+}
+plotly::layout(p, xaxis = list(title = "", dtick = 20), yaxis = list(title = ""),
+               showlegend = FALSE, hoverlabel = list(align = "left"))
+```
+
+## Tímamót til skoðunar í greiningu
+
+| Ár | Atburður | Fyrirhuguð notkun |
+|---:|---|---|
+| 1970 | Samfellt lokaprófsnám tekið upp við HÍ | Menntasamhengi |
+| 1974 | Fyrstu brautskráningar úr fjögurra ára námi | Mögulegt breytingartímabil |
+| 1996 | Lög nr. 8/1996 | Regluumhverfi |
+| 1997 | BS/MS-skipulag | Breyttur nefnari brautskráninga |
+| 2015 | Reglur nr. 1105/2015 | Viðmið leyfishæfs náms |
+
+Orsakamál verða ekki leidd af nálægð tímamóta og brota í tímaröð einni saman.
+
+## Heimildir {.unnumbered}

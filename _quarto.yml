@@ -1,0 +1,105 @@
+project:
+  type: book
+  output-dir: site
+  resources:
+    - .nojekyll
+    - /img/hi
+
+bibliography: references.bib
+
+book:
+  title: "Verkfræðingar á Íslandi"
+  subtitle: "Vinnudagbók um þróun lögverndaðrar fagstéttar"
+  repo-url: https://github.com/HI-IDN/engineers-is
+  repo-branch: profession-history
+  repo-actions: [edit, issue]
+  site-url: https://hi-idn.github.io/engineers-is
+  favicon: img/hi/favicon.svg
+  search: true
+  page-footer:
+    left: "© 2026 Helga Ingimundardóttir"
+    center: "Vinnudagbók rannsóknar"
+    right:
+      - icon: github
+        href: https://github.com/HI-IDN/engineers-is
+        aria-label: GitHub-kóðasafn
+  navbar:
+    logo: img/hi/hi_named_logo-is.svg
+    logo-alt: "Háskóli Íslands"
+    background: primary
+    left:
+      - text: "Verktækni"
+        href: grein/
+      - text: "Kynning"
+        href: kynning/
+    tools:
+      - icon: github
+        href: https://github.com/HI-IDN/engineers-is
+        aria-label: GitHub-kóðasafn
+  sidebar:
+    style: docked
+    background: light
+  chapters:
+    - index.qmd
+    - part: "Rannsóknin"
+      chapters:
+        - docs/01-rannsoknarspurningar.qmd
+        - docs/02-gogn.qmd
+        - docs/03-saga-og-timamot.qmd
+        - docs/04-adferdir.qmd
+    - part: "Niðurstöður"
+      chapters:
+        - docs/05-nylidun.qmd
+        - docs/06-brautskraningar.qmd
+  appendices:
+    - part: docs/vidauki-gogn.qmd
+      chapters:
+        - docs/gogn-leyfisskrar.qmd
+        - docs/gogn-mannanafnaskra.qmd
+        - docs/gogn-hagstofa.qmd
+        - docs/gogn-skemman.qmd
+    - part: "Annað"
+      chapters:
+        - docs/vidauki-vinnudagbok.qmd
+
+format:
+  html:
+    theme:
+      - cosmo
+      - styles/hi-book.scss
+    include-in-header: partials/header-includes.inc
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-summary: "Sýna kóðann"
+    code-copy: true
+    code-overflow: wrap
+    smooth-scroll: true
+    fig-width: 9
+    fig-height: 5.5
+
+execute:
+  freeze: auto
+  echo: true
+  warning: false
+  message: false
+
+language:
+  section-title-appendices: "Viðauki"
+  toc-title-document: "Efnisyfirlit"
+  toc-title-website: "Á þessari síðu"
+  back-to-top: "Efst á síðu"
+  search-text-placeholder: "Leita"
+  repo-action-links-edit: "Breyta þessari síðu"
+  repo-action-links-issue: "Tilkynna villu"
+  repo-action-links-source: "Skoða frumkóða"
+  copy-button-tooltip: "Afrita"
+  copy-button-tooltip-success: "Afritað!"
+  search-no-results-text: "Engar niðurstöður"
+  section-title-references: "Heimildir"
+  crossref-apx-prefix: "Viðauki"
+  crossref-ch-prefix: "Kafli"
+  crossref-sec-prefix: "Hluti"
+  crossref-fig-title: "Mynd"
+  crossref-tbl-title: "Tafla"

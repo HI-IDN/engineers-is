@@ -1,0 +1,164 @@
+/*-- scss:defaults --*/
+
+$hi-blue: #10099f;
+$hi-teal: #2dd2c0;
+$hi-paper: #f5f5f5;
+$hi-panel: #eeeeee;
+$hi-ink: #262626;
+$hi-white: #ffffff;
+$hi-pink: #d61f69;
+
+$font-family-sans-serif: system-ui, -apple-system, "Segoe UI", sans-serif;
+$font-family-monospace: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+$headings-font-weight: 800;
+$headings-color: $hi-blue;
+$body-color: $hi-ink;
+$link-color: $hi-blue;
+$primary: $hi-blue;
+$secondary: $hi-teal;
+$code-color: $hi-pink;
+$code-bg: rgba($hi-pink, 0.07);
+$border-radius: 0;
+
+/*-- scss:rules --*/
+
+.navbar {
+  border-bottom: 3px solid $hi-teal;
+
+  // Keep the book title centred across the full navbar, with the HÍ logo at left.
+  .navbar-container { position: relative; }
+
+  .navbar-brand-container {
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    margin: 0 !important;
+  }
+
+  .navbar-brand-logo {
+    pointer-events: auto;
+
+    img {
+      height: 30px;
+      filter: brightness(0) invert(1);
+    }
+  }
+
+  .navbar-brand:not(.navbar-brand-logo) {
+    position: absolute !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    pointer-events: auto;
+    white-space: nowrap;
+  }
+
+  .navbar-title {
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+    color: $hi-white !important;
+  }
+
+  .navbar-brand-logo img {
+    height: 30px;
+    filter: brightness(0) invert(1);
+  }
+
+  .navbar-brand,
+  .nav-link,
+  .quarto-navbar-tools .nav-link {
+    color: $hi-white !important;
+  }
+}
+
+.sidebar { border-right: 1px solid $hi-panel; }
+
+// The chapter title already appears as the page heading; avoid repeating it
+// in the two Quarto breadcrumb locations.
+.quarto-page-breadcrumbs,
+.quarto-title-breadcrumbs {
+  display: none !important;
+}
+
+h1 {
+  border-bottom: 3px solid $hi-teal;
+  padding-bottom: 0.25em;
+}
+
+h2 {
+  border-bottom: 1px solid $hi-panel;
+  padding-bottom: 0.15em;
+  margin-top: 1.8em;
+}
+
+pre.sourceCode,
+div.sourceCode {
+  background: $hi-paper;
+  border-left: 4px solid $hi-teal;
+  border-radius: 0;
+}
+
+.callout {
+  border-radius: 0;
+  border-left-width: 4px;
+}
+
+.nav-footer {
+  background: $hi-blue;
+  color: $hi-white;
+
+  a { color: $hi-teal; }
+}
+
+table {
+  th {
+    background: $hi-blue;
+    color: $hi-white;
+  }
+
+  tbody tr:nth-child(even) td { background: $hi-paper; }
+}
+
+// Article-style metadata blocks used by the draft article page.
+.article-meta {
+  margin: 1rem 0 1.5rem;
+  color: $hi-ink;
+  line-height: 1.55;
+}
+
+.quarto-title-meta .quarto-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-bottom: .8rem;
+
+  .quarto-category {
+    display: inline-block;
+    border-radius: 999px;
+    padding: .15rem .65rem;
+    background: $hi-teal;
+    color: $hi-blue;
+    font-size: .72rem;
+    font-weight: 650;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+  }
+}
+
+.article-status,
+.article-abstract {
+  margin: 1rem 0 1.5rem;
+  padding: .9rem 1.1rem;
+  background: $hi-paper;
+  border-left: 4px solid $hi-teal;
+}
+
+.article-status p,
+.article-abstract p { margin-bottom: 0; }
+
+.article-abstract-label {
+  margin: 0 0 .45rem !important;
+  color: $hi-blue;
+  font-size: 1rem;
+  font-weight: 700;
+}

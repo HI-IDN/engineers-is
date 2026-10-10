@@ -25,3 +25,13 @@ site/
 .vscode/
 .DS_Store
 Thumbs.db
+
+/.quarto/
+**/*.quarto_ipynb
+
+# Scratch output for manual review; safe to delete.
+tmp.out
+
+
+# https://www.ije.is/media/file/Guidelines_for_authors.pdf
+Guidelines_for_authors.pdf
